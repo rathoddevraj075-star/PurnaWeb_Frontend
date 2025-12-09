@@ -1,0 +1,181 @@
+PAGE 1 : HOME (
+HERO SECTION)
+Headline:
+Complete Care for the Complete You
+Subtext:
+From your morning routine to your nightly wind-down, The Purna brings you pure, effective essentials inspired by Ayurveda and crafted for modern wellness.
+CTA:
+ Explore Our Essentials
+SECTION: THE PURNA PHILOSOPHY
+Headline:
+Care That Feels Complete
+Text:
+At The Purna, we believe wellness is not a moment — it's a flow. A daily ritual that begins when you wake up and stays with you till night. Our products are crafted to complete every part of your routine with purity, intention, and care.
+3 Pillars:
+Complete Ritual
+ — Essentials designed for every moment of your day.
+Natural Formulations
+ — Gentle, effective ingredients inspired by Ayurvedic wisdom.
+Modern Wellness
+ — Clean design, contemporary feel, everyday comfort.
+SECTION: THE PURNA ROUTINE (MORNING → NIGHT)
+Headline:
+Your Day, Made Whole
+Subtext:
+From refreshing oral care to nurturing night-time rituals, experience wellness that completes your entire day.
+Timeline Items:
+6 AM — Oral Care Essentials
+ Start fresh with safe, gentle, natural formulations.
+10 AM — Body Care
+ Stay energized with cleansing and nourishing essentials.
+4 PM — Hand &amp; Hygiene
+ Midday freshness that keeps you active and confident.
+8 PM — Hair &amp; Skin Ritual
+ Wash away the day with calm, herbal nourishment.
+10 PM — Night Care
+ End the day with products crafted for rest, repair, and renewal.
+SECTION: PRODUCT CATEGORIES
+Headline:
+Explore Our Essentials
+Categories (with short descriptions):
+Oral Care
+ — Clean, fresh, daily-safe formulations for a confident smile.
+Body Care
+ — Gentle cleansers and nourishes for every skin type.
+Hair Care
+ — Balanced, natural routines for soft, healthy hair.
+Face Care
+ — Daily refresh, glow, and clarity.
+Self-Care Add-ons
+ — Everyday essentials for complete wellness.
+CTA: View All Products
+SECTION: WHY CHOOSE THE PURNA
+Headline:
+Why The Purna?
+Bullets with Icons:
+Safe, natural-inspired ingredients
+Designed for everyday Indian routines
+Morning-to-night complete care
+Conscious, responsible manufacturing
+Vocal for Local brand ecosystem
+SECTION: FEATURED PRODUCTS
+Headline:
+Our Most Loved Essentials
+(Designer will place 4 featured products.)
+CTA: Learn More
+SECTION: JOURNAL PREVIEW
+Headline:
+ 
+From The Purna Journal
+Articles:
+How to Build a Complete Daily Wellness Routine
+Why Ayurveda Is More Relevant Than Ever
+5 Small Rituals That Transform Your Day
+CTA: Explore More
+FOOTER CONTENT
+Short About:
+The Purna is a modern Ayurvedic-inspired brand offering complete daily wellness from morning to night.
+Links:
+Home | About Us | Products | Journal | Contact
+PAGE 2 — ABOUT US 
+Headline:
+Rooted in Wholeness. Designed for Modern Life.
+SECTION: OUR STORY
+Headline:
+The Meaning of “Purna”
+Text:
+ “Purna” means complete — whole, fulfilled, balanced.
+ This philosophy guides everything we create. Because true wellness isn’t about one product or one moment. It’s about the small rituals that shape your entire day.
+The Purna brings together Ayurvedic-inspired ingredients, conscious formulations, and thoughtful design to create essentials that support you from morning to night.
+SECTION: OUR PURPOSE
+Headline:
+Why We Exist
+Text:
+We started The Purna to simplify wellness for the modern generation. To create a brand that feels natural, safe, and trustworthy — without the complexity often associated with Ayurveda.
+Our mission is to make daily self-care 
+complete, effortless, and meaningful
+ for every Indian household.
+SECTION: THE PURNA ROUTINE
+Headline:
+Wellness That Flows With You
+Text:
+ Your day follows a rhythm. Your care should too.
+ The Purna Routine is designed to support each step of your day with simple, effective essentials.
+(Morning → Midday → Evening → Night visual cue on website)
+SECTION: OUR VALUES
+Headline:
+ 
+Guided by Conscious Care
+Vocal for Local
+ — Working closely with Indian farmers, manufacturers &amp; suppliers.
+Ingredient Transparency
+ — Safe, clear, trustworthy formulas.
+Everyday Accessibility
+ — Rituals built for every home and every routine.
+Holistic Wellness
+ — A complete approach to personal care.
+PAGE 3 — ALL PRODUCTS (PLP)
+Header:
+All Essentials. One Complete Routine.
+Subtext:
+Discover our full range of products crafted for your daily wellbeing.
+Grid of products( graphics or photos)
+SUB PAGE:  PRODUCT DETAIL PAGE (For Each Product)
+You can use this content block for every product.
+Product Header (Dynamic per product)
+Variant Name
+Short Tagline
+ (Example for charcoal variant):
+Brighten your smile with nature-powered charcoal cleansing.
+Benefits Section (Reusable template)
+Key Benefits:
+Deep cleansing
+Gentle daily use
+Fresh breath / smooth skin / soft hair (depends on product)
+Natural-inspired formulation
+Free from harsh chemicals
+Hero Ingredient Section
+Example: Activated Charcoal (for toothpaste)
+Removes impurities and stains naturally, giving a visibly cleaner, brighter smile.
+Example Name: Moringa / Clove / Miswak etc.
+(Written depending on product)
+How to Use
+Use twice daily.
+Apply as directed.
+Suitable for all skin/hair types.
+Suitable For
+Adults
+Teens
+Everyday use
+Complete Your Routine
+Cross-sell 3 relevant products.
+PAGE 5 — THE PURNA ROUTINE PAGE
+Headline:
+A Ritual That Completes Your Day
+Sections:
+Morning Ritual
+Start fresh with oral care and gentle cleansers.
+Midday Freshness
+Stay active with refreshing hygiene essentials.
+Evening Reset
+Wash off the day with nourishing care.
+Nightly Nourishment
+Calm your senses with restorative routines.
+PAGE 6 — JOURNAL PAGE
+Headline:
+The Purna Journal
+Subtext:
+ Stories, rituals, ingredients &amp; tips to help you care for yourself completely.
+PAGE 7 — CONTACT PAGE
+Headline:
+We’re Here to Help
+Contact Content:
+Email: care@thepurna.in
+Phone: +91 ___
+Address: ___
+Form Headline:
+Write to Us
+Name
+Email
+Message
+CTA: Submit

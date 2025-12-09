@@ -1,0 +1,188 @@
+@import "tailwindcss";
+@import "swiper/css";
+@import "swiper/css/pagination";
+@import "swiper/css/navigation";
+@import "swiper/css/effect-fade";
+
+/* Local TT Firs Neue Font Face Declarations */
+@font-face {
+  font-family: 'TT Firs Neue';
+  src: url('/tt_firs_neue/TT Firs Neue Trial Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'TT Firs Neue';
+  src: url('/tt_firs_neue/TT Firs Neue Trial Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'TT Firs Neue';
+  src: url('/tt_firs_neue/TT Firs Neue Trial DemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'TT Firs Neue';
+  src: url('/tt_firs_neue/TT Firs Neue Trial Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  /* This will apply TT Firs Neue to all text by default */
+  html, body {
+    font-family: 'TT Firs Neue', sans-serif;
+  }
+}
+
+
+:root{
+  --bg: 38 33% 97%; /* #FDF8F0 Cream */
+  --fg: 222 47% 11%;
+  --muted: 215 16% 47%;
+  --border: 214 32% 91%;
+  --accent: 23 100% 45%; /* #E65800 Orange */
+  --color-orange: #E65800;
+  --color-purple: #6667AB;
+  --color-blue: #0CC0DF;
+  --color-green: #41C280;
+  --color-pink: #FAB8D6;
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  display: none !important;
+}
+
+html, body {
+  overflow-x: hidden;   
+  overflow-y: scroll;       
+  overscroll-behavior-y: none;  
+}
+html {
+  line-height: 1.15;
+  -webkit-text-size-adjust: 100%;
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+.desktop {
+  width: 120px;
+}
+ .menu {
+  top: 83px;
+ }
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-wrapper {
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+  position: relative;
+  height: 27px;
+}
+
+.marquee-track {
+  display: inline-flex;
+  min-width: 200%;
+  animation: marquee 50s linear infinite;
+}
+
+@media (min-width: 768px) {
+  .marquee-wrapper:hover .marquee-track {
+    animation-play-state: paused;
+  }
+}
+
+.logo-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.logo-link {
+  display: inline-block;
+  text-decoration: none;
+}
+
+.logo-img {
+  display: none;
+  height: auto;
+}
+
+.logo-img.desktop {
+  display: block;
+}
+
+.logo-img.mobile {
+  display: none;
+}
+
+.logo-img.transparent {
+  display: none;
+}
+
+
+@media (max-width: 768px) {
+  .logo-img.desktop {
+    display: none;
+  }
+  .logo-img.mobile {
+    display: block;
+  }
+}
+
+
+.navbar.transparent .logo-img.desktop {
+  display: none;
+}
+.navbar.transparent .logo-img.transparent {
+  display: block;
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-scroll-left {
+  animation: scroll-left linear infinite;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
+
