@@ -34,7 +34,7 @@ const Hero3D = () => {
                     transition={{ duration: 0.8, ease: "easeOut" }}
                     style={{ y: yText }}
                 >
-                    <h2 className="text-[var(--color-orange)] text-lg md:text-xl tracking-[0.2em] mb-4 uppercase">
+                    <h2 className="text-[#d9634c] text-lg md:text-xl tracking-[0.2em] mb-4 uppercase">
                         Complete Care for the Complete You
                     </h2>
                     <h1 className="text-[#151515] text-6xl md:text-8xl lg:text-9xl leading-none tracking-tighter mb-6">
