@@ -34,7 +34,7 @@ export default function ContactVideoSection() {
   }, []);
 
   return (
-    <section className="relative w-full h-[400px] sm:h-[225px]  md:h-[360px] overflow-hidden border-b border-black">
+    <section className="relative w-full h-[250px] sm:h-[300px] md:h-[400px] overflow-hidden border-b border-black">
       {/* Video */}
       <video
         ref={videoRef}
@@ -56,7 +56,7 @@ export default function ContactVideoSection() {
         className="absolute inset-0 flex items-center justify-center  cursor-pointer"
         onClick={togglePlayPause}
       >
-        <h2 className="text-white text-5xl md:text-6xl font-bold">FAQ</h2>
+        <h2 className="text-white text-5xl md:text-6xl">FAQ</h2>
       </div>
 
       {/* Play / Pause button */}

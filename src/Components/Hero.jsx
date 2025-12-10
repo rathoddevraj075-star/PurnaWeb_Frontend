@@ -33,7 +33,7 @@ export default function Hero() {
           </p>
           <a
             href="#products"
-            className="inline-block px-8 sm:mt-4 py-3 mt-4 sm:py-3 lg:py-5 border border-black tracking-widest text-gray-900 text-sm sm:text-sm md:text-base font-bold uppercase rounded-xl bg-white hover:bg-black hover:text-white transition"
+            className="inline-block px-8 sm:mt-4 py-3 mt-4 sm:py-3 lg:py-5 border border-black tracking-widest text-gray-900 text-sm sm:text-sm md:text-base uppercase rounded-xl bg-white hover:bg-black hover:text-white transition"
           >
             Explore Our Essentials
           </a>

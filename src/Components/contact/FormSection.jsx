@@ -20,7 +20,7 @@ export default function ContactForm() {
   return (
     <section className="bg-[#FCF8F2] py-12">
       <div className="max-w-2xl mx-auto px-6 text-center">
-        <h2 className="text-lg md:text-xl font-bold tracking-wide mb-2 uppercase">
+        <h2 className="text-lg md:text-xl tracking-wide mb-2 uppercase">
           Get in Touch with Us
         </h2>
         <p className="text-sm md:text-base text-gray-700 mb-10">

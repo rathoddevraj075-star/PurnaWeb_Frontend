@@ -51,19 +51,19 @@ const AllProductsPage = () => {
                     {/* Sidebar Filters (Desktop) */}
                     <aside className="hidden lg:block w-64 flex-shrink-0">
                         <div className="sticky top-32">
-                            <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                            <h3 className="text-xl mb-6 flex items-center gap-2">
                                 <Filter size={20} /> Filters
                             </h3>
 
                             <div className="space-y-2">
-                                <p className="text-sm font-bold text-neutral-400 uppercase tracking-wider mb-3">Category</p>
+                                <p className="text-sm text-neutral-400 uppercase tracking-wider mb-3">Category</p>
                                 {categories.map((cat) => (
                                     <button
                                         key={cat}
                                         onClick={() => setSelectedCategory(cat)}
                                         className={`block w-full text-left px-4 py-3 rounded-xl transition-all ${selectedCategory === cat
-                                                ? "bg-black text-white font-bold shadow-lg"
-                                                : "hover:bg-white text-neutral-600 hover:text-black"
+                                            ? "bg-black text-white shadow-lg"
+                                            : "hover:bg-white text-neutral-600 hover:text-black"
                                             }`}
                                     >
                                         {cat}
@@ -75,7 +75,7 @@ const AllProductsPage = () => {
 
                     {/* Mobile Filter Toggle */}
                     <div className="lg:hidden flex justify-between items-center mb-6">
-                        <span className="font-bold text-lg">{filteredProducts.length} Products</span>
+                        <span className="text-lg">{filteredProducts.length} Products</span>
                         <button
                             onClick={() => setIsFilterOpen(true)}
                             className="flex items-center gap-2 px-4 py-2 bg-white border rounded-full shadow-sm font-medium"
@@ -96,12 +96,12 @@ const AllProductsPage = () => {
                                     className="fixed top-0 right-0 h-full w-80 bg-white z-50 p-6 shadow-2xl overflow-y-auto"
                                 >
                                     <div className="flex justify-between items-center mb-8">
-                                        <h3 className="text-xl font-bold">Filters</h3>
+                                        <h3 className="text-xl">Filters</h3>
                                         <button onClick={() => setIsFilterOpen(false)}><X size={24} /></button>
                                     </div>
 
                                     <div className="space-y-2">
-                                        <p className="text-sm font-bold text-neutral-400 uppercase tracking-wider mb-3">Category</p>
+                                        <p className="text-sm text-neutral-400 uppercase tracking-wider mb-3">Category</p>
                                         {categories.map((cat) => (
                                             <button
                                                 key={cat}
@@ -110,8 +110,8 @@ const AllProductsPage = () => {
                                                     setIsFilterOpen(false);
                                                 }}
                                                 className={`block w-full text-left px-4 py-3 rounded-xl transition-all ${selectedCategory === cat
-                                                        ? "bg-black text-white font-bold"
-                                                        : "bg-neutral-50 text-neutral-600"
+                                                    ? "bg-black text-white"
+                                                    : "bg-neutral-50 text-neutral-600"
                                                     }`}
                                             >
                                                 {cat}
@@ -153,12 +153,12 @@ const AllProductsPage = () => {
                                         {/* Content */}
                                         <div className="p-6 flex-1 flex flex-col">
                                             <div className="mb-2 flex items-center justify-between">
-                                                <span className="text-xs font-bold tracking-widest uppercase text-[var(--color-orange)]">
+                                                <span className="text-xs tracking-widest uppercase text-[var(--color-orange)]">
                                                     {product.category || "Essential"}
                                                 </span>
-                                                <span className="text-sm font-bold">${product.price}</span>
+                                                <span className="text-sm">${product.price}</span>
                                             </div>
-                                            <h3 className="text-lg font-bold mb-2 text-neutral-900 group-hover:text-[var(--color-orange)] transition-colors">
+                                            <h3 className="text-lg mb-2 text-neutral-900 group-hover:text-[var(--color-orange)] transition-colors">
                                                 {product.name}
                                             </h3>
                                             <p className="text-neutral-500 text-sm mb-4 line-clamp-2 flex-1">
@@ -180,7 +180,7 @@ const AllProductsPage = () => {
                                 <p className="text-xl text-neutral-400">No products found in this category.</p>
                                 <button
                                     onClick={() => setSelectedCategory("All")}
-                                    className="mt-4 text-[var(--color-orange)] font-bold hover:underline"
+                                    className="mt-4 text-[var(--color-orange)] hover:underline"
                                 >
                                     View all products
                                 </button>

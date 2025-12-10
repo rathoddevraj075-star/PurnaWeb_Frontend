@@ -38,11 +38,10 @@ function Feature({ icon, title, text, smallText }) {
     <div className="flex flex-col items-center text-center space-y-2 lg:mb-20">
       <img src={icon} alt={title} className="w-14 h-14 object-contain" />
       <div>
-        <h3 className="font-bold text-sm">{title}</h3>
+        <h3 className="text-sm">{title}</h3>
         <p
-          className={`text-black ${
-            smallText ? "text-xs md:text-base  max-w-[210px]" : "text-sm"
-          }`}
+          className={`text-black ${smallText ? "text-xs md:text-base  max-w-[210px]" : "text-sm"
+            }`}
         >
           {text}
         </p>
@@ -66,7 +65,7 @@ const FeaturesSection = () => {
           </p>
 
           {/* Main Rich Text with inline images */}
-          <h3 className="text-lg md:text-4xl font-bold uppercase">
+          <h3 className="text-lg md:text-4xl uppercase">
             Sustainable{" "}
             <img
               src="//wonder-theme-wellness.myshopify.com/cdn/shop/files/blog-post-3.jpg?v=1737287369&width=200"
@@ -87,73 +86,73 @@ const FeaturesSection = () => {
       </section>
 
       <section className="bg-[#FCF8F2] py-16 border-b border-black">
-      <div className="max-w-7xl mx-auto px-6">
-        {/* Desktop layout */}
-        <div className="hidden md:grid grid-cols-3 gap-30 items-center">
-          {/* Left features */}
-          <div className="flex flex-col space-y-16">
-            {features.slice(0, 3).map((f, i) => (
-              <Feature key={i} {...f} />
-            ))}
+        <div className="max-w-7xl mx-auto px-6">
+          {/* Desktop layout */}
+          <div className="hidden md:grid grid-cols-3 gap-30 items-center">
+            {/* Left features */}
+            <div className="flex flex-col space-y-16">
+              {features.slice(0, 3).map((f, i) => (
+                <Feature key={i} {...f} />
+              ))}
+            </div>
+
+            {/* Center video */}
+            <div className="flex justify-center">
+              <video
+                playsInline
+                autoPlay
+                loop
+                muted
+                preload="metadata"
+                className="w-[35rem] max-w-sm lg:max-w-3xl"
+                src="https://wonder-theme-wellness.myshopify.com/cdn/shop/videos/c/vp/f087c0f71002463594892e68000dfe75/f087c0f71002463594892e68000dfe75.HD-720p-4.5Mbps-40573155.mp4?v=0"
+                poster="//wonder-theme-wellness.myshopify.com/cdn/shop/files/preview_images/f087c0f71002463594892e68000dfe75.thumbnail.0000000000_600x.jpg?v=1736152625"
+              />
+            </div>
+
+            {/* Right features */}
+            <div className="flex flex-col space-y-16">
+              {features.slice(3).map((f, i) => (
+                <Feature key={i} {...f} />
+              ))}
+            </div>
           </div>
 
-          {/* Center video */}
-          <div className="flex justify-center">
-            <video
-              playsInline
-              autoPlay
-              loop
-              muted
-              preload="metadata"
-              className="w-[35rem] max-w-sm lg:max-w-3xl"
-              src="https://wonder-theme-wellness.myshopify.com/cdn/shop/videos/c/vp/f087c0f71002463594892e68000dfe75/f087c0f71002463594892e68000dfe75.HD-720p-4.5Mbps-40573155.mp4?v=0"
-              poster="//wonder-theme-wellness.myshopify.com/cdn/shop/files/preview_images/f087c0f71002463594892e68000dfe75.thumbnail.0000000000_600x.jpg?v=1736152625"
-            />
+          {/* Mobile layout */}
+          <div className="md:hidden flex flex-col items-center space-y-10">
+            {/* Video */}
+            <div className="w-full flex justify-center">
+              <video
+                playsInline
+                autoPlay
+                loop
+                muted
+                preload="metadata"
+                className="w-full max-w-xs sm:max-w-sm"
+                src="https://wonder-theme-wellness.myshopify.com/cdn/shop/videos/c/vp/f087c0f71002463594892e68000dfe75/f087c0f71002463594892e68000dfe75.HD-720p-4.5Mbps-40573155.mp4?v=0"
+                poster="//wonder-theme-wellness.myshopify.com/cdn/shop/files/preview_images/f087c0f71002463594892e68000dfe75.thumbnail.0000000000_600x.jpg?v=1736152625"
+              />
+            </div>
+
+            {/* Features stacked */}
+            <div className="grid grid-cols-1 gap-10">
+              {features.map((f, i) => (
+                <Feature key={i} {...f} />
+              ))}
+            </div>
           </div>
 
-          {/* Right features */}
-          <div className="flex flex-col space-y-16">
-            {features.slice(3).map((f, i) => (
-              <Feature key={i} {...f} />
-            ))}
+          {/* CTA button */}
+          <div className="mt-12 flex justify-center">
+            <a
+              href="/products/mens-multi"
+              className="border border-black px-6 py-3 rounded-md text-sm font-semibold tracking-wide hover:bg-black hover:text-white transition"
+            >
+              CHECK PRODUCTS
+            </a>
           </div>
         </div>
-
-        {/* Mobile layout */}
-        <div className="md:hidden flex flex-col items-center space-y-10">
-          {/* Video */}
-          <div className="w-full flex justify-center">
-            <video
-              playsInline
-              autoPlay
-              loop
-              muted
-              preload="metadata"
-              className="w-full max-w-xs sm:max-w-sm"
-              src="https://wonder-theme-wellness.myshopify.com/cdn/shop/videos/c/vp/f087c0f71002463594892e68000dfe75/f087c0f71002463594892e68000dfe75.HD-720p-4.5Mbps-40573155.mp4?v=0"
-              poster="//wonder-theme-wellness.myshopify.com/cdn/shop/files/preview_images/f087c0f71002463594892e68000dfe75.thumbnail.0000000000_600x.jpg?v=1736152625"
-            />
-          </div>
-
-          {/* Features stacked */}
-          <div className="grid grid-cols-1 gap-10">
-            {features.map((f, i) => (
-              <Feature key={i} {...f} />
-            ))}
-          </div>
-        </div>
-
-        {/* CTA button */}
-        <div className="mt-12 flex justify-center">
-          <a
-            href="/products/mens-multi"
-            className="border border-black px-6 py-3 rounded-md text-sm font-semibold tracking-wide hover:bg-black hover:text-white transition"
-          >
-            CHECK PRODUCTS
-          </a>
-        </div>
-      </div>
-    </section>
+      </section>
     </>
   );
 };

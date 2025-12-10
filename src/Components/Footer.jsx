@@ -23,7 +23,7 @@ const Footer = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-6">
         {/* PRODUCTS */}
         <div>
-          <h3 className="font-bold mb-3 text-lg">PRODUCTS</h3>
+          <h3 className="mb-3 text-lg">PRODUCTS</h3>
           <ul className="space-y-2 text-sm">
             <li>
               <a href="/products/herbal-toothpaste" className="hover:underline">
@@ -50,7 +50,7 @@ const Footer = () => {
 
         {/* INFO */}
         <div>
-          <h3 className="font-bold mb-3 text-lg">INFO</h3>
+          <h3 className="mb-3 text-lg">INFO</h3>
           <ul className="space-y-2 text-sm">
             <li>
               <a href="/faq" className="hover:underline">
@@ -82,7 +82,7 @@ const Footer = () => {
 
         {/* SOCIAL */}
         <div>
-          <h3 className="font-bold mb-3 text-lg">SOCIAL</h3>
+          <h3 className="mb-3 text-lg">SOCIAL</h3>
           <ul className="space-y-2 text-sm">
             <li className="flex items-center gap-2">
               <a href="#" className="flex items-center gap-2 hover:underline">
@@ -109,7 +109,7 @@ const Footer = () => {
 
         {/* ABOUT */}
         <div>
-          <h3 className="font-bold mb-4 text-lg">ABOUT THE PURNA</h3>
+          <h3 className="mb-4 text-lg">ABOUT THE PURNA</h3>
           <p className="text-sm leading-relaxed">
             The Purna offers complete daily wellness from morning to night. Ayurvedic-inspired essentials for your everyday routine.
           </p>
@@ -158,7 +158,7 @@ const Footer = () => {
       </div>
 
       {/* Large Text */}
-      <div className="mt-6 text-center font-bold tracking-tight opacity-50 select-none cursor-default">
+      <div className="mt-6 text-center tracking-tight opacity-50 select-none cursor-default">
         <span className="text-[var(--color-orange)] text-[15vw] sm:text-[15vw] md:text-[15vw] lg:text-[18vw] xl:text-[20vw] leading-none">
           The
         </span>

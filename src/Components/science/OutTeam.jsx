@@ -57,7 +57,7 @@ const OurTeam = ({
     <>
       <section className="w-full overflow-hidden bg-[#fcf8f2] border-t border-black">
         <div className="relative flex items-center justify-center h-[100px] md:h-[80px]">
-          <h2 className="w-full text-2xl md:text-xl font-bold whitespace-nowrap overflow-hidden relative">
+          <h2 className="w-full text-2xl md:text-xl whitespace-nowrap overflow-hidden relative">
             <div
               className="scrolling-container flex"
               ref={containerRef}

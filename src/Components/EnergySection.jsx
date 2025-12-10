@@ -137,7 +137,7 @@ export default function EnergySection() {
                   />
                   <div className="absolute inset-0" />
                   <div className="relative z-10 flex flex-col items-center lg:items-end justify-center p-6 lg:p-14 text-center">
-                    <h2 className="text-2xl lg:text-7xl text-left font-bold text-white drop-shadow-lg">
+                    <h2 className="text-2xl lg:text-7xl text-left text-white drop-shadow-lg">
                       {p.promoText}
                     </h2>
                     {/* <a

@@ -11,7 +11,7 @@ const JoinNow = () => {
         }}
       >
         <div className="bg-white/50 backdrop-blur-md rounded-xl shadow-lg p-8 max-w-3xl w-full text-center">
-          <h2 className="text-3xl md:text-[45px] font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl md:text-[45px] text-gray-900 mb-4">
             JOIN OUR CIRCLE & SAVE!
           </h2>
 
@@ -28,7 +28,7 @@ const JoinNow = () => {
             />
             <button
               type="submit"
-              className="bg-black text-white px-4 py-3 rounded-r-xl text-sm font-bold uppercase hover:bg-gray-800 transition"
+              className="bg-black text-white px-4 py-3 rounded-r-xl text-sm uppercase hover:bg-gray-800 transition"
             >
               Subscribe
             </button>

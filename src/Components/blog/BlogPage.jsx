@@ -25,7 +25,7 @@ const BlogPage = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
                 >
-                    <span className="text-[var(--color-orange)] font-bold tracking-[0.2em] uppercase text-sm md:text-base">
+                    <span className="text-[var(--color-orange)] tracking-[0.2em] uppercase text-sm md:text-base">
                         The Journal
                     </span>
                     <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif mt-6 text-[#151515]">
@@ -64,7 +64,7 @@ const BlogPage = () => {
                                     <span>{post.date}</span>
                                     <span>Wellness</span>
                                 </div>
-                                <h2 className="text-2xl font-serif font-bold text-[#151515] leading-tight mb-4 group-hover:text-[var(--color-orange)] transition-colors duration-300">
+                                <h2 className="text-2xl font-serif text-[#151515] leading-tight mb-4 group-hover:text-[var(--color-orange)] transition-colors duration-300">
                                     <Link to={`/journal/${post.slug}`}>
                                         {post.title}
                                     </Link>
@@ -73,7 +73,7 @@ const BlogPage = () => {
                                     {post.excerpt}
                                 </p>
 
-                                <Link to={`/journal/${post.slug}`} className="inline-flex items-center text-sm font-bold uppercase tracking-widest text-[#151515] hover:text-[var(--color-orange)] transition-colors group/link">
+                                <Link to={`/journal/${post.slug}`} className="inline-flex items-center text-sm uppercase tracking-widest text-[#151515] hover:text-[var(--color-orange)] transition-colors group/link">
                                     Read Story
                                     <span className="ml-2 transform group-hover/link:translate-x-1 transition-transform duration-300">→</span>
                                 </Link>

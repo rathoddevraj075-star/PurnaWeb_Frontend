@@ -5,7 +5,7 @@ const RoutineSection = ({ title, description, step, color, align }) => {
     return (
         <div className={`flex flex-col md:flex-row items-center gap-12 py-24 ${align === 'right' ? 'md:flex-row-reverse' : ''}`}>
             <div className="flex-1 space-y-6">
-                <span className="text-sm font-bold tracking-[0.2em] text-gray-500 uppercase">{step}</span>
+                <span className="text-sm tracking-[0.2em] text-gray-500 uppercase">{step}</span>
                 <h2 className={`text-4xl md:text-5xl font-serif text-[${color}]`}>{title}</h2>
                 <p className="text-lg text-gray-600 leading-relaxed max-w-md">{description}</p>
             </div>

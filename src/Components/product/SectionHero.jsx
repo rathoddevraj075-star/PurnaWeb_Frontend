@@ -17,7 +17,7 @@ function SectionHero({ themeColor }) {
           <p className="text-base mb-2">What Our Customers Say</p>
 
           {/* Heading */}
-          <h2 className="text-3xl md:text-5xl font-bold">
+          <h2 className="text-3xl md:text-5xl">
             +10000 Happy Customers
           </h2>
         </div>

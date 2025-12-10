@@ -34,7 +34,7 @@ export default function ContactVideoSection() {
   }, []);
 
   return (
-    <section className="relative w-full h-[400px] md:h-[360px] overflow-hidden border-b border-black">
+    <section className="relative w-full h-[250px] sm:h-[300px] md:h-[400px] overflow-hidden border-b border-black">
       {/* Video */}
       <video
         ref={videoRef}

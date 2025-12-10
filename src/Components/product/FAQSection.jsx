@@ -40,7 +40,7 @@ export default function FAQSection() {
           Everything You Need to Know!
         </p>
         {/* Title */}
-        <h2 className="text-xl md:text-2xl font-bold mb-8 tracking-wide">
+        <h2 className="text-xl md:text-2xl mb-8 tracking-wide">
           FREQUENTLY ASKED QUESTIONS
         </h2>
 

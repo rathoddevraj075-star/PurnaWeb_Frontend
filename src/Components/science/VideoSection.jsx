@@ -40,7 +40,7 @@ export default function ScienceHero() {
             <h3 className="uppercase tracking-wide text-sm md:text-md font-extrabold mb-2">
               our mission
             </h3>
-            <h2 className="text-2xl md:text-7xl font-bold">
+            <h2 className="text-2xl md:text-7xl">
               THERE’S A SCIENCE TO THE SCIENCE.
             </h2>
           </div>

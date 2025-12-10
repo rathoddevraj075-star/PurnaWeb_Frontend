@@ -19,7 +19,7 @@ export default function AboutSection() {
 
         {/* The Purna Routine Timeline */}
         <div className="text-center mb-16">
-          <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
+          <h3 className="text-2xl md:text-3xl lg:text-4xl mb-4">
             Your Day, Made Whole
           </h3>
           <p className="text-base md:text-lg text-neutral-600 max-w-3xl mx-auto mb-12">
@@ -28,31 +28,31 @@ export default function AboutSection() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 lg:gap-8">
             <div className="text-center p-6 bg-[#FCF8F2] rounded-2xl shadow-sm border border-neutral-100">
-              <div className="text-2xl font-bold text-neutral-900 mb-3">6 AM</div>
+              <div className="text-2xl text-neutral-900 mb-3">6 AM</div>
               <h4 className="text-lg font-semibold mb-2">Oral Care Essentials</h4>
               <p className="text-sm text-neutral-600">Start fresh with safe, gentle, natural formulations.</p>
             </div>
 
             <div className="text-center p-6 bg-[#FCF8F2] rounded-2xl shadow-sm border border-neutral-100">
-              <div className="text-2xl font-bold text-neutral-900 mb-3">10 AM</div>
+              <div className="text-2xl text-neutral-900 mb-3">10 AM</div>
               <h4 className="text-lg font-semibold mb-2">Body Care</h4>
               <p className="text-sm text-neutral-600">Stay energized with cleansing and nourishing essentials.</p>
             </div>
 
             <div className="text-center p-6 bg-[#FCF8F2] rounded-2xl shadow-sm border border-neutral-100">
-              <div className="text-2xl font-bold text-neutral-900 mb-3">4 PM</div>
+              <div className="text-2xl text-neutral-900 mb-3">4 PM</div>
               <h4 className="text-lg font-semibold mb-2">Hand & Hygiene</h4>
               <p className="text-sm text-neutral-600">Midday freshness that keeps you active and confident.</p>
             </div>
 
             <div className="text-center p-6 bg-[#FCF8F2] rounded-2xl shadow-sm border border-neutral-100">
-              <div className="text-2xl font-bold text-neutral-900 mb-3">8 PM</div>
+              <div className="text-2xl text-neutral-900 mb-3">8 PM</div>
               <h4 className="text-lg font-semibold mb-2">Hair & Skin Ritual</h4>
               <p className="text-sm text-neutral-600">Wash away the day with calm, herbal nourishment.</p>
             </div>
 
             <div className="text-center p-6 bg-[#FCF8F2] rounded-2xl shadow-sm border border-neutral-100">
-              <div className="text-2xl font-bold text-neutral-900 mb-3">10 PM</div>
+              <div className="text-2xl text-neutral-900 mb-3">10 PM</div>
               <h4 className="text-lg font-semibold mb-2">Night Care</h4>
               <p className="text-sm text-neutral-600">End the day with products crafted for rest, repair, and renewal.</p>
             </div>

@@ -25,7 +25,7 @@ function KeyBenefitsSection({ benefits }) {
     <section className="py-16 bg-[#FCF8F2] border-t border-b border-black/10">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-12">
-          <h2 className="text-2xl md:text-3xl font-bold uppercase tracking-wide mb-4">
+          <h2 className="text-2xl md:text-3xl uppercase tracking-wide mb-4">
             Key Benefits
           </h2>
           <div className="w-20 h-1 bg-[var(--color-orange)] mx-auto"></div>
@@ -38,7 +38,7 @@ function KeyBenefitsSection({ benefits }) {
                 <CheckCircle size={24} />
               </div>
               <div>
-                <h3 className="font-bold text-lg mb-2">{benefit}</h3>
+                <h3 className="text-lg mb-2">{benefit}</h3>
                 <p className="text-neutral-600 text-sm">Scientifically formulated to deliver visible results.</p>
               </div>
             </div>
@@ -71,7 +71,7 @@ function HeroIngredientSection({ ingredient }) {
 
           {/* Text */}
           <div className="w-full md:w-1/2 text-center md:text-left">
-            <span className="text-[var(--color-orange)] font-bold tracking-widest uppercase text-sm mb-2 block">
+            <span className="text-[var(--color-orange)] tracking-widest uppercase text-sm mb-2 block">
               Hero Ingredient
             </span>
             <h2 className="text-3xl md:text-5xl font-extrabold mb-6">
@@ -97,7 +97,7 @@ function UsageSection({ howToUse, suitableFor }) {
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-12">
         {/* How to Use */}
         <div className="bg-white p-8 md:p-12 rounded-3xl shadow-sm">
-          <h3 className="text-2xl font-bold mb-8 flex items-center gap-3">
+          <h3 className="text-2xl mb-8 flex items-center gap-3">
             <span className="w-8 h-8 bg-black text-white rounded-full flex items-center justify-center text-sm">1</span>
             How to Use
           </h3>
@@ -113,7 +113,7 @@ function UsageSection({ howToUse, suitableFor }) {
 
         {/* Suitable For */}
         <div className="bg-white p-8 md:p-12 rounded-3xl shadow-sm">
-          <h3 className="text-2xl font-bold mb-8 flex items-center gap-3">
+          <h3 className="text-2xl mb-8 flex items-center gap-3">
             <span className="w-8 h-8 bg-black text-white rounded-full flex items-center justify-center text-sm">2</span>
             Suitable For
           </h3>
@@ -141,7 +141,7 @@ function CrossSellSection({ crossSellIds }) {
     <section className="py-20 bg-white border-t border-black/10">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Complete Your Routine</h2>
+          <h2 className="text-3xl md:text-4xl mb-4">Complete Your Routine</h2>
           <p className="text-neutral-600">Pair with these essentials for maximum benefits.</p>
         </div>
 
@@ -158,9 +158,9 @@ function CrossSellSection({ crossSellIds }) {
                   <Plus size={20} />
                 </div>
               </div>
-              <h3 className="text-xl font-bold mb-2 group-hover:text-[var(--color-orange)] transition-colors">{product.name}</h3>
+              <h3 className="text-xl mb-2 group-hover:text-[var(--color-orange)] transition-colors">{product.name}</h3>
               <p className="text-neutral-600 text-sm mb-4 line-clamp-2">{product.description}</p>
-              <div className="font-bold text-lg">${product.price.toFixed(2)}</div>
+              <div className="text-lg">${product.price.toFixed(2)}</div>
             </Link>
           ))}
         </div>
@@ -195,7 +195,7 @@ function ScrollingBanner({ product }) {
 
         <a
           href={product.scrollingBanner.ctaLink || "/science"}
-          className="mt-8 px-8 py-4 bg-white text-black font-bold rounded-full hover:bg-[var(--color-orange)] hover:text-white transition-all transform hover:scale-105"
+          className="mt-8 px-8 py-4 bg-white text-black rounded-full hover:bg-[var(--color-orange)] hover:text-white transition-all transform hover:scale-105"
         >
           {product.scrollingBanner.ctaText}
         </a>
@@ -318,7 +318,7 @@ export default function ProductPageContent({ product }) {
         {/* RIGHT: Product Info */}
         <div className="flex-1 space-y-6 lg:pr-10 mt-10 lg:mt-0 text-white max-w-xl">
           <div>
-            <h3 className="uppercase tracking-widest text-xs font-bold mb-2 opacity-80">Plant-Based Wellness</h3>
+            <h3 className="uppercase tracking-widest text-xs mb-2 opacity-80">Plant-Based Wellness</h3>
             <h1 className="text-3xl lg:text-5xl font-extrabold leading-tight mb-3">
               {product.name}
             </h1>
@@ -331,7 +331,7 @@ export default function ProductPageContent({ product }) {
 
           <div className="flex gap-2 flex-wrap">
             {product.tags.map((tag) => (
-              <span key={tag} className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold tracking-wide">
+              <span key={tag} className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-xs tracking-wide">
                 {tag}
               </span>
             ))}
@@ -345,7 +345,7 @@ export default function ProductPageContent({ product }) {
           {product.supplements?.length > 0 && (
             <div className="space-y-3 pt-4 border-t border-white/20">
               <p className="font-medium text-sm">
-                Target Area: <span className="font-bold">{selectedSupplement}</span>
+                Target Area: <span className="">{selectedSupplement}</span>
               </p>
               <div className="flex gap-3 flex-wrap">
                 {product.supplements.map((supp) => (
@@ -353,8 +353,8 @@ export default function ProductPageContent({ product }) {
                     key={supp.name}
                     onClick={() => setSelectedSupplement(supp.name)}
                     className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${selectedSupplement === supp.name
-                        ? "bg-white text-[var(--color-orange)] scale-110 shadow-lg"
-                        : "bg-white/20 hover:bg-white/30"
+                      ? "bg-white text-[var(--color-orange)] scale-110 shadow-lg"
+                      : "bg-white/20 hover:bg-white/30"
                       }`}
                     title={supp.name}
                   >
@@ -368,18 +368,18 @@ export default function ProductPageContent({ product }) {
           {/* Price + Cart */}
           <div className="pt-6 space-y-6">
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-bold">${product.price.toFixed(2)}</span>
+              <span className="text-3xl">${product.price.toFixed(2)}</span>
               <span className="text-sm opacity-70">Tax included</span>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex items-center bg-white/10 rounded-xl border border-white/20 overflow-hidden w-full sm:w-auto">
                 <button onClick={() => setQty(Math.max(1, qty - 1))} className="p-4 hover:bg-white/10 transition"><Minus size={18} /></button>
-                <span className="px-6 font-bold">{qty}</span>
+                <span className="px-6">{qty}</span>
                 <button onClick={() => setQty(qty + 1)} className="p-4 hover:bg-white/10 transition"><Plus size={18} /></button>
               </div>
 
-              <button className="flex-1 bg-white text-black tracking-widest px-8 py-4 rounded-xl text-sm font-bold hover:bg-neutral-200 transition-colors shadow-lg">
+              <button className="flex-1 bg-white text-black tracking-widest px-8 py-4 rounded-xl text-sm hover:bg-neutral-200 transition-colors shadow-lg">
                 ADD TO CART
               </button>
             </div>
@@ -397,7 +397,7 @@ export default function ProductPageContent({ product }) {
               return (
                 <div key={title} className="py-4">
                   <button
-                    className="flex items-center justify-between w-full cursor-pointer uppercase font-bold tracking-wide text-sm hover:opacity-80 transition"
+                    className="flex items-center justify-between w-full cursor-pointer uppercase tracking-wide text-sm hover:opacity-80 transition"
                     onClick={() => togglePanel(idx)}
                   >
                     <span>{title}</span>

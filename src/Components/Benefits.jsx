@@ -92,7 +92,7 @@ function Feature({ icon, title, text, smallText }) {
     <div className="flex flex-col items-center text-center space-y-4">
       <div className="text-4xl mb-2">{icon}</div>
       <div>
-        <h3 className="font-bold text-lg md:text-xl lg:text-2xl mb-2">{title}</h3>
+        <h3 className="text-lg md:text-xl lg:text-2xl mb-2">{title}</h3>
         <p
           className={`text-gray-600 ${smallText ? "text-xs md:text-base lg:text-lg" : "text-sm"
             }`}

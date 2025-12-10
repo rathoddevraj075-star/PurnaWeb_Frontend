@@ -53,7 +53,7 @@ export default function Navbar() {
         ${scrolled ? "fixed top-0 left-0" : "relative"}`}
       >
         {/* -------------------- 📱 Minimal Navbar -------------------- */}
-        <div className="flex items-center justify-between px-6 py-2 max-[1196px]:flex min-[1197px]:hidden">
+        <div className="flex items-center justify-between px-4 py-2 max-[1196px]:flex min-[1197px]:hidden">
           {/* Left Icons */}
           <div className="flex items-center space-x-4">
             <button onClick={() => setMenuOpen(!menuOpen)}>
@@ -89,8 +89,8 @@ export default function Navbar() {
           </a>
 
           {/* Nav links */}
-          <nav className="flex space-x-8 text-md font-bold">
-            {["SHOP", "ABOUT", "ROUTINE", "JOURNAL", "SCIENCE", "FAQ", "CONTACT"].map((item) => (
+          <nav className="flex space-x-8 text-md">
+            {["SHOP", "ABOUT", "ROUTINE", "JOURNAL", "FAQ", "CONTACT"].map((item) => (
               <a
                 key={item}
                 href={item === "SHOP" ? "/products" : `/${item.toLowerCase()}`}
@@ -151,7 +151,7 @@ export default function Navbar() {
           >
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b">
-              <h2 className="text-lg font-bold">HELLO!</h2>
+              <h2 className="text-lg">HELLO!</h2>
               <button onClick={() => setMenuOpen(false)}>
                 <X size={22} />
               </button>
@@ -271,7 +271,7 @@ export default function Navbar() {
           w-full max-[496px]:w-full min-[497px]:w-[400px]`}
         >
           <div className="flex justify-between items-center border-b pb-4">
-            <h2 className="text-lg font-bold">YOUR CART</h2>
+            <h2 className="text-lg">YOUR CART</h2>
             <button onClick={() => setCartOpen(false)}>
               <X size={24} />
             </button>

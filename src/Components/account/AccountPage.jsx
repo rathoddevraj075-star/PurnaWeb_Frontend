@@ -172,7 +172,7 @@ export default function AccountPage() {
                     </div>
                     <div>
                       <p className="text-sm uppercase tracking-wide">Welcome</p>
-                      <h3 className="text-xl font-bold">{user?.name || "User"}</h3>
+                      <h3 className="text-xl">{user?.name || "User"}</h3>
                       <p className="text-xs text-black/60">{user?.email}</p>
                     </div>
                   </div>
@@ -207,7 +207,7 @@ export default function AccountPage() {
                 <M.div className="rounded-2xl border border-black bg-white p-6" {...hoverScale}>
                   <div className="flex items-start justify-between">
                     <div>
-                      <h3 className="text-lg font-bold">Recent Orders</h3>
+                      <h3 className="text-lg">Recent Orders</h3>
                       <p className="text-sm text-black/60">Track and manage your latest purchases</p>
                     </div>
                     <a href="#" className="text-sm underline">View all</a>
@@ -234,7 +234,7 @@ export default function AccountPage() {
                 <M.div className="rounded-2xl border border-black bg-white p-6" {...hoverScale}>
                   <div className="flex items-start justify-between">
                     <div>
-                      <h3 className="text-lg font-bold">Saved Addresses</h3>
+                      <h3 className="text-lg">Saved Addresses</h3>
                       <p className="text-sm text-black/60">Quickly check out with saved details</p>
                     </div>
                     <a href="#" className="text-sm underline">Manage</a>
@@ -269,7 +269,7 @@ export default function AccountPage() {
                   </div>
                   <div>
                     <p className="text-sm uppercase tracking-wide">Welcome</p>
-                    <h3 className="text-xl font-bold">Guest</h3>
+                    <h3 className="text-xl">Guest</h3>
                   </div>
                 </div>
                 <div className="mt-6 flex flex-col gap-3">
@@ -297,7 +297,7 @@ export default function AccountPage() {
           <M.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center px-4">
             <M.div initial={{ scale: 0.95, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 20 }} transition={{ duration: 0.25 }} className="w-full max-w-md md:max-w-lg bg-white rounded-2xl border border-black p-6 shadow-2xl">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold">{mode === "login" ? "Sign in" : "Create account"}</h3>
+                <h3 className="text-lg">{mode === "login" ? "Sign in" : "Create account"}</h3>
                 <button onClick={() => setShowModal(false)} className="text-sm underline">Close</button>
               </div>
               <form className="space-y-4" onSubmit={mode === "login" ? handleLogin : handleSignup}>

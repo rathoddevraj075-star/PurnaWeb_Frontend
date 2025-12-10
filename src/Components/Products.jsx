@@ -38,7 +38,7 @@ const Products = () => {
           >
             <Link
               to="/products"
-              className="group inline-flex items-center gap-2 px-8 py-4 bg-[#151515] text-white rounded-full font-bold transition-all hover:bg-[var(--color-orange)]"
+              className="group inline-flex items-center gap-2 px-8 py-4 bg-[#151515] text-white rounded-full transition-all hover:bg-[var(--color-orange)]"
             >
               View All Products
               <ArrowUpRight className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
@@ -81,18 +81,18 @@ const Products = () => {
                 {/* Content */}
                 <div className="p-6 flex-1 flex flex-col">
                   <div className="mb-2">
-                    <span className="text-xs font-bold tracking-widest uppercase text-[var(--color-orange)]">
+                    <span className="text-xs tracking-widest uppercase text-[var(--color-orange)]">
                       {product.tags[0]}
                     </span>
                   </div>
-                  <h3 className="text-xl font-bold mb-2 text-neutral-900 group-hover:text-[var(--color-orange)] transition-colors">
+                  <h3 className="text-xl mb-2 text-neutral-900 group-hover:text-[var(--color-orange)] transition-colors">
                     {product.name}
                   </h3>
                   <p className="text-neutral-500 text-sm mb-4 line-clamp-2 flex-1">
                     {product.tagline || product.description}
                   </p>
                   <div className="flex items-center justify-between mt-auto">
-                    <span className="text-lg font-bold text-black">
+                    <span className="text-lg text-black">
                       ${product.price.toFixed(2)}
                     </span>
                     <span className="text-sm font-medium text-neutral-500 group-hover:text-black transition-colors flex items-center gap-1">

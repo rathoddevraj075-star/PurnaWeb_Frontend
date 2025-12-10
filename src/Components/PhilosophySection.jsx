@@ -14,9 +14,9 @@ export default function PhilosophySection() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
           <div className="text-center p-8 bg-[#FCF8F2] rounded-2xl">
             <div className="w-16 h-16 bg-neutral-900 rounded-full mx-auto mb-6 flex items-center justify-center">
-              <span className="text-white text-2xl font-bold">1</span>
+              <span className="text-white text-2xl ">1</span>
             </div>
-            <h3 className="text-xl font-bold mb-4">Holistic Wellness</h3>
+            <h3 className="text-xl mb-4">Holistic Wellness</h3>
             <p className="text-neutral-600 leading-relaxed">
               We embrace a holistic approach, nurturing your mind, body, and spirit.
             </p>
@@ -24,9 +24,9 @@ export default function PhilosophySection() {
 
           <div className="text-center p-8 bg-[#FCF8F2] rounded-2xl">
             <div className="w-16 h-16 bg-neutral-900 rounded-full mx-auto mb-6 flex items-center justify-center">
-              <span className="text-white text-2xl font-bold">2</span>
+              <span className="text-white text-2xl">2</span>
             </div>
-            <h3 className="text-xl font-bold mb-4">Ayurvedic Wisdom</h3>
+            <h3 className="text-xl mb-4">Ayurvedic Wisdom</h3>
             <p className="text-neutral-600 leading-relaxed">
               Our products are rooted in ancient Ayurvedic principles for balanced living.
             </p>
@@ -34,9 +34,9 @@ export default function PhilosophySection() {
 
           <div className="text-center p-8 bg-[#FCF8F2] rounded-2xl">
             <div className="w-16 h-16 bg-neutral-900 rounded-full mx-auto mb-6 flex items-center justify-center">
-              <span className="text-white text-2xl font-bold">3</span>
+              <span className="text-white text-2xl">3</span>
             </div>
-            <h3 className="text-xl font-bold mb-4">Conscious Living</h3>
+            <h3 className="text-xl mb-4">Conscious Living</h3>
             <p className="text-neutral-600 leading-relaxed">
               We encourage mindful choices that contribute to a sustainable and healthy lifestyle.
             </p>

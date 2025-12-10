@@ -65,10 +65,10 @@ const RoutineSection = () => {
                                 {/* Content */}
                                 <div className="flex-1 text-center md:text-left">
                                     <div className={`md:max-w-md ${index % 2 === 0 ? "md:mr-auto" : "md:ml-auto"}`}>
-                                        <span className="inline-block px-4 py-1 bg-[var(--color-orange)] text-white text-sm font-bold rounded-full mb-4">
+                                        <span className="inline-block px-4 py-1 bg-[var(--color-orange)] text-white text-sm rounded-full mb-4">
                                             {event.time}
                                         </span>
-                                        <h3 className="text-2xl font-bold mb-2">{event.title}</h3>
+                                        <h3 className="text-2xl mb-2">{event.title}</h3>
                                         <p className="text-neutral-600">{event.description}</p>
                                     </div>
                                 </div>

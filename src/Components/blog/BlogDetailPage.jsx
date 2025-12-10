@@ -54,7 +54,7 @@ const BlogDetailPage = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
                     >
-                        <div className="inline-flex items-center gap-3 text-xs md:text-sm font-bold tracking-[0.25em] uppercase text-gray-500 mb-8 border border-gray-300 rounded-full px-4 py-2 bg-white/50 backdrop-blur-sm">
+                        <div className="inline-flex items-center gap-3 text-xs md:text-sm tracking-[0.25em] uppercase text-gray-500 mb-8 border border-gray-300 rounded-full px-4 py-2 bg-white/50 backdrop-blur-sm">
                             <span className="text-[var(--color-orange)]">{post.date}</span>
                             <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
                             <span>{post.readTime || "Read"}</span>
@@ -95,7 +95,7 @@ const BlogDetailPage = () => {
                     {/* Sidebar / Share (Desktop) */}
                     <div className="hidden lg:block lg:col-span-2">
                         <div className="sticky top-32 flex flex-col gap-6 items-center">
-                            <span className="text-xs font-bold uppercase tracking-widest text-gray-400 -rotate-90 origin-center translate-y-8 mb-8">Share This</span>
+                            <span className="text-xs uppercase tracking-widest text-gray-400 -rotate-90 origin-center translate-y-8 mb-8">Share This</span>
                             <button className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[var(--color-orange)] hover:text-white hover:border-[var(--color-orange)] transition-all duration-300">
                                 <span className="sr-only">Facebook</span>F
                             </button>
@@ -116,14 +116,14 @@ const BlogDetailPage = () => {
                             viewport={{ once: true, margin: "-100px" }}
                             transition={{ duration: 0.8 }}
                             className="prose prose-lg md:prose-xl prose-neutral 
-                                prose-headings:font-serif prose-headings:font-bold prose-headings:text-[#151515] prose-headings:tracking-tight prose-headings:mt-12 prose-headings:mb-6
+                                prose-headings:font-serif prose-headings:text-[#151515] prose-headings:tracking-tight prose-headings:mt-12 prose-headings:mb-6
                                 prose-p:text-gray-600 prose-p:leading-relaxed prose-p:mb-6
                                 prose-a:text-[var(--color-orange)] prose-a:no-underline prose-a:border-b prose-a:border-[var(--color-orange)] hover:prose-a:bg-orange-50 
                                 prose-img:rounded-2xl prose-img:shadow-lg prose-img:my-10
                                 prose-blockquote:border-l-4 prose-blockquote:border-[var(--color-orange)] prose-blockquote:pl-6 prose-blockquote:py-2 prose-blockquote:italic prose-blockquote:text-2xl prose-blockquote:font-serif prose-blockquote:text-gray-800 prose-blockquote:bg-transparent prose-blockquote:my-10
                                 prose-ul:list-disc prose-ul:pl-6 prose-ul:my-6 prose-li:mb-2 prose-li:text-gray-600
                                 [&>.lead]:text-2xl [&>.lead]:font-medium [&>.lead]:text-gray-800 [&>.lead]:mb-10 [&>.lead]:leading-snug
-                                [&>.drop-cap]:first-letter:text-7xl [&>.drop-cap]:first-letter:font-bold [&>.drop-cap]:first-letter:text-[#151515] [&>.drop-cap]:first-letter:float-left [&>.drop-cap]:first-letter:mr-4 [&>.drop-cap]:first-letter:leading-[0.8]"
+                                [&>.drop-cap]:first-letter:text-7xl [&>.drop-cap]:first-letter:text-[#151515] [&>.drop-cap]:first-letter:float-left [&>.drop-cap]:first-letter:mr-4 [&>.drop-cap]:first-letter:leading-[0.8]"
                             dangerouslySetInnerHTML={{ __html: post.content }}
                         />
 
@@ -135,14 +135,14 @@ const BlogDetailPage = () => {
                                 <p className="text-gray-300 mb-8 max-w-lg mx-auto">Get exclusive wellness tips, Ayurvedic insights, and early access to new rituals.</p>
                                 <form className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
                                     <input type="email" placeholder="Your email address" className="flex-1 px-6 py-3 rounded-full text-black focus:outline-none focus:ring-2 focus:ring-[var(--color-orange)]" />
-                                    <button className="bg-[var(--color-orange)] text-white px-8 py-3 rounded-full font-bold uppercase tracking-wider hover:bg-[#d97706] transition-colors">Join</button>
+                                    <button className="bg-[var(--color-orange)] text-white px-8 py-3 rounded-full uppercase tracking-wider hover:bg-[#d97706] transition-colors">Join</button>
                                 </form>
                             </div>
                         </div>
 
                         {/* Back Link */}
                         <div className="mt-16 pt-10 border-t border-gray-200 flex justify-between items-center">
-                            <Link to="/journal" className="inline-flex items-center gap-3 text-sm font-bold tracking-[0.2em] uppercase hover:text-[var(--color-orange)] transition-colors group">
+                            <Link to="/journal" className="inline-flex items-center gap-3 text-sm tracking-[0.2em] uppercase hover:text-[var(--color-orange)] transition-colors group">
                                 <span className="w-8 h-[1px] bg-black group-hover:bg-[var(--color-orange)] transition-colors"></span>
                                 Back to Journal
                             </Link>
@@ -158,10 +158,10 @@ const BlogDetailPage = () => {
                     <div className="max-w-7xl mx-auto">
                         <div className="flex justify-between items-end mb-16">
                             <div>
-                                <span className="text-[var(--color-orange)] font-bold tracking-[0.2em] uppercase text-sm block mb-4">Curated for you</span>
+                                <span className="text-[var(--color-orange)] racking-[0.2em] uppercase text-sm block mb-4">Curated for you</span>
                                 <h3 className="text-4xl md:text-5xl font-serif text-[#151515]">Continue Reading</h3>
                             </div>
-                            <Link to="/journal" className="hidden md:inline-block text-sm font-bold underline decoration-gray-300 underline-offset-8 hover:text-[var(--color-orange)] hover:decoration-[var(--color-orange)] transition-all">
+                            <Link to="/journal" className="hidden md:inline-block text-sm underline decoration-gray-300 underline-offset-8 hover:text-[var(--color-orange)] hover:decoration-[var(--color-orange)] transition-all">
                                 View All Stories
                             </Link>
                         </div>
@@ -183,13 +183,13 @@ const BlogDetailPage = () => {
                                                 alt={related.title}
                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                                             />
-                                            <div className="absolute bottom-4 left-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-white text-xs font-bold uppercase tracking-widest border border-white/50 px-3 py-1 rounded-full backdrop-blur-sm bg-white/10">
+                                            <div className="absolute bottom-4 left-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-white text-xs uppercase tracking-widest border border-white/50 px-3 py-1 rounded-full backdrop-blur-sm bg-white/10">
                                                 Read Story
                                             </div>
                                         </div>
                                         <div className="flex-1 flex flex-col">
-                                            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">{related.date}</span>
-                                            <h4 className="font-serif text-2xl font-bold text-[#151515] group-hover:text-[var(--color-orange)] transition-colors mb-3 leading-tight">{related.title}</h4>
+                                            <span className="text-xs text-gray-400 uppercase tracking-widest mb-3">{related.date}</span>
+                                            <h4 className="font-serif text-2xl text-[#151515] group-hover:text-[var(--color-orange)] transition-colors mb-3 leading-tight">{related.title}</h4>
                                             <p className="text-gray-500 line-clamp-2 text-sm leading-relaxed">{related.excerpt}</p>
                                         </div>
                                     </Link>

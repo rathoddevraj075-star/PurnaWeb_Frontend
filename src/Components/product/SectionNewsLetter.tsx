@@ -8,7 +8,7 @@ export default function SectionNewsletter({ themeColor = "#55acea" }) {
     >
       <div className="max-w-3xl mx-auto text-center text-white">
         {/* Heading */}
-        <h2 className="text-2xl md:text-2xl font-bold uppercase tracking-wide mb-4">
+        <h2 className="text-2xl md:text-2xl uppercase tracking-wide mb-4">
           Join Our Circle &amp; Save!
         </h2>
 
