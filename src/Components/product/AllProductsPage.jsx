@@ -143,11 +143,6 @@ const AllProductsPage = () => {
                                                 alt={product.name}
                                                 className="relative z-10 w-full h-full object-contain drop-shadow-md group-hover:scale-110 transition-transform duration-500"
                                             />
-                                            <div className="absolute bottom-4 right-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md text-black hover:bg-[var(--color-orange)] hover:text-white transition-colors">
-                                                    <Plus size={20} />
-                                                </div>
-                                            </div>
                                         </div>
 
                                         {/* Content */}

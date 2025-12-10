@@ -69,13 +69,6 @@ const Products = () => {
                     alt={product.name}
                     className="relative z-10 w-full h-full object-contain drop-shadow-md group-hover:scale-110 transition-transform duration-500"
                   />
-
-                  {/* Quick Add Button */}
-                  <div className="absolute bottom-4 right-4 z-20">
-                    <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md text-black group-hover:bg-[var(--color-orange)] group-hover:text-white transition-colors">
-                      <Plus size={20} />
-                    </div>
-                  </div>
                 </div>
 
                 {/* Content */}

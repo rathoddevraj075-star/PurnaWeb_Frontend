@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Menu, X, Search, User, ShoppingBag } from "lucide-react";
+import { Menu, X, Search, User } from "lucide-react";
 
 // ✅ Swiper imports
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -9,7 +9,6 @@ import "swiper/css";
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [cartOpen, setCartOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [shopOpen, setShopOpen] = useState(false);
 
@@ -19,7 +18,6 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Example products (replace with your Shopify data)
   // Example products (replace with your Shopify data)
   const products = [
     {
@@ -65,7 +63,6 @@ export default function Navbar() {
           </div>
 
           {/* Center Logo */}
-          {/* Center Logo */}
           <a href="/" className="block">
             <img src="/images/logo-black.png" alt="The Purna" className="h-14 w-auto object-contain" />
           </a>
@@ -75,9 +72,6 @@ export default function Navbar() {
             <a href="/account">
               <User size={22} />
             </a>
-            <button onClick={() => setCartOpen(true)}>
-              <ShoppingBag size={22} />
-            </button>
           </div>
         </div>
 
@@ -104,17 +98,6 @@ export default function Navbar() {
 
           {/* Right actions */}
           <div className="flex items-center space-x-4">
-            {/* <button className="flex items-center gap-1 text-sm font-medium hover:opacity-80">
-              <img
-                src="https://cdn.shopify.com/static/images/flags/us.svg"
-                alt="USA"
-                className="w-5 h-4"
-              />
-              USD ▼
-            </button> */}
-            {/* <button className="flex items-center gap-1 text-sm font-medium hover:opacity-80">
-              EN ▼
-            </button> */}
             <button
               className="p-1 rounded-full hover:bg-black/10"
               onClick={() => setSearchOpen(true)}
@@ -124,12 +107,6 @@ export default function Navbar() {
             <a href="/account" className="p-1 rounded-full hover:bg-black/10">
               <User size={25} className="text-black/50" />
             </a>
-            <button
-              onClick={() => setCartOpen(true)}
-              className="relative p-1 rounded-full hover:bg-black/10"
-            >
-              <ShoppingBag size={25} className="text-black/50" />
-            </button>
           </div>
         </div>
       </header>
@@ -212,15 +189,6 @@ export default function Navbar() {
                 Log in
               </a>
               <div className="flex items-center space-x-6 text-sm">
-                {/* <button className="flex items-center gap-1">
-                  <img
-                    src="https://cdn.shopify.com/static/images/flags/us.svg"
-                    alt="USA"
-                    className="w-5 h-4"
-                  />
-                  USD ▼
-                </button>
-                <button>EN ▼</button> */}
               </div>
             </div>
           </div>
@@ -248,49 +216,6 @@ export default function Navbar() {
           >
             <X size={22} />
           </button>
-        </div>
-      </div>
-
-      {/* 🛒 Cart Drawer */}
-      <div
-        className={`fixed inset-0 z-50 transition-transform duration-500 ${cartOpen ? "translate-x-0" : "translate-x-full"
-          }`}
-      >
-        {/* Backdrop */}
-        <div
-          className={`fixed inset-0 z-40 bg-black/20 backdrop-blur-sm transition-opacity duration-300
-          ${cartOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
-          onClick={() => setCartOpen(false)}
-        ></div>
-
-        {/* Cart Drawer */}
-        <div
-          className={`fixed top-0 right-0 h-full bg-white p-6 flex flex-col z-50
-          transform transition-transform duration-300 ease-in-out
-          ${cartOpen ? "translate-x-0" : "translate-x-full"}
-          w-full max-[496px]:w-full min-[497px]:w-[400px]`}
-        >
-          <div className="flex justify-between items-center border-b pb-4">
-            <h2 className="text-lg">YOUR CART</h2>
-            <button onClick={() => setCartOpen(false)}>
-              <X size={24} />
-            </button>
-          </div>
-
-          <div className="flex-1 flex flex-col items-center justify-center space-y-4">
-            <ShoppingBag size={48} />
-            <p className="text-sm font-medium">YOUR CART IS EMPTY</p>
-            <button className="px-6 py-2 bg-black text-white rounded-md hover:bg-gray-800 transition">
-              CONTINUE SHOPPING
-            </button>
-            <p className="text-xs text-center mt-6">
-              HAVE AN ACCOUNT?{" "}
-              <a href="/account" className="underline font-medium">
-                Log in
-              </a>{" "}
-              to check out faster.
-            </p>
-          </div>
         </div>
       </div>
     </>

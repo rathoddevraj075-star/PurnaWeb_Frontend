@@ -373,15 +373,9 @@ export default function ProductPageContent({ product }) {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex items-center bg-white/10 rounded-xl border border-white/20 overflow-hidden w-full sm:w-auto">
-                <button onClick={() => setQty(Math.max(1, qty - 1))} className="p-4 hover:bg-white/10 transition"><Minus size={18} /></button>
-                <span className="px-6">{qty}</span>
-                <button onClick={() => setQty(qty + 1)} className="p-4 hover:bg-white/10 transition"><Plus size={18} /></button>
-              </div>
-
-              <button className="flex-1 bg-white text-black tracking-widest px-8 py-4 rounded-xl text-sm hover:bg-neutral-200 transition-colors shadow-lg">
-                ADD TO CART
-              </button>
+              <Link to="/contact" className="flex-1 bg-white text-black tracking-widest px-8 py-4 rounded-xl text-sm hover:bg-neutral-200 transition-colors shadow-lg text-center font-bold">
+                CONTACT TO PURCHASE
+              </Link>
             </div>
 
             <div className="flex items-center gap-2 text-sm opacity-80 justify-center sm:justify-start">
