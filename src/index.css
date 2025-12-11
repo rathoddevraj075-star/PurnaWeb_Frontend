@@ -7,7 +7,7 @@
 /* Local TT Firs Neue Font Face Declarations */
 @font-face {
   font-family: 'TT Firs Neue';
-  src: url('/tt_firs_neue/TT Firs Neue Trial Regular.ttf') format('truetype');
+  src: url('/fonts/tt_firs_neue/TT Firs Neue Trial Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -15,7 +15,7 @@
 
 @font-face {
   font-family: 'TT Firs Neue';
-  src: url('/tt_firs_neue/TT Firs Neue Trial Medium.ttf') format('truetype');
+  src: url('/fonts/tt_firs_neue/TT Firs Neue Trial Medium.ttf') format('truetype');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -23,7 +23,7 @@
 
 @font-face {
   font-family: 'TT Firs Neue';
-  src: url('/tt_firs_neue/TT Firs Neue Trial DemiBold.ttf') format('truetype');
+  src: url('/fonts/tt_firs_neue/TT Firs Neue Trial DemiBold.ttf') format('truetype');
   font-weight: 600;
   font-style: normal;
   font-display: swap;
@@ -31,26 +31,29 @@
 
 @font-face {
   font-family: 'TT Firs Neue';
-  src: url('/tt_firs_neue/TT Firs Neue Trial Bold.ttf') format('truetype');
+  src: url('/fonts/tt_firs_neue/TT Firs Neue Trial Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 
 @layer base {
-  /* This will apply TT Firs Neue to all text by default */
-  html, body {
+
+  html,
+  body {
     font-family: 'TT Firs Neue', sans-serif;
   }
 }
 
 
-:root{
-  --bg: 38 33% 97%; /* #FDF8F0 Cream */
+:root {
+  --bg: 38 33% 97%;
+  /* #FDF8F0 Cream */
   --fg: 222 47% 11%;
   --muted: 215 16% 47%;
   --border: 214 32% 91%;
-  --accent: 23 100% 45%; /* #E65800 Orange */
+  --accent: 23 100% 45%;
+  /* #E65800 Orange */
   --color-orange: #E65800;
   --color-purple: #6667AB;
   --color-blue: #0CC0DF;
@@ -63,16 +66,19 @@
   display: none !important;
 }
 
-html, body {
-  overflow-x: hidden;   
-  overflow-y: scroll;       
-  overscroll-behavior-y: none;  
+html,
+body {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  overscroll-behavior-y: none;
 }
+
 html {
   line-height: 1.15;
   -webkit-text-size-adjust: 100%;
   box-sizing: border-box;
 }
+
 body {
   margin: 0;
 }
@@ -86,14 +92,16 @@ body {
 .desktop {
   width: 120px;
 }
- .menu {
+
+.menu {
   top: 83px;
- }
+}
 
 @keyframes marquee {
   0% {
     transform: translateX(0%);
   }
+
   100% {
     transform: translateX(-50%);
   }
@@ -151,6 +159,7 @@ body {
   .logo-img.desktop {
     display: none;
   }
+
   .logo-img.mobile {
     display: block;
   }
@@ -160,6 +169,7 @@ body {
 .navbar.transparent .logo-img.desktop {
   display: none;
 }
+
 .navbar.transparent .logo-img.transparent {
   display: block;
 }
@@ -168,6 +178,7 @@ body {
   0% {
     transform: translateX(0);
   }
+
   100% {
     transform: translateX(-100%);
   }
@@ -178,19 +189,34 @@ body {
 }
 
 .scrollbar-hide::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
+  display: none;
+  /* Chrome, Safari */
 }
+
 .scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;     /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 /* Animation Utilities for Hero3D */
 @keyframes blob {
-  0% { transform: translate(0px, 0px) scale(1); }
-  33% { transform: translate(30px, -50px) scale(1.1); }
-  66% { transform: translate(-20px, 20px) scale(0.9); }
-  100% { transform: translate(0px, 0px) scale(1); }
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
 }
 
 .animate-blob {
@@ -208,5 +234,3 @@ body {
 .perspective-1000 {
   perspective: 1000px;
 }
-
-

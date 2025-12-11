@@ -47,8 +47,7 @@ export default function Navbar() {
       {/* Navbar */}
       <header
         className={`w-full z-50 transition-all duration-500 border-b border-white/10
-        bg-white/60 backdrop-blur-md shadow-sm 
-        ${scrolled ? "fixed top-0 left-0" : "relative"}`}
+        bg-white/60 backdrop-blur-md shadow-sm fixed top-0 left-0`}
       >
         {/* -------------------- 📱 Minimal Navbar -------------------- */}
         <div className="flex items-center justify-between px-4 py-2 max-[1196px]:flex min-[1197px]:hidden">

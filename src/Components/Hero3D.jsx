@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 
 const Hero3D = () => {
     const ref = useRef(null);
@@ -8,10 +8,16 @@ const Hero3D = () => {
         offset: ["start start", "end start"],
     });
 
+    const smoothProgress = useSpring(scrollYProgress, {
+        stiffness: 100,
+        damping: 30,
+        restDelta: 0.001
+    });
+
     // Parallax effects
-    const yText = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
-    const yBg = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
-    const opacityHero = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+    const yText = useTransform(smoothProgress, [0, 1], ["0%", "50%"]);
+    const yBg = useTransform(smoothProgress, [0, 1], ["0%", "20%"]);
+    const opacityHero = useTransform(smoothProgress, [0, 0.8], [1, 0]);
 
     return (
         <section
