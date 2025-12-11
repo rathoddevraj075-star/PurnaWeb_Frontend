@@ -1,9 +1,9 @@
-// ProductPageContent.jsx
+// ProductPageContent.jsx - Marvis-Style Premium Product Page
 "use client";
 
 import AnnoucementBar from "../AnnoucementBar";
 import { useState, useRef, useEffect } from "react";
-import { Plus, Minus, ChevronLeft, ChevronRight, CheckCircle, Star } from "lucide-react";
+import { Plus, Minus, ChevronLeft, ChevronRight, CheckCircle, Star, ArrowRight } from "lucide-react";
 import Navbar from "../Navbar";
 import FAQSection from "./FAQSection";
 import SectionTestimonials from "./SectionTestimonials";
@@ -17,216 +17,14 @@ import { products } from "../data/product";
 
 const M = motion;
 
-/* -------------------- SECTION: Key Benefits -------------------- */
-function KeyBenefitsSection({ benefits }) {
-  if (!benefits || benefits.length === 0) return null;
-
-  return (
-    <section className="py-16 bg-[#FCF8F2] border-t border-b border-black/10">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-12">
-          <h2 className="text-2xl md:text-3xl uppercase tracking-wide mb-4">
-            Key Benefits
-          </h2>
-          <div className="w-20 h-1 bg-[var(--color-orange)] mx-auto"></div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {benefits.map((benefit, index) => (
-            <div key={index} className="flex items-start gap-4 p-6 bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-              <div className="bg-[var(--color-orange)]/10 p-3 rounded-full text-[var(--color-orange)]">
-                <CheckCircle size={24} />
-              </div>
-              <div>
-                <h3 className="text-lg mb-2">{benefit}</h3>
-                <p className="text-neutral-600 text-sm">Scientifically formulated to deliver visible results.</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* -------------------- SECTION: Hero Ingredient -------------------- */
-function HeroIngredientSection({ ingredient }) {
-  if (!ingredient) return null;
-
-  return (
-    <section className="py-20 bg-white overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-20">
-          {/* Image */}
-          <div className="w-full md:w-1/2 flex justify-center">
-            <div className="relative">
-              <div className="absolute inset-0 bg-[var(--color-orange)]/10 rounded-full blur-3xl transform scale-150"></div>
-              <img
-                src={ingredient.image}
-                alt={ingredient.name}
-                className="relative z-10 w-64 h-64 md:w-80 md:h-80 object-contain drop-shadow-2xl"
-              />
-            </div>
-          </div>
-
-          {/* Text */}
-          <div className="w-full md:w-1/2 text-center md:text-left">
-            <span className="text-[var(--color-orange)] tracking-widest uppercase text-sm mb-2 block">
-              Hero Ingredient
-            </span>
-            <h2 className="text-3xl md:text-5xl font-extrabold mb-6">
-              {ingredient.name}
-            </h2>
-            <p className="text-lg text-neutral-600 leading-relaxed mb-8">
-              {ingredient.description}
-            </p>
-            <div className="inline-block px-6 py-3 bg-[#FDF8F0] rounded-lg border border-[var(--color-orange)]/20 text-[var(--color-orange)] font-medium">
-              Powered by Nature
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* -------------------- SECTION: Usage & Suitability -------------------- */
-function UsageSection({ howToUse, suitableFor }) {
-  return (
-    <section className="py-20 bg-[#F9F9F9] border-t border-black/5">
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-12">
-        {/* How to Use */}
-        <div className="bg-white p-8 md:p-12 rounded-3xl shadow-sm">
-          <h3 className="text-2xl mb-8 flex items-center gap-3">
-            <span className="w-8 h-8 bg-black text-white rounded-full flex items-center justify-center text-sm">1</span>
-            How to Use
-          </h3>
-          <ul className="space-y-4">
-            {howToUse?.map((step, i) => (
-              <li key={i} className="flex items-start gap-4">
-                <div className="w-1.5 h-1.5 bg-[var(--color-orange)] rounded-full mt-2.5"></div>
-                <p className="text-neutral-700 leading-relaxed">{step}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Suitable For */}
-        <div className="bg-white p-8 md:p-12 rounded-3xl shadow-sm">
-          <h3 className="text-2xl mb-8 flex items-center gap-3">
-            <span className="w-8 h-8 bg-black text-white rounded-full flex items-center justify-center text-sm">2</span>
-            Suitable For
-          </h3>
-          <ul className="space-y-4">
-            {suitableFor?.map((item, i) => (
-              <li key={i} className="flex items-center gap-4 p-4 bg-[#FDF8F0] rounded-xl">
-                <CheckCircle size={20} className="text-[var(--color-orange)]" />
-                <span className="font-medium text-neutral-800">{item}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* -------------------- SECTION: Cross Sell -------------------- */
-function CrossSellSection({ crossSellIds }) {
-  if (!crossSellIds || crossSellIds.length === 0) return null;
-
-  const crossSellProducts = products.filter(p => crossSellIds.includes(p.id));
-
-  return (
-    <section className="py-20 bg-white border-t border-black/10">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl mb-4">Complete Your Routine</h2>
-          <p className="text-neutral-600">Pair with these essentials for maximum benefits.</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {crossSellProducts.map((product) => (
-            <Link to={`/products/${product.id}`} key={product.id} className="group block">
-              <div className="bg-[#FDF8F0] rounded-2xl p-8 mb-6 relative overflow-hidden transition-transform duration-300 group-hover:-translate-y-2">
-                <img
-                  src={product.images[0]}
-                  alt={product.name}
-                  className="w-full h-64 object-contain mix-blend-multiply"
-                />
-                <div className="absolute bottom-4 right-4 bg-white p-3 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Plus size={20} />
-                </div>
-              </div>
-              <h3 className="text-xl mb-2 group-hover:text-[var(--color-orange)] transition-colors">{product.name}</h3>
-              <p className="text-neutral-600 text-sm mb-4 line-clamp-2">{product.description}</p>
-              <div className="text-lg">${product.price.toFixed(2)}</div>
-            </Link>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* -------------------- SECTION: Scrolling Banner -------------------- */
-function ScrollingBanner({ product }) {
-  if (!product.scrollingBanner) return null;
-
-  return (
-    <section className="relative w-full h-[60vh] md:h-[80vh] overflow-hidden border-b border-black">
-      <img
-        src={product.scrollingBanner.image}
-        alt={product.name}
-        className="w-full h-full object-cover"
-      />
-
-      <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/20">
-        <div className="overflow-hidden whitespace-nowrap w-full">
-          <M.div
-            className="text-white font-extrabold uppercase text-[6vw] tracking-wide inline-block"
-            animate={{ x: ["0%", "-100%"] }}
-            transition={{ repeat: Infinity, duration: 25, ease: "linear" }}
-          >
-            {product.scrollingBanner.text} • {product.scrollingBanner.text} •{" "}
-            {product.scrollingBanner.text} •
-          </M.div>
-        </div>
-
-        <a
-          href={product.scrollingBanner.ctaLink || "/science"}
-          className="mt-8 px-8 py-4 bg-white text-black rounded-full hover:bg-[var(--color-orange)] hover:text-white transition-all transform hover:scale-105"
-        >
-          {product.scrollingBanner.ctaText}
-        </a>
-      </div>
-    </section>
-  );
-}
-
-/* -------------------- MAIN PRODUCT PAGE -------------------- */
-export default function ProductPageContent({ product }) {
-  const [imageIndex, setImageIndex] = useState(0);
-  const [qty, setQty] = useState(1);
-  const [selectedSupplement, setSelectedSupplement] = useState(
-    product.supplements?.[0]?.name || ""
-  );
+/* ========== PREMIUM PRODUCT HERO SECTION ========== */
+function ProductHero({ product, imageIndex, setImageIndex }) {
   const [openPanels, setOpenPanels] = useState(() => new Set());
-
   const isFirstRender = useRef(true);
 
   useEffect(() => {
     isFirstRender.current = false;
-    setImageIndex(0); // Reset image on product change
-    setOpenPanels(new Set()); // Reset accordion
   }, [product.id]);
-
-  const nextSlide = () =>
-    setImageIndex((prev) => (prev + 1) % product.images.length);
-  const prevSlide = () =>
-    setImageIndex((prev) =>
-      prev === 0 ? product.images.length - 1 : prev - 1
-    );
 
   function togglePanel(idx) {
     setOpenPanels((prev) => {
@@ -237,24 +35,537 @@ export default function ProductPageContent({ product }) {
     });
   }
 
-  // Helper to render accordion content
-  function renderAccordionContent(title, content) {
+  const nextSlide = () => setImageIndex((prev) => (prev + 1) % product.images.length);
+  const prevSlide = () => setImageIndex((prev) => (prev === 0 ? product.images.length - 1 : prev - 1));
+
+  // Render accordion content
+  function renderAccordionContent(content) {
     if (Array.isArray(content)) {
       return (
-        <ul className="list-disc list-inside space-y-2">
+        <ul className="space-y-3">
           {content.map((item, i) => (
-            <li key={i} className="text-sm text-white/90">
-              {typeof item === "string" ? item : (
-                <><strong>{item.title || item.name}:</strong> {item.description || item.text || ""}</>
-              )}
+            <li key={i} className="flex items-start gap-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-white/60 mt-2 shrink-0"></span>
+              <span className="text-white/80 text-sm leading-relaxed">
+                {typeof item === "string" ? item : (
+                  <><span className="text-white font-medium">{item.title || item.name}:</span> {item.description || item.text || ""}</>
+                )}
+              </span>
             </li>
           ))}
         </ul>
       );
     }
-    if (typeof content === "string") return <p className="text-white/90">{content}</p>;
-    return <pre className="whitespace-pre-wrap text-white/90">{JSON.stringify(content, null, 2)}</pre>;
+    if (typeof content === "string") return <p className="text-white/80 text-sm leading-relaxed">{content}</p>;
+    return <pre className="whitespace-pre-wrap text-white/80 text-sm">{JSON.stringify(content, null, 2)}</pre>;
   }
+
+  return (
+    <section
+      className="relative min-h-screen overflow-hidden"
+      style={{ backgroundColor: product.themeColor }}
+    >
+      {/* Decorative elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-1/4 -right-1/4 w-[80vw] h-[80vw] rounded-full opacity-10 bg-white blur-3xl"></div>
+        <div className="absolute -bottom-1/4 -left-1/4 w-[60vw] h-[60vw] rounded-full opacity-5 bg-black blur-3xl"></div>
+      </div>
+
+      <div className="relative z-10 max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-20">
+        <div className="flex flex-col lg:flex-row min-h-screen pt-20 lg:pt-28 pb-12 lg:pb-20 gap-8 lg:gap-16">
+
+          {/* LEFT SIDE - Visual Gallery */}
+          <div className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-10">
+            {/* Thumbnail strip - Desktop only */}
+            <div className="hidden lg:flex flex-col gap-4 order-1">
+              {product.images.map((img, i) => (
+                <M.button
+                  key={i}
+                  onClick={() => setImageIndex(i)}
+                  className={`relative w-16 h-16 xl:w-20 xl:h-20 rounded-xl overflow-hidden transition-all duration-300 ${i === imageIndex
+                    ? "ring-2 ring-white ring-offset-2 ring-offset-transparent scale-110"
+                    : "opacity-60 hover:opacity-100"
+                    }`}
+                  style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}
+                  whileHover={{ scale: i === imageIndex ? 1.1 : 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <img src={img} alt="" className="w-full h-full object-contain p-2" />
+                </M.button>
+              ))}
+            </div>
+
+            {/* Main image */}
+            <div className="relative flex-1 flex items-center justify-center order-2 w-full max-w-xl lg:max-w-2xl xl:max-w-3xl">
+              {/* Navigation arrows */}
+              <button
+                onClick={prevSlide}
+                className="absolute left-0 sm:left-4 z-20 p-3 sm:p-4 rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all"
+              >
+                <ChevronLeft size={24} />
+              </button>
+
+              <AnimatePresence mode="wait">
+                <M.img
+                  key={imageIndex}
+                  src={product.images[imageIndex]}
+                  alt={product.name}
+                  className="w-full max-w-[300px] sm:max-w-[400px] lg:max-w-[500px] xl:max-w-[600px] h-auto object-contain drop-shadow-2xl"
+                  initial={isFirstRender.current ? false : { opacity: 0, scale: 0.9, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9, y: -20 }}
+                  transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+                />
+              </AnimatePresence>
+
+              <button
+                onClick={nextSlide}
+                className="absolute right-0 sm:right-4 z-20 p-3 sm:p-4 rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all"
+              >
+                <ChevronRight size={24} />
+              </button>
+
+              {/* Mobile thumbnail dots */}
+              <div className="lg:hidden absolute -bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
+                {product.images.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setImageIndex(i)}
+                    className={`w-2.5 h-2.5 rounded-full transition-all ${i === imageIndex ? "bg-white scale-125" : "bg-white/40"
+                      }`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT SIDE - Product Info */}
+          <div className="flex-1 flex flex-col justify-center text-white max-w-xl mx-auto lg:mx-0 lg:max-w-lg xl:max-w-xl mt-12 lg:mt-0">
+            {/* Category tag */}
+            <M.span
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="inline-block text-xs tracking-[0.3em] uppercase opacity-70 mb-4"
+            >
+              {product.category || "Plant-Based Wellness"}
+            </M.span>
+
+            {/* Product name */}
+            <M.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl leading-tight mb-4"
+            >
+              {product.name}
+            </M.h1>
+
+            {/* Tagline */}
+            {product.tagline && (
+              <M.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="text-lg sm:text-xl text-white/80 italic mb-6"
+              >
+                {product.tagline}
+              </M.p>
+            )}
+
+            {/* Tags */}
+            <M.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="flex flex-wrap gap-2 mb-8"
+            >
+              {product.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="px-4 py-1.5 text-xs tracking-wide uppercase bg-white/10 backdrop-blur-sm rounded-full border border-white/20"
+                >
+                  {tag}
+                </span>
+              ))}
+            </M.div>
+
+            {/* Price & CTA */}
+            <M.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="mb-10"
+            >
+              <div className="flex items-baseline gap-3 mb-6">
+                <span className="text-4xl sm:text-5xl font-light">${product.price.toFixed(2)}</span>
+                <span className="text-sm opacity-60">Tax included</span>
+              </div>
+
+              <Link
+                to="/contact"
+                className="group inline-flex items-center gap-3 bg-white text-black px-8 py-4 rounded-full font-medium text-sm tracking-wide hover:bg-white/90 transition-all shadow-lg hover:shadow-xl"
+              >
+                <span>CONTACT TO PURCHASE</span>
+                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              </Link>
+
+              {/* Trust badge */}
+              <div className="flex items-center gap-2 mt-6 text-sm opacity-70">
+                <div className="flex text-yellow-400">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} size={14} fill="currentColor" />
+                  ))}
+                </div>
+                <span>10,000+ Happy Customers</span>
+              </div>
+            </M.div>
+
+            {/* Accordion */}
+            <M.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="border-t border-white/20"
+            >
+              {Object.entries(product.accordion || {}).map(([title, content], idx) => {
+                const isOpen = openPanels.has(idx);
+                return (
+                  <div key={title} className="border-b border-white/20">
+                    <button
+                      className="flex items-center justify-between w-full py-5 text-left group"
+                      onClick={() => togglePanel(idx)}
+                    >
+                      <span className="text-sm tracking-[0.15em] uppercase font-medium group-hover:opacity-70 transition-opacity">
+                        {title}
+                      </span>
+                      <M.span
+                        animate={{ rotate: isOpen ? 45 : 0 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <Plus size={18} />
+                      </M.span>
+                    </button>
+                    <AnimatePresence>
+                      {isOpen && (
+                        <M.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                          className="overflow-hidden"
+                        >
+                          <div className="pb-6">
+                            {renderAccordionContent(content)}
+                          </div>
+                        </M.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              })}
+            </M.div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ========== KEY BENEFITS SECTION ========== */
+function KeyBenefitsSection({ benefits, themeColor }) {
+  if (!benefits || benefits.length === 0) return null;
+
+  return (
+    <section className="py-16 sm:py-20 lg:py-28 bg-[#FDFBF7]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
+        {/* Section header */}
+        <M.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12 lg:mb-16"
+        >
+          <span className="text-xs tracking-[0.3em] uppercase text-neutral-500 mb-3 block">Why Choose Us</span>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl text-neutral-900">Key Benefits</h2>
+          <div className="w-16 h-1 mx-auto mt-6" style={{ backgroundColor: themeColor }}></div>
+        </M.div>
+
+        {/* Benefits grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          {benefits.map((benefit, index) => (
+            <M.div
+              key={index}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="group relative p-6 sm:p-8 bg-white rounded-2xl border border-neutral-100 hover:border-neutral-200 hover:shadow-xl transition-all duration-300"
+            >
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 transition-transform group-hover:scale-110"
+                style={{ backgroundColor: `${themeColor}15` }}
+              >
+                <CheckCircle size={24} style={{ color: themeColor }} />
+              </div>
+              <h3 className="text-lg font-semibold text-neutral-900 mb-2">{benefit}</h3>
+              <p className="text-sm text-neutral-500 leading-relaxed">
+                Scientifically formulated to deliver visible results.
+              </p>
+            </M.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ========== HERO INGREDIENT SECTION ========== */
+function HeroIngredientSection({ ingredient, themeColor }) {
+  if (!ingredient) return null;
+
+  return (
+    <section className="py-16 sm:py-20 lg:py-28 bg-white overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
+        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+          {/* Image side */}
+          <M.div
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.7 }}
+            className="w-full lg:w-1/2 flex justify-center"
+          >
+            <div className="relative">
+              {/* Decorative circles */}
+              <div
+                className="absolute inset-0 rounded-full blur-3xl transform scale-125 opacity-20"
+                style={{ backgroundColor: themeColor }}
+              ></div>
+              <div
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] h-[90%] rounded-full border-2 opacity-20"
+                style={{ borderColor: themeColor }}
+              ></div>
+              <img
+                src={ingredient.image}
+                alt={ingredient.name}
+                className="relative z-10 w-56 h-56 sm:w-72 sm:h-72 lg:w-80 lg:h-80 object-contain drop-shadow-2xl"
+              />
+            </div>
+          </M.div>
+
+          {/* Text side */}
+          <M.div
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.7 }}
+            className="w-full lg:w-1/2 text-center lg:text-left"
+          >
+            <span
+              className="text-xs tracking-[0.3em] uppercase mb-3 block"
+              style={{ color: themeColor }}
+            >
+              Hero Ingredient
+            </span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl text-neutral-900 mb-6">
+              {ingredient.name}
+            </h2>
+            <p className="text-lg text-neutral-600 leading-relaxed mb-8 max-w-lg mx-auto lg:mx-0">
+              {ingredient.description}
+            </p>
+            <div
+              className="inline-block px-6 py-3 rounded-full text-sm font-medium"
+              style={{ backgroundColor: `${themeColor}15`, color: themeColor }}
+            >
+              Powered by Nature
+            </div>
+          </M.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ========== USAGE SECTION ========== */
+function UsageSection({ howToUse, suitableFor, themeColor }) {
+  return (
+    <section className="py-16 sm:py-20 lg:py-28 bg-[#FDFBF7]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+          {/* How to Use */}
+          <M.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
+            className="bg-white p-8 sm:p-10 lg:p-12 rounded-3xl shadow-sm"
+          >
+            <div className="flex items-center gap-4 mb-8">
+              <div
+                className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm"
+                style={{ backgroundColor: themeColor }}
+              >
+                1
+              </div>
+              <h3 className="text-xl sm:text-2xl text-neutral-900">How to Use</h3>
+            </div>
+            <ul className="space-y-5">
+              {howToUse?.map((step, i) => (
+                <li key={i} className="flex items-start gap-4">
+                  <span
+                    className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium shrink-0 mt-0.5"
+                    style={{ backgroundColor: `${themeColor}15`, color: themeColor }}
+                  >
+                    {i + 1}
+                  </span>
+                  <p className="text-neutral-700 leading-relaxed">{step}</p>
+                </li>
+              ))}
+            </ul>
+          </M.div>
+
+          {/* Suitable For */}
+          <M.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="bg-white p-8 sm:p-10 lg:p-12 rounded-3xl shadow-sm"
+          >
+            <div className="flex items-center gap-4 mb-8">
+              <div
+                className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm"
+                style={{ backgroundColor: themeColor }}
+              >
+                2
+              </div>
+              <h3 className="text-xl sm:text-2xl text-neutral-900">Suitable For</h3>
+            </div>
+            <ul className="space-y-4">
+              {suitableFor?.map((item, i) => (
+                <li
+                  key={i}
+                  className="flex items-center gap-4 p-4 rounded-xl transition-colors"
+                  style={{ backgroundColor: `${themeColor}08` }}
+                >
+                  <CheckCircle size={20} style={{ color: themeColor }} />
+                  <span className="font-medium text-neutral-800">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </M.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ========== CROSS SELL SECTION ========== */
+function CrossSellSection({ crossSellIds, themeColor }) {
+  if (!crossSellIds || crossSellIds.length === 0) return null;
+
+  const crossSellProducts = products.filter(p => crossSellIds.includes(p.id));
+
+  return (
+    <section className="py-16 sm:py-20 lg:py-28 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
+        {/* Section header */}
+        <M.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12 lg:mb-16"
+        >
+          <span className="text-xs tracking-[0.3em] uppercase text-neutral-500 mb-3 block">Recommended</span>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl text-neutral-900">Complete Your Routine</h2>
+          <p className="text-neutral-600 mt-4 max-w-md mx-auto">Pair with these essentials for maximum benefits.</p>
+        </M.div>
+
+        {/* Scrollable products */}
+        <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:overflow-visible">
+          {crossSellProducts.map((product, index) => (
+            <M.div
+              key={product.id}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="flex-shrink-0 w-72 sm:w-auto"
+            >
+              <Link to={`/products/${product.id}`} className="group block">
+                <div
+                  className="relative rounded-2xl p-8 mb-6 overflow-hidden transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-xl"
+                  style={{ backgroundColor: `${product.themeColor}15` }}
+                >
+                  <img
+                    src={product.images[0]}
+                    alt={product.name}
+                    className="w-full h-48 sm:h-56 object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute bottom-4 right-4 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
+                    <ArrowRight size={18} className="text-neutral-900" />
+                  </div>
+                </div>
+                <h3 className="text-lg font-semibold text-neutral-900 mb-2 group-hover:text-[var(--color-orange)] transition-colors">
+                  {product.name}
+                </h3>
+                <p className="text-sm text-neutral-500 mb-3 line-clamp-2">{product.description}</p>
+                <span className="text-lg font-medium text-neutral-900">${product.price.toFixed(2)}</span>
+              </Link>
+            </M.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ========== SCROLLING BANNER SECTION ========== */
+function ScrollingBanner({ product }) {
+  if (!product.scrollingBanner) return null;
+
+  return (
+    <section className="relative w-full h-[50vh] sm:h-[60vh] lg:h-[70vh] overflow-hidden">
+      <img
+        src={product.scrollingBanner.image}
+        alt={product.name}
+        className="w-full h-full object-cover"
+      />
+
+      <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center">
+        {/* Scrolling text */}
+        <div className="overflow-hidden whitespace-nowrap w-full mb-8">
+          <M.div
+            className="text-white uppercase text-[8vw] sm:text-[6vw] lg:text-[5vw] tracking-wider inline-block"
+            animate={{ x: ["0%", "-50%"] }}
+            transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
+          >
+            {product.scrollingBanner.text} {product.scrollingBanner.text} {product.scrollingBanner.text}
+          </M.div>
+        </div>
+
+        <Link
+          to={product.scrollingBanner.ctaLink || "/science"}
+          className="group inline-flex items-center gap-3 bg-white text-black px-8 py-4 rounded-full font-medium text-sm tracking-wide hover:bg-white/90 transition-all"
+        >
+          <span>{product.scrollingBanner.ctaText}</span>
+          <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+        </Link>
+      </div>
+    </section>
+  );
+}
+
+/* ========== MAIN PRODUCT PAGE ========== */
+export default function ProductPageContent({ product }) {
+  const [imageIndex, setImageIndex] = useState(0);
+
+  useEffect(() => {
+    setImageIndex(0);
+  }, [product.id]);
 
   return (
     <>
@@ -266,578 +577,27 @@ export default function ProductPageContent({ product }) {
       <AnnoucementBar />
       <Navbar />
 
-      {/* Product Hero */}
-      <div
-        className="lg:min-h-[90vh] flex flex-col lg:flex-row items-center lg:items-start justify-center px-6 lg:px-20 gap-10 pt-24 pb-20"
-        style={{ backgroundColor: product.themeColor }}
-      >
-        {/* LEFT: Thumbnails */}
-        <div className="hidden lg:flex flex-col gap-6 lg:mt-10 lg:pl-10 cursor-pointer">
-          {product.images.map((img, i) => (
-            <img
-              key={i}
-              src={img}
-              onClick={() => setImageIndex(i)}
-              className={`lg:w-20 lg:h-20 object-contain rounded-xl cursor-pointer border-2 transition 
-          ${i === imageIndex ? "border-white" : "border-transparent bg-white/10"}`}
-            />
-          ))}
-        </div>
+      {/* Hero Section */}
+      <ProductHero
+        product={product}
+        imageIndex={imageIndex}
+        setImageIndex={setImageIndex}
+      />
 
-        {/* CENTER: Main Image */}
-        <div className="relative group flex-1 flex justify-center items-center">
-          {imageIndex > 0 && (
-            <button
-              onClick={prevSlide}
-              className="absolute left-0 z-20 bg-white/20 hover:bg-white/40 p-3 rounded-full text-white transition backdrop-blur-sm"
-            >
-              <ChevronLeft size={24} />
-            </button>
-          )}
-
-          <M.img
-            key={imageIndex}
-            src={product.images[imageIndex]}
-            alt={product.name}
-            className="w-[280px] sm:w-[400px] lg:w-[500px] xl:w-[600px] object-contain drop-shadow-2xl"
-            initial={isFirstRender.current ? false : { opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-          />
-
-          {imageIndex < product.images.length - 1 && (
-            <button
-              onClick={nextSlide}
-              className="absolute right-0 z-20 bg-white/20 hover:bg-white/40 p-3 rounded-full text-white transition backdrop-blur-sm"
-            >
-              <ChevronRight size={24} />
-            </button>
-          )}
-        </div>
-
-        {/* RIGHT: Product Info */}
-        <div className="flex-1 space-y-6 lg:pr-10 mt-10 lg:mt-0 text-white max-w-xl">
-          <div>
-            <h3 className="uppercase tracking-widest text-xs mb-2 opacity-80">Plant-Based Wellness</h3>
-            <h1 className="text-3xl lg:text-5xl font-extrabold leading-tight mb-3">
-              {product.name}
-            </h1>
-            {product.tagline && (
-              <p className="text-lg lg:text-xl font-medium text-white/90 italic">
-                {product.tagline}
-              </p>
-            )}
-          </div>
-
-          <div className="flex gap-2 flex-wrap">
-            {product.tags.map((tag) => (
-              <span key={tag} className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-xs tracking-wide">
-                {tag}
-              </span>
-            ))}
-          </div>
-
-          <p className="text-base leading-relaxed opacity-90">
-            {product.description}
-          </p>
-
-          {/* Supplement Selector */}
-          {product.supplements?.length > 0 && (
-            <div className="space-y-3 pt-4 border-t border-white/20">
-              <p className="font-medium text-sm">
-                Target Area: <span className="">{selectedSupplement}</span>
-              </p>
-              <div className="flex gap-3 flex-wrap">
-                {product.supplements.map((supp) => (
-                  <button
-                    key={supp.name}
-                    onClick={() => setSelectedSupplement(supp.name)}
-                    className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${selectedSupplement === supp.name
-                      ? "bg-white text-[var(--color-orange)] scale-110 shadow-lg"
-                      : "bg-white/20 hover:bg-white/30"
-                      }`}
-                    title={supp.name}
-                  >
-                    <img src={supp.icon} alt={supp.name} className="w-6 h-6 object-contain" />
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Price + Cart */}
-          <div className="pt-6 space-y-6">
-            <div className="flex items-baseline gap-2">
-              <span className="text-3xl">${product.price.toFixed(2)}</span>
-              <span className="text-sm opacity-70">Tax included</span>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link to="/contact" className="flex-1 bg-white text-black tracking-widest px-8 py-4 rounded-xl text-sm hover:bg-neutral-200 transition-colors shadow-lg text-center font-bold">
-                CONTACT TO PURCHASE
-              </Link>
-            </div>
-
-            <div className="flex items-center gap-2 text-sm opacity-80 justify-center sm:justify-start">
-              <div className="flex text-yellow-400"><Star size={14} fill="currentColor" /><Star size={14} fill="currentColor" /><Star size={14} fill="currentColor" /><Star size={14} fill="currentColor" /><Star size={14} fill="currentColor" /></div>
-              <span>10,000+ Happy Customers</span>
-            </div>
-          </div>
-
-          {/* Accordion */}
-          <div className="divide-y divide-white/20 border-t border-white/20 mt-8">
-            {Object.entries(product.accordion || {}).map(([title, content], idx) => {
-              const isOpen = openPanels.has(idx);
-              return (
-                <div key={title} className="py-4">
-                  <button
-                    className="flex items-center justify-between w-full cursor-pointer uppercase tracking-wide text-sm hover:opacity-80 transition"
-                    onClick={() => togglePanel(idx)}
-                  >
-                    <span>{title}</span>
-                    {isOpen ? <Minus size={18} /> : <Plus size={18} />}
-                  </button>
-                  <AnimatePresence>
-                    {isOpen && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        className="overflow-hidden"
-                      >
-                        <div className="pt-4 pb-2 text-sm leading-relaxed">
-                          {renderAccordionContent(title, content)}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              );
-            }
-            )}
-          </div>
-        </div>
-      </div>
-
-      <KeyBenefitsSection benefits={product.keyBenefits} />
-      <HeroIngredientSection ingredient={product.heroIngredient} />
-      <UsageSection howToUse={product.howToUse} suitableFor={product.suitableFor} />
-      <CrossSellSection crossSellIds={product.crossSell} />
+      {/* Content Sections */}
+      <KeyBenefitsSection benefits={product.keyBenefits} themeColor={product.themeColor} />
+      <HeroIngredientSection ingredient={product.heroIngredient} themeColor={product.themeColor} />
+      <UsageSection howToUse={product.howToUse} suitableFor={product.suitableFor} themeColor={product.themeColor} />
+      <CrossSellSection crossSellIds={product.crossSell} themeColor={product.themeColor} />
       <ScrollingBanner product={product} />
 
+      {/* Other Sections */}
       <FAQSection />
       <SectionHero themeColor={product.themeColor} />
-      <SectionTestimonials
-        testimonials={product.testimonials}
-        themeColor={product.themeColor}
-      />
+      <SectionTestimonials testimonials={product.testimonials} themeColor={product.themeColor} />
       <FeatureBanner />
       <SectionNewsletter themeColor={product.themeColor} />
       <Footer />
     </>
   );
 }
-
-// import AnnoucementBar from "../AnnoucementBar";
-// import { useState, useRef, useEffect } from "react";
-// import { Plus, Minus, ChevronLeft, ChevronRight } from "lucide-react";
-// import Navbar from "../Navbar";
-// import FAQSection from "./FAQSection";
-// import SectionTestimonials from "./SectionTestimonials";
-// import FeatureBanner from "./FeatureBanner";
-// import SectionNewsletter from "./SectionNewsLetter";
-// import Footer from "../Footer";
-// import SectionHero from "./SectionHero";
-// import { motion } from "framer-motion";
-
-// /* -------------------- SECTION 1: Benefits -------------------- */
-// const features = [
-//   {
-//     icon: "https://wonder-theme-wellness.myshopify.com/cdn/shop/files/nogmo-2.png?v=1737037297&width=1000",
-//     title: "Non-GMO",
-//     text: "We carefully evaluate every ingredient, ensuring they are non-GMO.",
-//   },
-//   {
-//     icon: "https://wonder-theme-wellness.myshopify.com/cdn/shop/files/eng-ico.png?v=1737042253&width=1000",
-//     title: "Engineered for Effectiveness",
-//     text: "Our formulations are crafted to maximize potency and absorption.",
-//   },
-//   {
-//     icon: "https://wonder-theme-wellness.myshopify.com/cdn/shop/files/vegan-2.png?v=1737037101&width=1000",
-//     title: "Vegan",
-//     text: "We ensure the highest standards with 100% vegan, cruelty-free formulations.",
-//   },
-//   {
-//     icon: "https://wonder-theme-wellness.myshopify.com/cdn/shop/files/quality.png?v=1737037585&width=1000",
-//     title: "Quality Ingredients",
-//     text: "We're dedicated to using scientifically backed, high-quality natural ingredients.",
-//   },
-//   {
-//     icon: "https://wonder-theme-wellness.myshopify.com/cdn/shop/files/lab.png?v=1737037643&width=1000",
-//     title: "Third-Party Tested",
-//     text: "We hold ourselves and our ingredients to the highest standards.",
-//   },
-//   {
-//     icon: "https://wonder-theme-wellness.myshopify.com/cdn/shop/files/nometal-2.png?v=1737037996&width=1000",
-//     title: "No Heavy Metals",
-//     text: "We guarantee the highest purity, ensuring our products are free from heavy metals.",
-//   },
-// ];
-
-// function BenefitsSection({ product }) {
-//   return (
-//     <section className="py-16 bg-[#FCF8F2] border-t border-b border-black">
-//       <div className="max-w-7xl mx-auto px-6 text-center">
-//         <h2 className="text-2xl md:text-3xl font-semibold mb-12">
-//           Science-Driven Confidence Boost
-//         </h2>
-
-//         {/* ✅ Desktop */}
-//         <div className="hidden md:grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16 items-center">
-//           <div className="flex flex-col space-y-12">
-//             {features.slice(0, 3).map((f, i) => (
-//               <Feature key={i} {...f} smallText />
-//             ))}
-//           </div>
-
-//           {/* Dynamic Video */}
-//           <div className="flex justify-center">
-//             <video
-//               playsInline
-//               autoPlay
-//               loop
-//               muted
-//               preload="metadata"
-//               className="w-130 max-w-md lg:max-w-2xl rounded-xl"
-//               src={product.featuresVideo.src}
-//               poster={product.featuresVideo.poster}
-//             />
-//           </div>
-
-//           <div className="flex flex-col space-y-12">
-//             {features.slice(3).map((f, i) => (
-//               <Feature key={i} {...f} smallText />
-//             ))}
-//           </div>
-//         </div>
-
-//         {/* ✅ Mobile */}
-//         <div className="md:hidden flex flex-col items-center">
-//           <div className="flex justify-center mb-8">
-//             <video
-//               playsInline
-//               autoPlay
-//               loop
-//               muted
-//               preload="metadata"
-//               className="w-full max-w-xs sm:max-w-sm rounded-xl shadow-md"
-//               src={product.featuresVideo.src}
-//               poster={product.featuresVideo.poster}
-//             />
-//           </div>
-
-//           <div className="grid grid-cols-1 gap-8">
-//             {features.map((f, i) => (
-//               <Feature key={i} {...f} />
-//             ))}
-//           </div>
-//         </div>
-//       </div>
-//     </section>
-//   );
-// }
-
-// function Feature({ icon, title, text, smallText }) {
-//   return (
-//     <div className="flex flex-col items-center text-center space-y-3 ">
-//       <img src={icon} alt={title} className="w-14 h-14 object-contain" />
-//       <div>
-//         <h3 className="font-semibold text-base">{title}</h3>
-//         <p
-//           className={`text-gray-600 ${
-//             smallText ? "text-xs md:text-sm" : "text-sm"
-//           }`}
-//         >
-//           {text}
-//         </p>
-//       </div>
-//     </div>
-//   );
-// }
-
-// /* -------------------- SECTION 2: Scrolling Banner -------------------- */
-// function ScrollingBanner({ product }) {
-//   return (
-//     <section className="relative w-full h-[80vh] overflow-hidden  border-b border-black">
-//       {/* Dynamic Background Image */}
-//       <img
-//         src={product.scrollingBanner.image}
-//         alt={product.name}
-//         className="w-full h-full object-cover"
-//       />
-
-//       {/* Overlay Content */}
-//       <div className="absolute inset-0 flex flex-col items-center justify-center">
-//         {/* Dynamic Scrolling Text */}
-//         <div className="overflow-hidden whitespace-nowrap w-full">
-//           <motion.div
-//             className="text-white font-extrabold uppercase text-[6vw] tracking-wide inline-block"
-//             animate={{ x: ["0%", "-100%"] }}
-//             transition={{ repeat: Infinity, duration: 25, ease: "linear" }}
-//           >
-//             {product.scrollingBanner.text} • {product.scrollingBanner.text} •{" "}
-//             {product.scrollingBanner.text} •
-//           </motion.div>
-//         </div>
-
-//         {/* Dynamic CTA */}
-//         <a
-//           href="/science"
-//           className="mt-6 px-6 py-3 border border-black bg-white text-black font-semibold rounded-lg hover:bg-black hover:text-white transition"
-//         >
-//           {product.scrollingBanner.ctaText}
-//         </a>
-//       </div>
-//     </section>
-//   );
-// }
-
-// /* -------------------- MAIN PRODUCT PAGE -------------------- */
-// export default function ProductPageContent({ product }) {
-//   const [index, setIndex] = useState(0);
-//   const [qty, setQty] = useState(1);
-//   const [selectedSupplement, setSelectedSupplement] = useState(
-//     product.supplements?.[0]?.name || ""
-//   );
-//   const [openIndex, setOpenIndex] = useState(null);
-
-//   const toggle = (idx) => {
-//     setOpenIndex(openIndex === idx ? null : idx);
-//   };
-
-//   const isFirstRender = useRef(true);
-
-//   useEffect(() => {
-//     isFirstRender.current = false;
-//   }, []);
-
-//   const nextSlide = () => {
-//     setIndex((prev) => (prev + 1) % product.images.length);
-//   };
-
-//   const prevSlide = () => {
-//     setIndex((prev) => (prev === 0 ? product.images.length - 1 : prev - 1));
-//   };
-
-//   return (
-//     <>
-//       <AnnoucementBar />
-//       <Navbar />
-
-//       {/* Product Hero */}
-//       <div
-//         className="lg:h-[78vh] text-white flex flex-col lg:flex-row p-6 lg:p-14 gap-8 border-t border-black"
-//         style={{ backgroundColor: product.themeColor }}
-//       >
-//         {/* LEFT: Images */}
-//         <div className="relative flex items-center justify-center lg:left-40 lg:w-1/2 group">
-//           {/* Prev Button */}
-//           {index > 0 && (
-//             <button
-//               onClick={prevSlide}
-//               className="absolute lg:left-42 z-20 bg-white/20 hover:bg-white/40 p-2 rounded-full opacity-0 group-hover:opacity-100 transition"
-//             >
-//               <ChevronLeft size={24} />
-//             </button>
-//           )}
-
-//           {/* Main Image */}
-//           <div className="flex justify-center w-full overflow-hidden">
-//             <motion.img
-//               key={index}
-//               src={product.images[index]}
-//               alt={product.name}
-//               className="w-72 lg:w-[550px] h-auto object-contain drop-shadow-xl"
-//               initial={isFirstRender.current ? false : { opacity: 0, x: 100 }}
-//               animate={{ opacity: 1, x: 0 }}
-//               exit={isFirstRender.current ? false : { opacity: 0, x: -100 }}
-//               transition={{ duration: 0.5, ease: "easeInOut" }}
-//             />
-//           </div>
-
-//           {/* Next Button */}
-//           {index < product.images.length - 1 && (
-//             <button
-//               onClick={nextSlide}
-//               className="absolute lg:right-42 z-20 bg-white/20 hover:bg-white/40 p-2 rounded-full opacity-0 group-hover:opacity-100 transition"
-//             >
-//               <ChevronRight size={24} />
-//             </button>
-//           )}
-
-//           {/* Thumbnails */}
-//           <div className="absolute lg:left-25 top-1/2 transform -translate-y-1/2 flex flex-col gap-4">
-//             {product.images.map((img, i) => (
-//               <img
-//                 key={i}
-//                 src={img}
-//                 onClick={() => setIndex(i)}
-//                 className={`w-16 h-16 rounded-lg cursor-pointer border transition ${
-//                   i === index ? "border-white" : "border-transparent"
-//                 }`}
-//               />
-//             ))}
-//           </div>
-//         </div>
-
-//         {/* RIGHT: Info */}
-//         <div className="lg:w-1/2 space-y-2">
-//           <h3 className="uppercase tracking-wide text-sm">Plant-Based</h3>
-//           <h1 className="text-3xl lg:text-4xl font-extrabold w-125">
-//             {product.name}
-//           </h1>
-
-//           {/* Tags */}
-//           <div className="flex gap-3 flex-wrap">
-//             {product.tags.map((tag) => (
-//               <span
-//                 key={tag}
-//                 className="border border-white text-white px-2 rounded-full text-sm"
-//               >
-//                 {tag}
-//               </span>
-//             ))}
-//           </div>
-
-//           <p className="text-lg leading-relaxed">{product.description}</p>
-
-//           {/* Supplement Selector */}
-//           {product.supplements?.length > 0 && (
-//             <div className="space-y-3">
-//               <p className="font-semibold">
-//                 Choose Supplement:{" "}
-//                 <span className="font-normal">{selectedSupplement}</span>
-//               </p>
-//               <div className="flex gap-3 flex-wrap">
-//                 {product.supplements.map((supp) => (
-//                   <button
-//                     key={supp.name}
-//                     onClick={() => setSelectedSupplement(supp.name)}
-//                     className={`w-12 h-12 rounded-full border-2 flex items-center justify-center transition ${
-//                       selectedSupplement === supp.name
-//                         ? "border-white bg-white/20"
-//                         : "border-transparent bg-white/10"
-//                     }`}
-//                   >
-//                     <img src={supp.icon} alt={supp.name} className="w-6 h-6" />
-//                   </button>
-//                 ))}
-//               </div>
-//             </div>
-//           )}
-
-//           {/* Price + Cart */}
-//           <div className="space-y-4">
-//             <p className="text-2xl font-bold">${product.price.toFixed(2)}</p>
-//             <div className="flex items-center gap-4">
-//               {/* Quantity */}
-//               <div className="flex items-center border rounded-lg overflow-hidden">
-//                 <button
-//                   onClick={() => setQty(qty > 1 ? qty - 1 : 1)}
-//                   className="p-2 bg-white/20"
-//                 >
-//                   <Minus size={16} />
-//                 </button>
-//                 <span className="px-4">{qty}</span>
-//                 <button
-//                   onClick={() => setQty(qty + 1)}
-//                   className="p-2 bg-white/20"
-//                 >
-//                   <Plus size={16} />
-//                 </button>
-//               </div>
-
-//               {/* Add to Cart */}
-//               <button className="bg-black text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800">
-//                 Add to Cart
-//               </button>
-//             </div>
-//             <p className="text-sm text-white/80">
-//               +10000 Happy Customers – Free shipping on US
-//             </p>
-//           </div>
-
-//           {/* Accordion */}
-//           <div className="divide-y divide-white/30 border-t border-b border-white/30">
-//             {Object.entries(product.accordion).map(([title, content], idx) => (
-//               <div key={title} className="py-4">
-//                 {/* Header */}
-//                 <button
-//                   className="flex items-center justify-between w-full cursor-pointer text-lg font-semibold"
-//                   onClick={() => toggle(idx)}
-//                 >
-//                   {title}
-//                   {openIndex === idx ? (
-//                     <Minus size={20} className="text-white" />
-//                   ) : (
-//                     <Plus size={20} className="text-white" />
-//                   )}
-//                 </button>
-
-//                 {/* Content */}
-//                 {openIndex === idx && (
-//                   <div className="mt-3 text-white/80">
-//                     {title === "Benefits" && Array.isArray(content) && (
-//                       <ul className="list-disc list-inside space-y-2">
-//                         {content.map((item, i) => (
-//                           <li key={i}>
-//                             <strong>{item.title}:</strong> {item.description}
-//                           </li>
-//                         ))}
-//                       </ul>
-//                     )}
-
-//                     {title === "How to Take Supplement?" &&
-//                       Array.isArray(content) && (
-//                         <ol className="list-decimal list-inside space-y-2">
-//                           {content.map((step, i) => (
-//                             <li key={i}>{step.step}</li>
-//                           ))}
-//                         </ol>
-//                       )}
-
-//                     {title === "Ingredients" && Array.isArray(content) && (
-//                       <ul className="list-disc list-inside space-y-2">
-//                         {content.map((ing, i) => (
-//                           <li key={i}>{ing.name}</li>
-//                         ))}
-//                       </ul>
-//                     )}
-
-//                     {title !== "Benefits" &&
-//                       title !== "How to Take Supplement?" &&
-//                       title !== "Ingredients" && <p>{content}</p>}
-//                   </div>
-//                 )}
-//               </div>
-//             ))}
-//           </div>
-//         </div>
-//       </div>
-
-//       <BenefitsSection product={product} />
-//       <ScrollingBanner product={product} />
-
-//       <FAQSection />
-//       <SectionHero themeColor={product.themeColor} />
-//       <SectionTestimonials
-//         testimonials={product.testimonials}
-//         themeColor={product.themeColor}
-//       />
-//       <FeatureBanner />
-//       <SectionNewsletter themeColor={product.themeColor} />
-//       <Footer />
-//     </>
-//   );
-// }
-// //

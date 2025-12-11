@@ -38,7 +38,7 @@ const HeroLayout = () => {
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
                     >
-                        <h2 className="text-[#E65800] text-xs sm:text-sm md:text-xl tracking-[0.3em] mb-6 uppercase font-bold">
+                        <h2 className="text-[#E65800] text-xs sm:text-sm md:text-xl tracking-[0.3em] mb-6 uppercase">
                             Complete Care for the Complete You
                         </h2>
                         <h1 className="text-[#151515] text-[15vw] md:text-[16vw] lg:text-[18vw] leading-[0.85] tracking-tighter font-black scale-y-110">

@@ -1,6 +1,6 @@
 export default function PhilosophySection() {
   return (
-    <section className="bg-[#FCF8F2] text-neutral-900 border-t border-black py-16 md:py-20 lg:py-24">
+    <section className="relative z-10 bg-[#FCF8F2] text-neutral-900 border-t border-black/10 py-16 md:py-20 lg:py-24">
       <div className="max-w-7xl px-6 mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-6">

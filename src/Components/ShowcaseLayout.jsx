@@ -39,7 +39,7 @@ const ShowcaseItem = ({ product, index }) => {
 
                 {/* Content Side */}
                 <div className={`flex-1 text-center ${isEven ? 'md:text-left md:order-2' : 'md:text-right md:order-1'}`}>
-                    <span className="inline-block text-[#E65800] text-sm font-bold tracking-[0.2em] uppercase mb-4">
+                    <span className="inline-block text-[#E65800] text-sm tracking-[0.2em] uppercase mb-4">
                         {product.category}
                     </span>
                     <h2 className="text-4xl md:text-6xl font-black text-[#151515] leading-[1] mb-6 tracking-tight">

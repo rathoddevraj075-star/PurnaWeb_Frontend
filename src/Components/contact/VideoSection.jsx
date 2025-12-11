@@ -56,7 +56,7 @@ export default function ContactVideoSection() {
         className="absolute inset-0 flex items-center justify-center cursor-pointer"
         onClick={togglePlayPause}
       >
-        <h2 className="text-white text-4xl md:text-6xl font-bold">CONTACT</h2>
+        <h2 className="text-white text-4xl md:text-6xl">CONTACT</h2>
       </div>
 
       {/* Play / Pause button */}
