@@ -1,41 +1,28 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import ScrollToTop from "./Components/ScrollToTop";
 
 import AnnouncementBar from "./Components/AnnoucementBar";
 import Navbar from "./Components/Navbar";
 import Hero3D from "./Components/Hero3D";
+import ShowcaseLayout from "./Components/ShowcaseLayout";
 import PhilosophySection from "./Components/PhilosophySection";
 import RoutineSection from "./Components/RoutineSection";
-import Products from "./Components/Products";
 import ProductSlider from "./Components/ProductsSlider";
-import ScrollingBanner from "./Components/ScrollingBanner";
-import EnergySection from "./Components/EnergySection";
-import BenefitsSection from "./Components/Benefits";
 import BlogSection from "./Components/BlogSection";
-// import MissionHero from "./Components/MissionHero";
-import Testimonials from "./Components/Testimonials";
-import ScrollingTextBanner from "./Components/MovingText";
-import VideoReels from "./Components/VideoReels";
-import AboutSection from "./Components/AboutSection";
 import Newsletter from "./Components/NewsLetter";
 import Footer from "./Components/Footer";
 
-import ProductPage from "./Components/product/ProductPage"; // your product page
-import AllProductsPage from "./Components/product/AllProductsPage"; // All Products listing page
-import Contact from "./Components/contact/ContactPage"; // your contact page
-import FAQ from "./Components/faq/FAQ";
+// Page Imports
+import ProductPage from "./Components/product/ProductPage";
+import AllProductsPage from "./Components/product/AllProductsPage";
+import Contact from "./Components/contact/ContactPage";
+import FAQSection from "./Components/faq/FAQ";
 import SciencePage from "./Components/science/SciencePage";
 import About from "./Components/about/About";
 import ThePurnaRoutine from "./Components/ThePurnaRoutine";
 import BlogPage from "./Components/blog/BlogPage";
 import BlogDetailPage from "./Components/blog/BlogDetailPage";
-
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import { FaQ } from "react-icons/fa6";
-import FAQSection from "./Components/faq/FAQ";
 import AccountPage from "./Components/account/AccountPage";
-
 
 function HomePage() {
   return (
@@ -45,9 +32,10 @@ function HomePage() {
       <Hero3D />
       <PhilosophySection />
       <RoutineSection />
-      <Products />
+      <ShowcaseLayout />
+      {/* <Products /> */}
       {/* <BenefitsSection /> */}
-      <ProductSlider />
+      {/* <ProductSlider /> */}
       <BlogSection />
       <Newsletter />
       <Footer />
@@ -58,6 +46,7 @@ function HomePage() {
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
         {/* Homepage */}
         <Route path="/" element={<HomePage />} />
