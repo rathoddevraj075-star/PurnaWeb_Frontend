@@ -18,27 +18,27 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Example products (replace with your Shopify data)
-  const products = [
+  // Categories for shop dropdown
+  const categories = [
     {
-      id: "herbal-toothpaste",
+      id: "oral-care",
       img: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=1887&auto=format&fit=crop",
-      title: "Herbal Toothpaste",
+      title: "Oral Care",
     },
     {
-      id: "copper-tongue-cleaner",
+      id: "skin-care",
       img: "https://images.unsplash.com/photo-1606208678220-44933923c5e2?q=80&w=1887&auto=format&fit=crop",
-      title: "Tongue Cleaner",
+      title: "Skin Care",
     },
     {
-      id: "neem-basil-soap",
+      id: "body-care",
       img: "https://images.unsplash.com/photo-1600857544200-b2f666a9a2ec?q=80&w=1887&auto=format&fit=crop",
-      title: "Neem Soap",
+      title: "Body Care",
     },
     {
-      id: "kumkumadi-face-oil",
+      id: "hair-care",
       img: "https://images.unsplash.com/photo-1620916297397-a4a5402a3c6c?q=80&w=1887&auto=format&fit=crop",
-      title: "Face Oil",
+      title: "Hair Care",
     },
   ];
 
@@ -49,45 +49,45 @@ export default function Navbar() {
         className={`w-full z-50 transition-all duration-500 border-b border-white/10
         bg-white/60 backdrop-blur-md shadow-sm fixed top-0 left-0`}
       >
-        {/* -------------------- 📱 Minimal Navbar -------------------- */}
-        <div className="flex items-center justify-between px-4 py-2 max-[1196px]:flex min-[1197px]:hidden">
+        {/* -------------------- 📱 Mobile Navbar -------------------- */}
+        <div className="flex items-center justify-between px-4 py-2 lg:hidden">
           {/* Left Icons */}
-          <div className="flex items-center space-x-4">
-            <button onClick={() => setMenuOpen(!menuOpen)}>
-              {menuOpen ? <X size={22} /> : <Menu size={22} />}
+          <div className="flex items-center space-x-3">
+            <button onClick={() => setMenuOpen(!menuOpen)} className="p-1">
+              {menuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
-            <button onClick={() => setSearchOpen(true)}>
-              <Search size={22} />
+            <button onClick={() => setSearchOpen(true)} className="p-1">
+              <Search size={20} />
             </button>
           </div>
 
           {/* Center Logo */}
           <a href="/" className="block">
-            <img src="/images/logo-black.png" alt="The Purna" className="h-14 w-auto object-contain" />
+            <img src="/images/logo-black.png" alt="The Purna" className="h-10 sm:h-12 w-auto object-contain" />
           </a>
 
           {/* Right Icons */}
-          <div className="flex items-center space-x-4">
-            <a href="/account">
-              <User size={22} />
+          <div className="flex items-center space-x-3">
+            <a href="/account" className="p-1">
+              <User size={20} />
             </a>
           </div>
         </div>
 
-        {/* -------------------- 💻 Full Navbar -------------------- */}
-        <div className="hidden min-[1197px]:flex items-center justify-between px-6 py-4">
+        {/* -------------------- 💻 Desktop Navbar -------------------- */}
+        <div className="hidden lg:flex items-center justify-between px-8 py-3">
           {/* Logo */}
           <a href="/" className="logo-wrapper block">
-            <img src="/images/logo-black.png" alt="THE PURNA" className="h-[4.5rem] w-auto object-contain" />
+            <img src="/images/logo-black.png" alt="THE PURNA" className="h-12 xl:h-14 w-auto object-contain" />
           </a>
 
           {/* Nav links */}
-          <nav className="flex space-x-8 text-md">
+          <nav className="flex space-x-6 xl:space-x-8 text-sm">
             {["SHOP", "ABOUT", "ROUTINE", "JOURNAL", "FAQ", "CONTACT"].map((item) => (
               <a
                 key={item}
                 href={item === "SHOP" ? "/products" : `/${item.toLowerCase()}`}
-                className="relative group text-black hover:text-gray-700 transition-colors"
+                className="relative group text-black hover:text-gray-700 transition-colors font-medium tracking-wide"
               >
                 {item}
                 <span className="absolute left-0 bottom-[-4px] w-0 h-[1.5px] bg-current transition-all duration-300 group-hover:w-full"></span>
@@ -96,15 +96,15 @@ export default function Navbar() {
           </nav>
 
           {/* Right actions */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3">
             <button
-              className="p-1 rounded-full hover:bg-black/10"
+              className="p-2 rounded-full hover:bg-black/5 transition-colors"
               onClick={() => setSearchOpen(true)}
             >
-              <Search size={25} className="text-black/50" />
+              <Search size={20} className="text-black/60" />
             </button>
-            <a href="/account" className="p-1 rounded-full hover:bg-black/10">
-              <User size={25} className="text-black/50" />
+            <a href="/account" className="p-2 rounded-full hover:bg-black/5 transition-colors">
+              <User size={20} className="text-black/60" />
             </a>
           </div>
         </div>
@@ -151,16 +151,16 @@ export default function Navbar() {
                 >
                   <div className="py-4">
                     <Swiper spaceBetween={20} slidesPerView={3}>
-                      {products.map((p) => (
-                        <SwiperSlide key={p.id}>
+                      {categories.map((cat) => (
+                        <SwiperSlide key={cat.id}>
                           <div className="flex flex-col items-center">
-                            <a href={`/products/${p.id}`} className="flex flex-col items-center group">
+                            <a href={`/collections/${cat.id}/immersive`} className="flex flex-col items-center group">
                               <img
-                                src={p.img}
-                                alt={p.title}
+                                src={cat.img}
+                                alt={cat.title}
                                 className="w-24 h-24 object-cover rounded-full group-hover:scale-105 transition-transform"
                               />
-                              <p className="mt-2 text-sm text-center group-hover:text-[var(--color-orange)] transition-colors">{p.title}</p>
+                              <p className="mt-2 text-sm text-center group-hover:text-[var(--color-orange)] transition-colors">{cat.title}</p>
                             </a>
                           </div>
                         </SwiperSlide>
@@ -199,22 +199,32 @@ export default function Navbar() {
         className={`fixed inset-0 z-50 bg-[#fbfaf6] transition-transform duration-500 ease-in-out
         ${searchOpen ? "translate-y-0" : "-translate-y-full"}`}
       >
-        <div className="flex items-center justify-center w-full h-24 px-4 border-b relative">
-          <div className="flex items-center w-full max-w-xl md:max-w-2xl bg-white border rounded-md px-3 py-2 shadow-sm">
-            <Search size={18} className="text-gray-500" />
-            <input
-              type="text"
-              placeholder="Search..."
-              autoFocus
-              className="flex-1 px-3 text-sm bg-transparent focus:outline-none"
-            />
-          </div>
+        <div className="flex items-center w-full h-16 sm:h-20 md:h-24 px-4 border-b relative">
+          {/* Close button - positioned properly for all screens */}
           <button
             onClick={() => setSearchOpen(false)}
-            className="absolute right-6 top-6"
+            className="absolute right-4 top-1/2 -translate-y-1/2 p-2 hover:bg-black/5 rounded-full transition-colors"
           >
-            <X size={22} />
+            <X size={20} />
           </button>
+
+          {/* Search input container - centered with proper margins */}
+          <div className="flex items-center w-full max-w-md sm:max-w-xl md:max-w-2xl mx-auto pr-12 sm:pr-0">
+            <div className="flex items-center w-full bg-white border rounded-full px-4 py-2.5 shadow-sm">
+              <Search size={18} className="text-gray-400 flex-shrink-0" />
+              <input
+                type="text"
+                placeholder="Search products, articles..."
+                autoFocus
+                className="flex-1 px-3 text-sm bg-transparent focus:outline-none"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Optional: Search suggestions area */}
+        <div className="p-6 text-center text-gray-400 text-sm">
+          Start typing to search...
         </div>
       </div>
     </>

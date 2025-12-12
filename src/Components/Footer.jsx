@@ -21,28 +21,28 @@ const Footer = () => {
       </div> */}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-6">
-        {/* PRODUCTS */}
+        {/* COLLECTIONS */}
         <div>
-          <h3 className="mb-3 text-lg">PRODUCTS</h3>
+          <h3 className="mb-3 text-lg">COLLECTIONS</h3>
           <ul className="space-y-2 text-sm">
             <li>
-              <a href="/products/herbal-toothpaste" className="hover:underline">
-                Herbal Toothpaste
+              <a href="/collections/oral-care/immersive" className="hover:underline">
+                Oral Care
               </a>
             </li>
             <li>
-              <a href="/products/copper-tongue-cleaner" className="hover:underline">
-                Copper Tongue Cleaner
+              <a href="/collections/skin-care/immersive" className="hover:underline">
+                Skin Care
               </a>
             </li>
             <li>
-              <a href="/products/neem-basil-soap" className="hover:underline">
-                Neem & Basil Soap
+              <a href="/collections/body-care/immersive" className="hover:underline">
+                Body Care
               </a>
             </li>
             <li>
-              <a href="/products/kumkumadi-face-oil" className="hover:underline">
-                Kumkumadi Face Oil
+              <a href="/collections/hair-care/immersive" className="hover:underline">
+                Hair Care
               </a>
             </li>
           </ul>

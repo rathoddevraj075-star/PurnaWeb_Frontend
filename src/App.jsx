@@ -12,8 +12,9 @@ import Newsletter from "./Components/NewsLetter";
 import Footer from "./Components/Footer";
 
 // Page Imports
-import ProductPage from "./Components/product/ProductPage";
 import AllProductsPage from "./Components/product/AllProductsPage";
+import VariantDetailScroller from "./Components/product/VariantDetailScroller";
+import ProductDeepDive from "./Components/product/ProductDeepDive";
 import Contact from "./Components/contact/ContactPage";
 import FAQSection from "./Components/faq/FAQ";
 import SciencePage from "./Components/science/SciencePage";
@@ -45,8 +46,14 @@ function App() {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<HomePage />} />
+
+        {/* Product & Category Routes */}
         <Route path="/products" element={<AllProductsPage />} />
-        <Route path="/products/:id" element={<ProductPage />} />
+        <Route path="/products/:id" element={<ProductDeepDive />} />
+
+        {/* Direct Link to Immersive from Category Selection */}
+        <Route path="/collections/:category/immersive" element={<VariantDetailScroller />} />
+
         <Route path="/contact" element={<Contact />} />
         <Route path="/faq" element={<FAQSection />} />
         <Route path="/science" element={<SciencePage />} />
@@ -61,4 +68,3 @@ function App() {
 }
 
 export default App;
-

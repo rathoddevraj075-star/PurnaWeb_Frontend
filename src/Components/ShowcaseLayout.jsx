@@ -51,7 +51,7 @@ const ShowcaseItem = ({ product, index }) => {
 
                     <div className={`${isEven ? 'md:justify-start' : 'md:justify-end'} flex justify-center`}>
                         <Link
-                            to={`/products/${product.id}`}
+                            to={`/collections/${product.category.toLowerCase().replace(/\s+/g, '-')}/immersive`}
                             className="inline-flex items-center gap-3 px-8 py-4 bg-[#151515] text-white rounded-full hover:bg-[#E65800] transition-colors duration-300"
                         >
                             <span className="font-medium tracking-wide text-sm uppercase">View Details</span>

@@ -128,17 +128,17 @@ const BlogDetailPage = () => {
                         />
 
                         {/* Newsletter Break */}
-                        <div className="my-20 p-10 bg-[#1F4D2B] text-white rounded-3xl text-center relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-                            <div className="relative z-10">
-                                <h3 className="text-2xl font-serif mb-4">Join the Inner Circle</h3>
-                                <p className="text-gray-300 mb-8 max-w-lg mx-auto">Get exclusive wellness tips, Ayurvedic insights, and early access to new rituals.</p>
-                                <form className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-                                    <input type="email" placeholder="Your email address" className="flex-1 px-6 py-3 rounded-full text-black focus:outline-none focus:ring-2 focus:ring-[var(--color-orange)]" />
-                                    <button className="bg-[var(--color-orange)] text-white px-8 py-3 rounded-full uppercase tracking-wider hover:bg-[#d97706] transition-colors">Join</button>
-                                </form>
-                            </div>
-                        </div>
+                        {/* <div className="my-20 p-10 bg-[#1F4D2B] text-white rounded-3xl text-center relative overflow-hidden">
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+                                <div className="relative z-10">
+                                    <h3 className="text-2xl font-serif mb-4">Join the Inner Circle</h3>
+                                    <p className="text-gray-300 mb-8 max-w-lg mx-auto">Get exclusive wellness tips, Ayurvedic insights, and early access to new rituals.</p>
+                                    <form className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+                                        <input type="email" placeholder="Your email address" className="flex-1 px-6 py-3 rounded-full text-black focus:outline-none focus:ring-2 focus:ring-[var(--color-orange)]" />
+                                        <button className="bg-[var(--color-orange)] text-white px-8 py-3 rounded-full uppercase tracking-wider hover:bg-[#d97706] transition-colors">Join</button>
+                                    </form>
+                                </div>
+                            </div> */}
 
                         {/* Back Link */}
                         <div className="mt-16 pt-10 border-t border-gray-200 flex justify-between items-center">
@@ -200,7 +200,7 @@ const BlogDetailPage = () => {
                 </div>
             </article>
 
-            <Newsletter />
+            {/* <Newsletter /> */}
             <Footer />
         </div>
     );
