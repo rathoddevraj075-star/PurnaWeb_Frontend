@@ -102,8 +102,8 @@ const AllProductsPage = () => {
                                     <div className="absolute bottom-0 left-0 p-8 w-full">
                                         <div className="flex justify-between items-end">
                                             <div>
-                                                <span className="text-white/60 text-sm font-bold tracking-widest uppercase mb-2 block">Collection</span>
-                                                <h2 className="text-4xl text-white font-bold leading-none mb-2">{cat.name}</h2>
+                                                <span className="text-white/60 text-sm tracking-widest uppercase mb-2 block">Collection</span>
+                                                <h2 className="text-4xl text-white leading-none mb-2">{cat.name}</h2>
                                                 <p className="text-white/80">{cat.count} Products</p>
                                             </div>
                                             <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white group-hover:bg-white group-hover:text-black transition-all duration-300">

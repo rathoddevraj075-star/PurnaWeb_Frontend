@@ -63,7 +63,7 @@ const CategoryPage = () => {
         return (
             <div className="min-h-screen flex items-center justify-center">
                 <div className="text-center">
-                    <h1 className="text-2xl font-bold mb-4">Category Not Found</h1>
+                    <h1 className="text-2xl mb-4">Category Not Found</h1>
                     <p className="text-neutral-600 mb-6">Could not find products for "{categoryName}"</p>
                     <button
                         onClick={() => navigate('/products')}
@@ -113,7 +113,7 @@ const CategoryPage = () => {
                     <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20">
                         <Link
                             to={`/collections/${category}/immersive`}
-                            className="inline-flex items-center gap-3 bg-white text-black px-8 py-4 rounded-full font-bold uppercase tracking-wider hover:scale-105 transition-transform shadow-2xl"
+                            className="inline-flex items-center gap-3 bg-white text-black px-8 py-4 rounded-full uppercase tracking-wider hover:scale-105 transition-transform shadow-2xl"
                         >
                             <span>Enter Immersive View</span>
                             <ArrowUpRight size={20} />
@@ -151,7 +151,7 @@ const CategoryPage = () => {
                                                 </span>
                                             ))}
                                         </div>
-                                        <h3 className="text-xl font-bold group-hover:text-[var(--color-orange)] transition-colors">
+                                        <h3 className="text-xl group-hover:text-[var(--color-orange)] transition-colors">
                                             {product.name}
                                         </h3>
                                         <p className="text-neutral-600 line-clamp-2">{product.tagline}</p>

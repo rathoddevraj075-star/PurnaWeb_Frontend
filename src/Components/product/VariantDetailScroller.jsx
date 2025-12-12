@@ -158,7 +158,7 @@ const VariantDetailScroller = () => {
         return (
             <div className="flex items-center justify-center min-h-screen">
                 <div className="text-center">
-                    <h1 className="text-2xl font-bold">Category Not Found</h1>
+                    <h1 className="text-2xl">Category Not Found</h1>
                     <p>Could not find products for {categoryName} ({category})</p>
                     <button onClick={() => navigate('/products')} className="mt-4 bg-black text-white px-4 py-2 rounded">Go Back</button>
                 </div>
@@ -172,7 +172,7 @@ const VariantDetailScroller = () => {
 
             <button
                 onClick={() => navigate(-1)}
-                className="fixed top-6 left-6 z-50 flex items-center gap-2 bg-white/80 backdrop-blur-md px-4 py-2 rounded-full shadow-sm hover:bg-white transition-all text-sm font-bold uppercase tracking-wider cursor-pointer"
+                className="fixed top-6 left-6 z-50 flex items-center gap-2 bg-white/80 backdrop-blur-md px-4 py-2 rounded-full shadow-sm hover:bg-white transition-all text-sm uppercase tracking-wider cursor-pointer"
             >
                 <ArrowLeft size={16} /> Back
             </button>
@@ -205,7 +205,7 @@ const VariantDetailScroller = () => {
                                 transition-all duration-700
                             `}
                         >
-                            <span className="text-xs font-bold text-neutral-400 uppercase tracking-[0.2em] mb-4 block">
+                            <span className="text-xs text-neutral-400 uppercase tracking-[0.2em] mb-4 block">
                                 {product.category} — {i + 1}/{categoryProducts.length}
                             </span>
                             <h2 className="text-4xl md:text-5xl font-black mb-4 leading-tight">{product.name}</h2>
@@ -216,7 +216,7 @@ const VariantDetailScroller = () => {
                             <div className="space-y-6">
                                 <div className="flex flex-wrap gap-2">
                                     {product.tags.map(tag => (
-                                        <span key={tag} className="px-3 py-1 bg-neutral-100 rounded-full text-xs font-bold text-neutral-500 uppercase">
+                                        <span key={tag} className="px-3 py-1 bg-neutral-100 rounded-full text-xs text-neutral-500 uppercase">
                                             {tag}
                                         </span>
                                     ))}
@@ -227,7 +227,7 @@ const VariantDetailScroller = () => {
                                 <div className="flex items-center justify-between">
                                     <button
                                         onClick={() => navigate(`/products/${product.id}`)}
-                                        className="flex items-center gap-2 bg-black text-white px-8 py-4 rounded-full font-bold uppercase tracking-wider hover:bg-neutral-800 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                                        className="flex items-center gap-2 bg-black text-white px-8 py-4 rounded-full uppercase tracking-wider hover:bg-neutral-800 transition-all hover:scale-105 active:scale-95 cursor-pointer"
                                     >
                                         View Details
                                     </button>

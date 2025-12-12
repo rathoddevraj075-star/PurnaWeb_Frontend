@@ -175,7 +175,7 @@ const ProductDeepDive = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
                     >
-                        <span className="inline-block py-1 px-3 rounded-full bg-black/5 backdrop-blur border border-black/10 text-xs font-bold uppercase tracking-widest mb-6">
+                        <span className="inline-block py-1 px-3 rounded-full bg-black/5 backdrop-blur border border-black/10 text-xs uppercase tracking-widest mb-6">
                             {product.category}
                         </span>
                         <h1 className="text-6xl md:text-8xl font-black mb-6 tracking-tight text-neutral-900 leading-tight">
@@ -200,12 +200,12 @@ const ProductDeepDive = () => {
                     >
                         <div className="flex items-center gap-3 mb-6">
                             <Sparkles className="text-amber-500" />
-                            <h2 className="text-3xl font-bold">Why It's Special</h2>
+                            <h2 className="text-3xl ">Why It's Special</h2>
                         </div>
                         <ul className="space-y-6">
                             {product.keyBenefits.map((b, i) => (
                                 <li key={i} className="flex gap-4">
-                                    <div className="min-w-[24px] h-6 rounded-full bg-black text-white flex items-center justify-center text-xs font-bold">
+                                    <div className="min-w-[24px] h-6 rounded-full bg-black text-white flex items-center justify-center text-xs">
                                         {i + 1}
                                     </div>
                                     <span className="text-lg text-neutral-800 font-medium">{b}</span>
@@ -228,7 +228,7 @@ const ProductDeepDive = () => {
                     >
                         <div className="flex items-center gap-3 mb-6">
                             <Droplets className="text-blue-500" />
-                            <h2 className="text-3xl font-bold">Pure Ingredients</h2>
+                            <h2 className="text-3xl">Pure Ingredients</h2>
                         </div>
                         <div className="flex flex-wrap gap-2">
                             {product.accordion?.INGREDIENTS?.map((ing, i) => (
@@ -256,7 +256,7 @@ const ProductDeepDive = () => {
                     >
                         <div className="flex items-center justify-center gap-3 mb-8">
                             <Sun className="text-yellow-400" />
-                            <h2 className="text-3xl font-bold">Your Daily Ritual</h2>
+                            <h2 className="text-3xl">Your Daily Ritual</h2>
                         </div>
                         <div className="space-y-6 text-left">
                             {product.howToUse?.map((step, i) => (
@@ -278,7 +278,7 @@ const ProductDeepDive = () => {
             <div className="fixed top-0 left-0 w-full z-50 p-6 flex justify-between items-center pointer-events-none">
                 <button
                     onClick={() => navigate(-1)}
-                    className="pointer-events-auto flex items-center gap-2 bg-white/80 backdrop-blur-md px-5 py-3 rounded-full text-sm font-bold uppercase tracking-wider hover:bg-white transition-all shadow-sm"
+                    className="pointer-events-auto flex items-center gap-2 bg-white/80 backdrop-blur-md px-5 py-3 rounded-full text-sm uppercase tracking-wider hover:bg-white transition-all shadow-sm"
                 >
                     <ArrowLeft size={16} /> Back
                 </button>
@@ -303,7 +303,7 @@ const ProductDeepDive = () => {
             </div>
 
             {/* Scroll Indicator */}
-            <div className="fixed bottom-8 left-1/2 -translate-x-1/2 text-neutral-400 text-xs font-bold uppercase tracking-widest z-20 animate-bounce">
+            <div className="fixed bottom-8 left-1/2 -translate-x-1/2 text-neutral-400 text-xs uppercase tracking-widest z-20 animate-bounce">
                 Scroll Down
             </div>
         </div>
