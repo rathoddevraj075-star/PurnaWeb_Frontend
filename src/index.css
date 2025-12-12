@@ -7,7 +7,7 @@
 /* Local TT Firs Neue Font Face Declarations */
 @font-face {
   font-family: 'TT Firs Neue';
-  src: url('/fonts/tt_firs_neue/TT Firs Neue Trial Regular.ttf') format('truetype');
+  src: url('/fonts/TT Firs Neue Trial Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -15,7 +15,7 @@
 
 @font-face {
   font-family: 'TT Firs Neue';
-  src: url('/fonts/tt_firs_neue/TT Firs Neue Trial Medium.ttf') format('truetype');
+  src: url('/fonts/TT Firs Neue Trial Medium.ttf') format('truetype');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -23,7 +23,7 @@
 
 @font-face {
   font-family: 'TT Firs Neue';
-  src: url('/fonts/tt_firs_neue/TT Firs Neue Trial DemiBold.ttf') format('truetype');
+  src: url('/fonts/TT Firs Neue Trial DemiBold.ttf') format('truetype');
   font-weight: 600;
   font-style: normal;
   font-display: swap;
@@ -31,7 +31,7 @@
 
 @font-face {
   font-family: 'TT Firs Neue';
-  src: url('/fonts/tt_firs_neue/TT Firs Neue Trial Bold.ttf') format('truetype');
+  src: url('/fonts/TT Firs Neue Trial Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
