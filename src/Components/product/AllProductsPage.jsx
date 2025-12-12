@@ -1,14 +1,17 @@
-import React, { useMemo, useEffect, useRef } from "react";
+import React, { useMemo, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Loader2 } from "lucide-react";
 import Navbar from "../Navbar";
 import Footer from "../Footer";
-import { products } from "../data/product";
 import Lenis from 'lenis';
+import { productService, categoryService } from '../../services/api';
 
 const AllProductsPage = () => {
     const containerRef = useRef(null);
+    const [categories, setCategories] = useState([]);
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     // Initialize Lenis Smooth Scroll
     useEffect(() => {
@@ -35,24 +38,63 @@ const AllProductsPage = () => {
         };
     }, []);
 
-    // Extract unique categories with metadata
-    const categories = useMemo(() => {
-        const uniqueCats = [...new Set(products.map((p) => p.category).filter(Boolean))];
-        return uniqueCats.map(cat => {
-            const catProducts = products.filter(p => p.category === cat);
-            return {
-                name: cat,
-                count: catProducts.length,
-                image: catProducts[0]?.images[0] || "",
-                theme: catProducts[0]?.themeColor || "#000"
-            };
-        });
+    // Fetch categories and products
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                const [categoriesRes, productsRes] = await Promise.all([
+                    categoryService.getCategories(),
+                    productService.getProducts()
+                ]);
+
+                const fetchedCategories = categoriesRes.data || [];
+                const fetchedProducts = productsRes.data || [];
+
+                // Build category data with product info
+                const categoriesWithProducts = fetchedCategories.map(cat => {
+                    const catProducts = fetchedProducts.filter(p =>
+                        p.category?._id === cat._id || p.category === cat._id
+                    );
+                    return {
+                        ...cat,
+                        count: catProducts.length,
+                        image: catProducts[0]?.images?.[0]?.url || cat.image || "",
+                        theme: catProducts[0]?.themeColor || "#000"
+                    };
+                });
+
+                setCategories(categoriesWithProducts);
+                setProducts(fetchedProducts);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
     }, []);
 
     // Parallax Header Logic
     const { scrollY } = useScroll();
     const headerY = useTransform(scrollY, [0, 500], [0, 200]);
     const headerOpacity = useTransform(scrollY, [0, 400], [1, 0]);
+
+    if (loading) {
+        return (
+            <>
+                <Navbar />
+                <div className="flex items-center justify-center min-h-screen bg-white">
+                    <div className="flex flex-col items-center gap-4">
+                        <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
+                        <span className="text-neutral-500 text-sm uppercase tracking-widest">Loading Collections...</span>
+                    </div>
+                </div>
+                <Footer />
+            </>
+        );
+    }
 
     return (
         <>
@@ -80,41 +122,47 @@ const AllProductsPage = () => {
 
                 <div className="max-w-[1800px] mx-auto px-4 sm:px-6 py-20 lg:py-32">
                     {/* Category Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {categories.map((cat, index) => (
-                            <Link key={cat.name} to={`/collections/${cat.name.toLowerCase().replace(/\s+/g, '-')}/immersive`} className="group block relative h-[60vh] overflow-hidden rounded-[2rem]">
-                                <motion.div
-                                    initial={{ opacity: 0, y: 20 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{ delay: index * 0.1 }}
-                                    className="relative w-full h-full"
-                                >
-                                    <div className="absolute inset-0 bg-neutral-200" style={{ backgroundColor: cat.theme }}>
-                                        <img
-                                            src={cat.image}
-                                            alt={cat.name}
-                                            className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700 ease-out"
-                                        />
-                                    </div>
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                    {categories.length === 0 ? (
+                        <div className="text-center py-20">
+                            <p className="text-neutral-500">No collections available yet.</p>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {categories.map((cat, index) => (
+                                <Link key={cat._id || cat.slug} to={`/collections/${cat.slug}/immersive`} className="group block relative h-[60vh] overflow-hidden rounded-[2rem]">
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 20 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        viewport={{ once: true }}
+                                        transition={{ delay: index * 0.1 }}
+                                        className="relative w-full h-full"
+                                    >
+                                        <div className="absolute inset-0 bg-neutral-200" style={{ backgroundColor: cat.theme }}>
+                                            <img
+                                                src={cat.image}
+                                                alt={cat.name}
+                                                className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700 ease-out"
+                                            />
+                                        </div>
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-                                    <div className="absolute bottom-0 left-0 p-8 w-full">
-                                        <div className="flex justify-between items-end">
-                                            <div>
-                                                <span className="text-white/60 text-sm tracking-widest uppercase mb-2 block">Collection</span>
-                                                <h2 className="text-4xl text-white leading-none mb-2">{cat.name}</h2>
-                                                <p className="text-white/80">{cat.count} Products</p>
-                                            </div>
-                                            <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white group-hover:bg-white group-hover:text-black transition-all duration-300">
-                                                <ArrowUpRight size={24} />
+                                        <div className="absolute bottom-0 left-0 p-8 w-full">
+                                            <div className="flex justify-between items-end">
+                                                <div>
+                                                    <span className="text-white/60 text-sm tracking-widest uppercase mb-2 block">Collection</span>
+                                                    <h2 className="text-4xl text-white leading-none mb-2">{cat.name}</h2>
+                                                    <p className="text-white/80">{cat.count} Products</p>
+                                                </div>
+                                                <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white group-hover:bg-white group-hover:text-black transition-all duration-300">
+                                                    <ArrowUpRight size={24} />
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </motion.div>
-                            </Link>
-                        ))}
-                    </div>
+                                    </motion.div>
+                                </Link>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
             <Footer />

@@ -54,10 +54,10 @@ export default function Navbar() {
           {/* Left Icons */}
           <div className="flex items-center space-x-3">
             <button onClick={() => setMenuOpen(!menuOpen)} className="p-1">
-              {menuOpen ? <X size={20} /> : <Menu size={20} />}
+              {menuOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
             <button onClick={() => setSearchOpen(true)} className="p-1">
-              <Search size={20} />
+              <Search size={18} />
             </button>
           </div>
 
@@ -69,7 +69,7 @@ export default function Navbar() {
           {/* Right Icons */}
           <div className="flex items-center space-x-3">
             <a href="/account" className="p-1">
-              <User size={20} />
+              <User size={18} />
             </a>
           </div>
         </div>
@@ -77,12 +77,16 @@ export default function Navbar() {
         {/* -------------------- 💻 Desktop Navbar -------------------- */}
         <div className="hidden lg:flex items-center justify-between px-8 py-3">
           {/* Logo */}
-          <a href="/" className="logo-wrapper block">
-            <img src="/images/logo-black.png" alt="THE PURNA" className="h-12 xl:h-14 w-auto object-contain" />
+          <a href="/" className="logo-wrapper relative block w-32 h-12">
+            <img
+              src="/images/logo-black.png"
+              alt="THE PURNA"
+              className="absolute top-1/2 left-0 -translate-y-1/2 h-24 max-w-none w-auto object-contain"
+            />
           </a>
 
           {/* Nav links */}
-          <nav className="flex space-x-6 xl:space-x-8 text-sm">
+          <nav className="flex space-x-6 xl:space-x-8 text-xs">
             {["SHOP", "ABOUT", "ROUTINE", "JOURNAL", "FAQ", "CONTACT"].map((item) => (
               <a
                 key={item}
@@ -101,10 +105,10 @@ export default function Navbar() {
               className="p-2 rounded-full hover:bg-black/5 transition-colors"
               onClick={() => setSearchOpen(true)}
             >
-              <Search size={20} className="text-black/60" />
+              <Search size={18} className="text-black/60" />
             </button>
             <a href="/account" className="p-2 rounded-full hover:bg-black/5 transition-colors">
-              <User size={20} className="text-black/60" />
+              <User size={18} className="text-black/60" />
             </a>
           </div>
         </div>
@@ -127,9 +131,9 @@ export default function Navbar() {
           >
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b">
-              <h2 className="text-lg">HELLO!</h2>
+              <h2 className="text-sm">HELLO!</h2>
               <button onClick={() => setMenuOpen(false)}>
-                <X size={22} />
+                <X size={18} />
               </button>
             </div>
 
@@ -139,10 +143,10 @@ export default function Navbar() {
               <div>
                 <button
                   onClick={() => setShopOpen(!shopOpen)}
-                  className="w-full flex justify-between items-center text-lg font-semibold uppercase border-b pb-2"
+                  className="w-full flex justify-between items-center text-sm font-semibold uppercase border-b pb-2"
                 >
                   <span>SHOP</span>
-                  <span className="text-xl">{shopOpen ? "—" : "+"}</span>
+                  <span className="text-lg">{shopOpen ? "—" : "+"}</span>
                 </button>
 
                 <div
@@ -175,7 +179,7 @@ export default function Navbar() {
                 <a
                   key={item}
                   href={`/${item.toLowerCase()}`}
-                  className="text-lg font-semibold uppercase border-b pb-2"
+                  className="text-sm font-semibold uppercase border-b pb-2"
                 >
                   {item}
                 </a>
@@ -205,7 +209,7 @@ export default function Navbar() {
             onClick={() => setSearchOpen(false)}
             className="absolute right-4 top-1/2 -translate-y-1/2 p-2 hover:bg-black/5 rounded-full transition-colors"
           >
-            <X size={20} />
+            <X size={18} />
           </button>
 
           {/* Search input container - centered with proper margins */}

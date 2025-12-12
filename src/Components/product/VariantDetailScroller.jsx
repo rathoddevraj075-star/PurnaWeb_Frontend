@@ -2,11 +2,11 @@ import React, { useRef, useMemo, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useScroll, useTransform, motion, AnimatePresence } from 'framer-motion';
-import { Environment, Float, Text, ContactShadows } from '@react-three/drei';
+import { Environment, Float, Text, ContactShadows, Html } from '@react-three/drei';
 import * as THREE from 'three';
-import { ArrowLeft, ShoppingBag } from 'lucide-react';
-import { products } from '../data/product';
+import { ArrowLeft, ShoppingBag, Loader2 } from 'lucide-react';
 import Lenis from 'lenis';
+import { productService, categoryService } from '../../services/api';
 
 // -- 3D Components --
 
@@ -71,7 +71,7 @@ const Scene = ({ products, activeIndex }) => {
                 {products.map((product, i) => (
                     (Math.abs(activeIndex - i) <= 2) && (
                         <ProductModel
-                            key={product.id}
+                            key={product._id || product.slug}
                             index={i}
                             activeIndex={activeIndex}
                             product={product}
@@ -91,7 +91,10 @@ const VariantDetailScroller = () => {
     const { category } = useParams();
     const navigate = useNavigate();
 
-    console.log("VariantDetailScroller Rendered. Category:", category);
+    const [categoryProducts, setCategoryProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [activeIndex, setActiveIndex] = useState(0);
 
     // Init Lenis
     useEffect(() => {
@@ -112,7 +115,41 @@ const VariantDetailScroller = () => {
         return () => lenis.destroy();
     }, []);
 
-    // Get Data
+    // Fetch products by category
+    useEffect(() => {
+        const fetchProducts = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                // First get categories to find the category ID
+                const categoriesResponse = await categoryService.getCategories();
+                const categoryData = categoriesResponse.data.find(
+                    c => c.slug === category || c.name.toLowerCase().replace(/\s+/g, '-') === category
+                );
+
+                if (!categoryData) {
+                    setError('Category not found');
+                    setLoading(false);
+                    return;
+                }
+
+                // Then fetch products for this category
+                const productsResponse = await productService.getProducts({ category: categoryData._id });
+                setCategoryProducts(productsResponse.data || []);
+            } catch (err) {
+                console.error('Error fetching products:', err);
+                setError(err.message || 'Failed to load products');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (category) {
+            fetchProducts();
+        }
+    }, [category]);
+
+    // Get category display name
     const categoryName = useMemo(() => {
         if (!category) return "";
         return category
@@ -121,15 +158,7 @@ const VariantDetailScroller = () => {
             .join(' ');
     }, [category]);
 
-    const categoryProducts = useMemo(() => {
-        const prods = products.filter(p => p.category === categoryName);
-        console.log("Filtered Products:", prods);
-        return prods;
-    }, [categoryName]);
-
     // Scroll Logic
-    const [activeIndex, setActiveIndex] = useState(0);
-
     useEffect(() => {
         const handleScroll = () => {
             const viewportHeight = window.innerHeight;
@@ -144,23 +173,28 @@ const VariantDetailScroller = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, [categoryProducts.length]);
 
-    // Update URL hash without jumping
-    useEffect(() => {
-        const currentProduct = categoryProducts[activeIndex];
-        if (currentProduct) {
-            // Optional: window.history.replaceState(null, null, `#${currentProduct.id}`);
-        }
-    }, [activeIndex, categoryProducts]);
-
-
-    if (!categoryProducts.length) {
-        console.warn("No products found for category:", categoryName);
+    // Loading state
+    if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-screen">
+            <div className="flex items-center justify-center min-h-screen bg-neutral-50">
+                <div className="flex flex-col items-center gap-4">
+                    <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
+                    <span className="text-neutral-500 text-sm uppercase tracking-widest">Loading {categoryName}...</span>
+                </div>
+            </div>
+        );
+    }
+
+    // Error state
+    if (error || !categoryProducts.length) {
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-neutral-50">
                 <div className="text-center">
-                    <h1 className="text-2xl">Category Not Found</h1>
-                    <p>Could not find products for {categoryName} ({category})</p>
-                    <button onClick={() => navigate('/products')} className="mt-4 bg-black text-white px-4 py-2 rounded">Go Back</button>
+                    <h1 className="text-2xl font-bold mb-2">No Products Found</h1>
+                    <p className="text-neutral-500 mb-6">Could not find products for "{categoryName}"</p>
+                    <button onClick={() => navigate('/products')} className="bg-black text-white px-6 py-3 rounded-full">
+                        Browse All Products
+                    </button>
                 </div>
             </div>
         );
@@ -192,7 +226,7 @@ const VariantDetailScroller = () => {
             <div className="relative z-10 lg:w-[50%]">
                 {categoryProducts.map((product, i) => (
                     <div
-                        key={product.id}
+                        key={product._id || product.slug}
                         className="h-screen flex items-end pb-24 lg:pb-0 lg:items-center p-6 sm:p-12 lg:p-20 relative pointer-events-none"
                     >
                         <motion.div
@@ -206,16 +240,16 @@ const VariantDetailScroller = () => {
                             `}
                         >
                             <span className="text-xs text-neutral-400 uppercase tracking-[0.2em] mb-4 block">
-                                {product.category} — {i + 1}/{categoryProducts.length}
+                                {product.category?.name || categoryName} — {i + 1}/{categoryProducts.length}
                             </span>
                             <h2 className="text-4xl md:text-5xl font-black mb-4 leading-tight">{product.name}</h2>
                             <p className="text-lg text-neutral-600 mb-8 leading-relaxed max-w-md">
-                                {product.description}
+                                {product.shortDescription || product.description}
                             </p>
 
                             <div className="space-y-6">
                                 <div className="flex flex-wrap gap-2">
-                                    {product.tags.map(tag => (
+                                    {(product.tags || []).map(tag => (
                                         <span key={tag} className="px-3 py-1 bg-neutral-100 rounded-full text-xs text-neutral-500 uppercase">
                                             {tag}
                                         </span>
@@ -226,7 +260,7 @@ const VariantDetailScroller = () => {
 
                                 <div className="flex items-center justify-between">
                                     <button
-                                        onClick={() => navigate(`/products/${product.id}`)}
+                                        onClick={() => navigate(`/products/${product.slug}`)}
                                         className="flex items-center gap-2 bg-black text-white px-8 py-4 rounded-full uppercase tracking-wider hover:bg-neutral-800 transition-all hover:scale-105 active:scale-95 cursor-pointer"
                                     >
                                         View Details

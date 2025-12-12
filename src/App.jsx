@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ScrollToTop from "./Components/ScrollToTop";
+import { AuthProvider } from "./context/AuthContext";
 
 import AnnouncementBar from "./Components/AnnoucementBar";
 import Navbar from "./Components/Navbar";
@@ -42,28 +43,30 @@ function HomePage() {
 
 function App() {
   return (
-    <Router>
-      <ScrollToTop />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
+    <AuthProvider>
+      <Router>
+        <ScrollToTop />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
 
-        {/* Product & Category Routes */}
-        <Route path="/products" element={<AllProductsPage />} />
-        <Route path="/products/:id" element={<ProductDeepDive />} />
+          {/* Product & Category Routes */}
+          <Route path="/products" element={<AllProductsPage />} />
+          <Route path="/products/:id" element={<ProductDeepDive />} />
 
-        {/* Direct Link to Immersive from Category Selection */}
-        <Route path="/collections/:category/immersive" element={<VariantDetailScroller />} />
+          {/* Direct Link to Immersive from Category Selection */}
+          <Route path="/collections/:category/immersive" element={<VariantDetailScroller />} />
 
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/faq" element={<FAQSection />} />
-        <Route path="/science" element={<SciencePage />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/routine" element={<ThePurnaRoutine />} />
-        <Route path="/journal" element={<BlogPage />} />
-        <Route path="/journal/:slug" element={<BlogDetailPage />} />
-        <Route path="/account" element={<AccountPage />} />
-      </Routes>
-    </Router>
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/faq" element={<FAQSection />} />
+          <Route path="/science" element={<SciencePage />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/routine" element={<ThePurnaRoutine />} />
+          <Route path="/journal" element={<BlogPage />} />
+          <Route path="/journal/:slug" element={<BlogDetailPage />} />
+          <Route path="/account" element={<AccountPage />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 

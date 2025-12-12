@@ -1,8 +1,8 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
-import { products } from "./data/product";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
+import { productService } from "../services/api";
 
 const ShowcaseItem = ({ product, index }) => {
     const ref = useRef(null);
@@ -15,6 +15,10 @@ const ShowcaseItem = ({ product, index }) => {
 
     // Smooth Parallax for image
     const yImg = useTransform(scrollYProgress, [0, 1], ["10%", "-10%"]);
+
+    // Get image URL from product
+    const imageUrl = product.images?.[0]?.url || product.images?.[0] || '';
+    const categoryName = product.category?.name || product.category || '';
 
     return (
         <section
@@ -29,7 +33,7 @@ const ShowcaseItem = ({ product, index }) => {
                         {/* Product Image */}
                         <div className="absolute inset-0 flex items-center justify-center p-8 bg-gradient-to-b from-white to-[#FDF8F0]">
                             <img
-                                src={product.images[0]}
+                                src={imageUrl}
                                 alt={product.name}
                                 className="w-full h-full object-contain grayscale-0 group-hover:scale-105 transition-transform duration-700 ease-out"
                             />
@@ -40,18 +44,18 @@ const ShowcaseItem = ({ product, index }) => {
                 {/* Content Side */}
                 <div className={`flex-1 text-center ${isEven ? 'md:text-left md:order-2' : 'md:text-right md:order-1'}`}>
                     <span className="inline-block text-[#E65800] text-sm tracking-[0.2em] uppercase mb-4">
-                        {product.category}
+                        {categoryName}
                     </span>
                     <h2 className="text-4xl md:text-6xl font-black text-[#151515] leading-[1] mb-6 tracking-tight">
                         {product.name}
                     </h2>
                     <p className="text-lg text-[#151515]/70 leading-relaxed mb-10 max-w-md mx-auto md:mx-0 inline-block">
-                        {product.tagline}
+                        {product.tagline || product.shortDescription}
                     </p>
 
                     <div className={`${isEven ? 'md:justify-start' : 'md:justify-end'} flex justify-center`}>
                         <Link
-                            to={`/collections/${product.category.toLowerCase().replace(/\s+/g, '-')}/immersive`}
+                            to={`/collections/${categoryName.toLowerCase().replace(/\s+/g, '-')}/immersive`}
                             className="inline-flex items-center gap-3 px-8 py-4 bg-[#151515] text-white rounded-full hover:bg-[#E65800] transition-colors duration-300"
                         >
                             <span className="font-medium tracking-wide text-sm uppercase">View Details</span>
@@ -71,13 +75,47 @@ const ShowcaseItem = ({ product, index }) => {
 };
 
 const ShowcaseLayout = () => {
-    // Show top 3 products
-    const showcaseProducts = products.slice(0, 3);
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const response = await productService.getFeaturedProducts(3);
+                setProducts(response.data || []);
+            } catch (error) {
+                console.error('Error fetching featured products:', error);
+                // Fallback to regular products if featured not available
+                try {
+                    const fallback = await productService.getProducts({ limit: 3 });
+                    setProducts(fallback.data || []);
+                } catch (e) {
+                    console.error('Fallback also failed:', e);
+                }
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProducts();
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="py-24 bg-[#FDF8F0] flex items-center justify-center">
+                <Loader2 className="w-6 h-6 animate-spin text-neutral-400" />
+            </div>
+        );
+    }
+
+    if (!products.length) {
+        return null; // Don't show section if no products
+    }
 
     return (
         <div className="relative">
-            {showcaseProducts.map((product, index) => (
-                <ShowcaseItem key={product.id} product={product} index={index} />
+            {products.map((product, index) => (
+                <ShowcaseItem key={product._id || product.slug} product={product} index={index} />
             ))}
 
             <div className="py-24 bg-[#151515] text-center">

@@ -1,10 +1,40 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Plus } from "lucide-react";
+import { ArrowUpRight, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { products } from "./data/product";
+import { productService } from "../services/api";
 
 const Products = () => {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await productService.getProducts();
+        setProducts(response.data || []);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="w-full bg-[#FDF8F0] py-20 flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-neutral-400" />
+      </section>
+    );
+  }
+
+  if (!products.length) {
+    return null;
+  }
+
   return (
     <section id="products" className="w-full bg-[#FDF8F0] border-t border-b py-20 md:py-28">
       <div className="max-w-7xl mx-auto px-6">
@@ -48,54 +78,60 @@ const Products = () => {
 
         {/* Product Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {products.map((product, index) => (
-            <motion.div
-              key={product.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1, duration: 0.5 }}
-              whileHover={{ y: -10 }}
-              className="group relative bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
-            >
-              <Link to={`/collections/${product.category.toLowerCase().replace(/\s+/g, '-')}/immersive`} className="block h-full flex flex-col">
-                {/* Image Container */}
-                <div className="relative h-64 w-full bg-[#F5F5F5] overflow-hidden flex items-center justify-center p-6">
-                  {/* Background Circle */}
-                  <div className="absolute inset-0 bg-[var(--color-orange)]/5 rounded-full scale-0 group-hover:scale-150 transition-transform duration-700 ease-out origin-center" />
+          {products.map((product, index) => {
+            const imageUrl = product.images?.[0]?.url || product.images?.[0] || '';
+            const categoryName = product.category?.name || '';
+            const categorySlug = categoryName.toLowerCase().replace(/\s+/g, '-');
 
-                  <img
-                    src={product.images[0]}
-                    alt={product.name}
-                    className="relative z-10 w-full h-full object-contain drop-shadow-md group-hover:scale-110 transition-transform duration-500"
-                  />
-                </div>
+            return (
+              <motion.div
+                key={product._id || product.slug}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1, duration: 0.5 }}
+                whileHover={{ y: -10 }}
+                className="group relative bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
+              >
+                <Link to={`/collections/${categorySlug}/immersive`} className="block h-full flex flex-col">
+                  {/* Image Container */}
+                  <div className="relative h-64 w-full bg-[#F5F5F5] overflow-hidden flex items-center justify-center p-6">
+                    {/* Background Circle */}
+                    <div className="absolute inset-0 bg-[var(--color-orange)]/5 rounded-full scale-0 group-hover:scale-150 transition-transform duration-700 ease-out origin-center" />
 
-                {/* Content */}
-                <div className="p-6 flex-1 flex flex-col">
-                  <div className="mb-2">
-                    <span className="text-xs tracking-widest uppercase text-[var(--color-orange)]">
-                      {product.tags[0]}
-                    </span>
+                    <img
+                      src={imageUrl}
+                      alt={product.name}
+                      className="relative z-10 w-full h-full object-contain drop-shadow-md group-hover:scale-110 transition-transform duration-500"
+                    />
                   </div>
-                  <h3 className="text-xl mb-2 text-neutral-900 group-hover:text-[var(--color-orange)] transition-colors">
-                    {product.name}
-                  </h3>
-                  <p className="text-neutral-500 text-sm mb-4 line-clamp-2 flex-1">
-                    {product.tagline || product.description}
-                  </p>
-                  <div className="flex items-center justify-between mt-auto">
-                    <span className="text-lg text-black">
-                      ${product.price.toFixed(2)}
-                    </span>
-                    <span className="text-sm font-medium text-neutral-500 group-hover:text-black transition-colors flex items-center gap-1">
-                      Shop Now <ArrowUpRight size={14} />
-                    </span>
+
+                  {/* Content */}
+                  <div className="p-6 flex-1 flex flex-col">
+                    <div className="mb-2">
+                      <span className="text-xs tracking-widest uppercase text-[var(--color-orange)]">
+                        {product.tags?.[0] || categoryName}
+                      </span>
+                    </div>
+                    <h3 className="text-xl mb-2 text-neutral-900 group-hover:text-[var(--color-orange)] transition-colors">
+                      {product.name}
+                    </h3>
+                    <p className="text-neutral-500 text-sm mb-4 line-clamp-2 flex-1">
+                      {product.tagline || product.shortDescription || product.description}
+                    </p>
+                    <div className="flex items-center justify-between mt-auto">
+                      <span className="text-lg text-black">
+                        ${product.price?.toFixed(2) || '0.00'}
+                      </span>
+                      <span className="text-sm font-medium text-neutral-500 group-hover:text-black transition-colors flex items-center gap-1">
+                        Shop Now <ArrowUpRight size={14} />
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
+                </Link>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>

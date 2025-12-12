@@ -1,20 +1,60 @@
 import { useState } from "react";
+import { contactService } from "../../services/api";
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
     email: "",
-    comment: "",
+    subject: "General Inquiry",
+    message: "",
   });
+  const [status, setStatus] = useState({ type: "", message: "" });
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form Submitted:", formData);
+
+    if (!formData.email || !formData.message) {
+      setStatus({ type: "error", message: "Please fill in all required fields." });
+      return;
+    }
+
+    setLoading(true);
+    setStatus({ type: "", message: "" });
+
+    try {
+      const response = await contactService.submitContact({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        subject: formData.subject || "General Inquiry",
+        message: formData.message,
+      });
+
+      setStatus({
+        type: "success",
+        message: response.message || "Your message has been sent successfully!"
+      });
+
+      // Reset form
+      setFormData({
+        name: "",
+        phone: "",
+        email: "",
+        subject: "General Inquiry",
+        message: "",
+      });
+    } catch (error) {
+      const message = error.response?.data?.message || "Something went wrong. Please try again.";
+      setStatus({ type: "error", message });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -24,9 +64,21 @@ export default function ContactForm() {
           Get in Touch with Us
         </h2>
         <p className="text-sm md:text-base text-gray-700 mb-10">
-          Have questions or need assistance? Fill out the form below, and we’ll
+          Have questions or need assistance? Fill out the form below, and we'll
           get back to you as soon as possible!
         </p>
+
+        {/* Status Message */}
+        {status.message && (
+          <div
+            className={`mb-6 p-4 rounded-md ${status.type === "success"
+                ? "bg-green-50 text-green-700 border border-green-200"
+                : "bg-red-50 text-red-700 border border-red-200"
+              }`}
+          >
+            {status.message}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-6 text-left">
           {/* Name + Phone */}
@@ -40,7 +92,8 @@ export default function ContactForm() {
                 value={formData.name}
                 onChange={handleChange}
                 placeholder=" "
-                className="peer w-full bg-white border border-black rounded-md px-3 pt-5 pb-2 focus:border-black focus:ring-0 focus:outline-none"
+                disabled={loading}
+                className="peer w-full bg-white border border-black rounded-md px-3 pt-5 pb-2 focus:border-black focus:ring-0 focus:outline-none disabled:opacity-50"
               />
               <label
                 htmlFor="name"
@@ -63,7 +116,8 @@ export default function ContactForm() {
                 value={formData.phone}
                 onChange={handleChange}
                 placeholder=" "
-                className="peer w-full bg-white border border-black rounded-md px-3 pt-5 pb-2 focus:border-black focus:ring-0 focus:outline-none"
+                disabled={loading}
+                className="peer w-full bg-white border border-black rounded-md px-3 pt-5 pb-2 focus:border-black focus:ring-0 focus:outline-none disabled:opacity-50"
               />
               <label
                 htmlFor="phone"
@@ -88,7 +142,8 @@ export default function ContactForm() {
               onChange={handleChange}
               placeholder=" "
               required
-              className="peer w-full bg-white border border-black rounded-md px-3 pt-5 pb-2 focus:border-black focus:ring-0 focus:outline-none"
+              disabled={loading}
+              className="peer w-full bg-white border border-black rounded-md px-3 pt-5 pb-2 focus:border-black focus:ring-0 focus:outline-none disabled:opacity-50"
             />
             <label
               htmlFor="email"
@@ -102,173 +157,65 @@ export default function ContactForm() {
             </label>
           </div>
 
-          {/* Comment */}
+          {/* Subject */}
           <div className="relative">
-            <textarea
-              name="comment"
-              id="comment"
-              rows="6"
-              value={formData.comment}
+            <input
+              type="text"
+              name="subject"
+              id="subject"
+              value={formData.subject}
               onChange={handleChange}
               placeholder=" "
-              className="peer w-full bg-white border border-black rounded-md px-3 pt-5 pb-2 focus:border-black focus:ring-0 focus:outline-none"
+              disabled={loading}
+              className="peer w-full bg-white border border-black rounded-md px-3 pt-5 pb-2 focus:border-black focus:ring-0 focus:outline-none disabled:opacity-50"
+            />
+            <label
+              htmlFor="subject"
+              className={`absolute left-3 bg-white px-1 text-gray-500 text-base transition-all duration-200
+                ${formData.subject
+                  ? "-top-2 text-sm text-black"
+                  : "top-1/2 -translate-y-1/2 text-base text-gray-400 peer-focus:-top-2 peer-focus:text-sm peer-focus:text-black"}
+              `}
+            >
+              Subject
+            </label>
+          </div>
+
+          {/* Message */}
+          <div className="relative">
+            <textarea
+              name="message"
+              id="message"
+              rows="6"
+              value={formData.message}
+              onChange={handleChange}
+              placeholder=" "
+              required
+              disabled={loading}
+              className="peer w-full bg-white border border-black rounded-md px-3 pt-5 pb-2 focus:border-black focus:ring-0 focus:outline-none disabled:opacity-50"
             ></textarea>
             <label
-              htmlFor="comment"
+              htmlFor="message"
               className={`absolute left-3 bg-white px-1 text-gray-500 text-base transition-all duration-200
-                ${formData.comment
+                ${formData.message
                   ? "-top-2 text-sm text-black"
                   : "top-6 text-base text-gray-400 peer-focus:-top-2 peer-focus:text-sm peer-focus:text-black"}
               `}
             >
-              Comment
+              Message*
             </label>
           </div>
 
           {/* Submit */}
           <button
             type="submit"
-            className="w-full md:w-auto bg-black text-white px-6 py-3 rounded-md font-semibold hover:bg-gray-800 transition"
+            disabled={loading}
+            className="w-full md:w-auto bg-black text-white px-6 py-3 rounded-md font-semibold hover:bg-gray-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            SEND A FORM
+            {loading ? "SENDING..." : "SEND MESSAGE"}
           </button>
         </form>
       </div>
     </section>
   );
 }
-
-// import { useState } from "react";
-
-// export default function FormSection() {
-//   const [formData, setFormData] = useState({
-//     name: "",
-//     phone: "",
-//     email: "",
-//     comment: "",
-//   });
-
-//   const handleChange = (e) => {
-//     setFormData({ ...formData, [e.target.name]: e.target.value });
-//   };
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     console.log("Form Submitted:", formData);
-//     // 🔗 Replace with API call or Shopify endpoint
-//   };
-
-//   return (
-//     <>
-//       <section className="relative py-12 md:py-20 bg-gray-100">
-//         <div className="max-w-4xl mx-auto px-6 text-center">
-//           {/* Title */}
-//           <h2 className="text-3xl md:text-5xl font-bold mb-4">
-//             Get in Touch with Us
-//           </h2>
-
-//           {/* Subtitle */}
-//           <p className="text-lg md:text-xl text-gray-600">
-//             Have questions or need assistance? Fill out the form below, and
-//             we’ll get back to you as soon as possible!
-//           </p>
-//         </div>
-//       </section>
-
-//       <section className="py-16 bg-white">
-//       <div className="max-w-3xl mx-auto px-6">
-//         <form
-//           onSubmit={handleSubmit}
-//           className="space-y-6 bg-white p-8 shadow-lg rounded-lg"
-//         >
-//           {/* Name & Phone */}
-//           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-//             <div className="relative">
-//               <input
-//                 type="text"
-//                 name="name"
-//                 id="name"
-//                 value={formData.name}
-//                 onChange={handleChange}
-//                 placeholder=" "
-//                 className="peer w-full border border-gray-300 rounded-md px-3 pt-5 pb-2 focus:border-black focus:ring-1 focus:ring-black"
-//               />
-//               <label
-//                 htmlFor="name"
-//                 className="absolute left-3 top-2 text-gray-500 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base"
-//               >
-//                 Name
-//               </label>
-//             </div>
-
-//             <div className="relative">
-//               <input
-//                 type="text"
-//                 name="phone"
-//                 id="phone"
-//                 value={formData.phone}
-//                 onChange={handleChange}
-//                 placeholder=" "
-//                 className="peer w-full border border-gray-300 rounded-md px-3 pt-5 pb-2 focus:border-black focus:ring-1 focus:ring-black"
-//               />
-//               <label
-//                 htmlFor="phone"
-//                 className="absolute left-3 top-2 text-gray-500 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base"
-//               >
-//                 Phone number
-//               </label>
-//             </div>
-//           </div>
-
-//           {/* Email */}
-//           <div className="relative">
-//             <input
-//               type="email"
-//               name="email"
-//               id="email"
-//               value={formData.email}
-//               onChange={handleChange}
-//               placeholder=" "
-//               required
-//               className="peer w-full border border-gray-300 rounded-md px-3 pt-5 pb-2 focus:border-black focus:ring-1 focus:ring-black"
-//             />
-//             <label
-//               htmlFor="email"
-//               className="absolute left-3 top-2 text-gray-500 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base"
-//             >
-//               Email*
-//             </label>
-//           </div>
-
-//           {/* Comment */}
-//           <div className="relative">
-//             <textarea
-//               name="comment"
-//               id="comment"
-//               rows="6"
-//               value={formData.comment}
-//               onChange={handleChange}
-//               placeholder=" "
-//               className="peer w-full border border-gray-300 rounded-md px-3 pt-5 pb-2 focus:border-black focus:ring-1 focus:ring-black"
-//             ></textarea>
-//             <label
-//               htmlFor="comment"
-//               className="absolute left-3 top-2 text-gray-500 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base"
-//             >
-//               Comment
-//             </label>
-//           </div>
-
-//           {/* Submit */}
-//           <button
-//             type="submit"
-//             className="w-full bg-black text-white py-3 rounded-md font-semibold hover:bg-gray-800 transition"
-//           >
-//             Send a form
-//           </button>
-//         </form>
-//       </div>
-//     </section>
-//     </>
-//   );
-// }

@@ -1,6 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
+import { newsletterService } from "../services/api";
 
 const Newsletter = () => {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState({ type: "", message: "" });
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!email) return;
+
+    setLoading(true);
+    setStatus({ type: "", message: "" });
+
+    try {
+      const response = await newsletterService.subscribe(email, "footer");
+      setStatus({ type: "success", message: response.message || "Thank you for subscribing!" });
+      setEmail("");
+    } catch (error) {
+      const message = error.response?.data?.message || "Something went wrong. Please try again.";
+      setStatus({ type: "error", message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div>
       <section
@@ -19,20 +44,34 @@ const Newsletter = () => {
             Sign up now for 10% off your first order – because you deserve it!
           </p>
 
-          <form className="flex items-center max-w-xl mx-auto">
+          <form onSubmit={handleSubmit} className="flex items-center max-w-xl mx-auto">
             <input
               type="email"
               placeholder="Email"
               required
-              className="flex-1 px-4 py-3 rounded-l-xl border bg-white border-black focus:outline-none focus:ring-2 focus:ring-black"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={loading}
+              className="flex-1 px-4 py-3 rounded-l-xl border bg-white border-black focus:outline-none focus:ring-2 focus:ring-black disabled:opacity-50"
             />
             <button
               type="submit"
-              className="bg-black text-white px-4 py-3 rounded-r-xl text-sm uppercase hover:bg-gray-800 transition"
+              disabled={loading}
+              className="bg-black text-white px-4 py-3 rounded-r-xl text-sm uppercase hover:bg-gray-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Subscribe
+              {loading ? "..." : "Subscribe"}
             </button>
           </form>
+
+          {/* Status Message */}
+          {status.message && (
+            <p
+              className={`mt-4 text-sm ${status.type === "success" ? "text-green-600" : "text-red-600"
+                }`}
+            >
+              {status.message}
+            </p>
+          )}
         </div>
       </section>
     </div>

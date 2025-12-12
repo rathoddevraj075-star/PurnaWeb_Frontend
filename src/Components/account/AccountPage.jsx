@@ -5,22 +5,19 @@ import { motion, AnimatePresence } from "framer-motion";
 const M = motion;
 import { User, Package, MapPin, Heart, Settings, Edit, LogIn, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useAuth } from "../../context/AuthContext";
 
 export default function AccountPage() {
-  const [authed, setAuthed] = useState(false);
-  const [user, setUser] = useState(null);
+  const { user, isAuthenticated, login, register, logout, loading: authLoading, error: authError, clearError } = useAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
   const [mode, setMode] = useState("login");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [orders, setOrders] = useState([]);
-  const [addresses, setAddresses] = useState([]);
-  const [loadingData, setLoadingData] = useState(false);
-  const [dataError, setDataError] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [toast, setToast] = useState("");
+
   const fadeIn = {
     initial: { opacity: 0, y: 24 },
     animate: { opacity: 1, y: 0 },
@@ -33,100 +30,54 @@ export default function AccountPage() {
   };
 
   useEffect(() => {
-    const saved = localStorage.getItem("account_user");
-    if (saved) {
-      try {
-        const u = JSON.parse(saved);
-        setUser(u);
-        setAuthed(true);
-      } catch {
-        setAuthed(false);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    if (authed) {
-      fetchOrdersAndAddresses();
-    }
-  }, [authed]);
-
-  useEffect(() => {
     if (!toast) return;
     const t = setTimeout(() => setToast(""), 2500);
     return () => clearTimeout(t);
   }, [toast]);
 
+  // Clear error when switching modes
+  useEffect(() => {
+    clearError();
+  }, [mode]);
+
   async function handleLogin(e) {
     e.preventDefault();
-    setError("");
     if (!email || !password) {
-      setError("Enter email and password");
       return;
     }
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 600));
-    const token = Math.random().toString(36).slice(2);
-    const u = { name: email.split("@")[0] || "User", email, token };
-    localStorage.setItem("account_user", JSON.stringify(u));
-    setUser(u);
-    setAuthed(true);
-    setShowModal(false);
-    setToast("Signed in successfully");
-    setLoading(false);
+
+    const result = await login(email, password);
+    if (result.success) {
+      setShowModal(false);
+      setToast("Signed in successfully");
+      setEmail("");
+      setPassword("");
+    }
   }
 
   function handleLogout() {
-    localStorage.removeItem("account_user");
-    setAuthed(false);
-    setUser(null);
+    logout();
     setEmail("");
     setPassword("");
     setName("");
-    setOrders([]);
-    setAddresses([]);
-    setDataError("");
+    setPhone("");
     setToast("Logged out successfully");
   }
 
   async function handleSignup(e) {
     e.preventDefault();
-    setError("");
     if (!name || !email || !password) {
-      setError("Fill all fields");
       return;
     }
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
-    const token = Math.random().toString(36).slice(2);
-    const u = { name, email, token };
-    localStorage.setItem("account_user", JSON.stringify(u));
-    setUser(u);
-    setAuthed(true);
-    setShowModal(false);
-    setToast("Account created successfully");
-    setLoading(false);
-  }
 
-  async function fetchOrdersAndAddresses() {
-    setLoadingData(true);
-    setDataError("");
-    try {
-      await new Promise((r) => setTimeout(r, 500));
-      const fetchedOrders = [
-        { id: "1234", status: "Delivered", item: "Men's Multi Capsules" },
-        { id: "1233", status: "Processing", item: "Collagen Capsules" },
-      ];
-      const fetchedAddresses = [
-        { label: "Home", line: "123 Wellness Ave, NY" },
-        { label: "Office", line: "99 Energy Rd, CA" },
-      ];
-      setOrders(fetchedOrders);
-      setAddresses(fetchedAddresses);
-    } catch {
-      setDataError("Failed to load account data");
-    } finally {
-      setLoadingData(false);
+    const result = await register({ name, email, password, phone });
+    if (result.success) {
+      setShowModal(false);
+      setToast("Account created successfully");
+      setEmail("");
+      setPassword("");
+      setName("");
+      setPhone("");
     }
   }
 
@@ -143,7 +94,7 @@ export default function AccountPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
-            {authed ? "Your Account" : mode === "login" ? "Welcome Back" : "Create Account"}
+            {isAuthenticated ? "Your Account" : mode === "login" ? "Welcome Back" : "Create Account"}
           </M.h1>
           <M.p
             className="mt-3 text-sm md:text-base text-black/70 max-w-2xl"
@@ -151,7 +102,7 @@ export default function AccountPage() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
           >
-            {authed
+            {isAuthenticated
               ? "Manage your details, orders, and preferences in one place."
               : mode === "login"
                 ? "Sign in to view orders, saved addresses, and personalize your experience."
@@ -162,7 +113,7 @@ export default function AccountPage() {
 
       <section className="bg-[#FCF8F2]">
         <div className="max-w-7xl mx-auto px-6 py-10">
-          {authed ? (
+          {isAuthenticated ? (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <M.div className="lg:col-span-1 bg-white rounded-2xl border border-black p-6" {...fadeIn}>
                 <div className="space-y-6">
@@ -207,55 +158,49 @@ export default function AccountPage() {
                 <M.div className="rounded-2xl border border-black bg-white p-6" {...hoverScale}>
                   <div className="flex items-start justify-between">
                     <div>
-                      <h3 className="text-lg">Recent Orders</h3>
-                      <p className="text-sm text-black/60">Track and manage your latest purchases</p>
+                      <h3 className="text-lg">Account Details</h3>
+                      <p className="text-sm text-black/60">Your profile information</p>
                     </div>
-                    <a href="#" className="text-sm underline">View all</a>
                   </div>
-                  {loadingData ? (
-                    <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="rounded-xl border border-black p-4 animate-pulse h-20" />
-                      <div className="rounded-xl border border-black p-4 animate-pulse h-20" />
+                  <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="rounded-xl border border-black p-4">
+                      <p className="text-xs text-black/60">Name</p>
+                      <p className="text-sm font-medium">{user?.name || "Not set"}</p>
                     </div>
-                  ) : dataError ? (
-                    <p className="mt-6 text-sm text-red-600">{dataError}</p>
-                  ) : (
-                    <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {orders.map((o) => (
-                        <div key={o.id} className="rounded-xl border border-black p-4">
-                          <p className="text-sm">Order #{o.id} • {o.status}</p>
-                          <p className="text-xs text-black/60">{o.item}</p>
-                        </div>
-                      ))}
+                    <div className="rounded-xl border border-black p-4">
+                      <p className="text-xs text-black/60">Email</p>
+                      <p className="text-sm font-medium">{user?.email || "Not set"}</p>
                     </div>
-                  )}
+                    <div className="rounded-xl border border-black p-4">
+                      <p className="text-xs text-black/60">Phone</p>
+                      <p className="text-sm font-medium">{user?.phone || "Not set"}</p>
+                    </div>
+                    <div className="rounded-xl border border-black p-4">
+                      <p className="text-xs text-black/60">Role</p>
+                      <p className="text-sm font-medium capitalize">{user?.role || "User"}</p>
+                    </div>
+                  </div>
                 </M.div>
 
                 <M.div className="rounded-2xl border border-black bg-white p-6" {...hoverScale}>
                   <div className="flex items-start justify-between">
                     <div>
                       <h3 className="text-lg">Saved Addresses</h3>
-                      <p className="text-sm text-black/60">Quickly check out with saved details</p>
+                      <p className="text-sm text-black/60">Manage your delivery addresses</p>
                     </div>
-                    <a href="#" className="text-sm underline">Manage</a>
                   </div>
-                  {loadingData ? (
-                    <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="rounded-xl border border-black p-4 animate-pulse h-20" />
-                      <div className="rounded-xl border border-black p-4 animate-pulse h-20" />
-                    </div>
-                  ) : dataError ? (
-                    <p className="mt-6 text-sm text-red-600">{dataError}</p>
-                  ) : (
-                    <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {addresses.map((a, i) => (
-                        <div key={i} className="rounded-xl border border-black p-4">
-                          <p className="text-sm">{a.label}</p>
-                          <p className="text-xs text-black/60">{a.line}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  <div className="mt-6">
+                    {user?.address?.street ? (
+                      <div className="rounded-xl border border-black p-4">
+                        <p className="text-sm font-medium">{user.address.street}</p>
+                        <p className="text-xs text-black/60">
+                          {user.address.city}, {user.address.state} - {user.address.pincode}
+                        </p>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-black/60">No addresses saved yet.</p>
+                    )}
+                  </div>
                 </M.div>
               </M.div>
             </div>
@@ -293,26 +238,70 @@ export default function AccountPage() {
       </section>
 
       <AnimatePresence>
-        {showModal && !authed && (
+        {showModal && !isAuthenticated && (
           <M.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center px-4">
             <M.div initial={{ scale: 0.95, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 20 }} transition={{ duration: 0.25 }} className="w-full max-w-md md:max-w-lg bg-white rounded-2xl border border-black p-6 shadow-2xl">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg">{mode === "login" ? "Sign in" : "Create account"}</h3>
-                <button onClick={() => setShowModal(false)} className="text-sm underline">Close</button>
+                <button onClick={() => { setShowModal(false); clearError(); }} className="text-sm underline">Close</button>
               </div>
               <form className="space-y-4" onSubmit={mode === "login" ? handleLogin : handleSignup}>
                 {mode === "signup" && (
-                  <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" className="w-full border border-black rounded-lg px-4 py-3 text-sm" />
+                  <>
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Name *"
+                      required
+                      className="w-full border border-black rounded-lg px-4 py-3 text-sm"
+                    />
+                    <input
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="Phone (optional)"
+                      className="w-full border border-black rounded-lg px-4 py-3 text-sm"
+                    />
+                  </>
                 )}
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="w-full border border-black rounded-lg px-4 py-3 text-sm" />
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" className="w-full border border-black rounded-lg px-4 py-3 text-sm" />
-                {error && <p className="text-xs text-red-600">{error}</p>}
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Email *"
+                  required
+                  className="w-full border border-black rounded-lg px-4 py-3 text-sm"
+                />
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Password *"
+                  required
+                  minLength={6}
+                  className="w-full border border-black rounded-lg px-4 py-3 text-sm"
+                />
+                {authError && <p className="text-xs text-red-600">{authError}</p>}
                 <div className="flex gap-3">
-                  <M.button type="submit" className="flex-1 bg-black text-white py-3 rounded-lg text-sm font-semibold tracking-wide disabled:opacity-60 shadow hover:shadow-md" {...hoverScale} disabled={loading}>
-                    {loading ? (mode === "login" ? "Signing in..." : "Creating...") : mode === "login" ? "Sign in" : "Create account"}
+                  <M.button
+                    type="submit"
+                    className="flex-1 bg-black text-white py-3 rounded-lg text-sm font-semibold tracking-wide disabled:opacity-60 shadow hover:shadow-md"
+                    {...hoverScale}
+                    disabled={authLoading}
+                  >
+                    {authLoading
+                      ? (mode === "login" ? "Signing in..." : "Creating...")
+                      : mode === "login" ? "Sign in" : "Create account"
+                    }
                   </M.button>
-                  <M.button type="button" className="flex-1 bg-white border border-black py-3 rounded-lg text-sm font-semibold tracking-wide shadow hover:shadow-md" {...hoverScale} onClick={() => setMode(mode === "login" ? "signup" : "login")}>
-                    {mode === "login" ? "Create account" : "Have an account? Sign in"}
+                  <M.button
+                    type="button"
+                    className="flex-1 bg-white border border-black py-3 rounded-lg text-sm font-semibold tracking-wide shadow hover:shadow-md"
+                    {...hoverScale}
+                    onClick={() => { setMode(mode === "login" ? "signup" : "login"); clearError(); }}
+                  >
+                    {mode === "login" ? "Create account" : "Have an account?"}
                   </M.button>
                 </div>
               </form>

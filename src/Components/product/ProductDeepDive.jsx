@@ -1,4 +1,4 @@
-import React, { useRef, useMemo, useState, Suspense } from 'react';
+import React, { useRef, useMemo, useState, useEffect, Suspense } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Canvas, useFrame, useThree, useLoader } from '@react-three/fiber';
 import { motion } from 'framer-motion';
@@ -11,12 +11,14 @@ import {
     Sparkles,
     ScrollControls,
     Scroll,
-    useScroll
+    useScroll,
+    Html
 } from '@react-three/drei';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import * as THREE from 'three';
-import { ArrowLeft, Droplets, Sun, Sparkles as SparklesIcon, Leaf, Star, ChevronDown, ShoppingBag } from 'lucide-react';
-import { products } from '../data/product';
+import { ArrowLeft, Droplets, Sun, Sparkles as SparklesIcon, Leaf, Star, ChevronDown, MapPin, Loader2 } from 'lucide-react';
+import StoreLocator from '../store/StoreLocator';
+import { productService } from '../../services/api';
 
 // --- Floating Particles Component ---
 const FloatingParticles = ({ color, count = 100 }) => {
@@ -70,8 +72,8 @@ const ScrollProductModel = ({ product }) => {
     const isMobile = viewport.width < 5;
 
     // Load Product Texture
-    // Note: In a real app, you might want to preload these or handle loading states
-    const texture = useLoader(THREE.TextureLoader, product.images[0]);
+    const imageUrl = product.images?.[0]?.url || product.images?.[0] || 'https://via.placeholder.com/300';
+    const texture = useLoader(THREE.TextureLoader, imageUrl);
     texture.colorSpace = THREE.SRGBColorSpace;
 
     useFrame((state, delta) => {
@@ -143,7 +145,7 @@ const ScrollProductModel = ({ product }) => {
                     {/* Rounded Box Geometry for a modern "bottle/packaging" look */}
                     <boxGeometry args={[2, 2.5, 0.5]} />
                     <meshPhysicalMaterial
-                        color={product.themeColor}
+                        color={product.themeColor || '#000000'}
                         metalness={0.1}
                         roughness={0.2}
                         transmission={0.0} // Solid but shiny
@@ -186,6 +188,8 @@ const ScrollProductModel = ({ product }) => {
 
 // --- Immersive Scene (Enhanced) ---
 const Scene = ({ product }) => {
+    const categoryName = product.category?.name || 'PRODUCT';
+
     return (
         <>
             <PerspectiveCamera makeDefault position={[0, 0, 9]} fov={45} />
@@ -200,11 +204,11 @@ const Scene = ({ product }) => {
                 castShadow
                 shadow-mapSize={[2048, 2048]}
             />
-            <pointLight position={[-10, -5, -10]} intensity={1.5} color={product.themeColor} />
+            <pointLight position={[-10, -5, -10]} intensity={1.5} color={product.themeColor || '#000000'} />
             <Environment preset="studio" />
 
             {/* ENHANCED PARTICLES */}
-            <FloatingParticles color={product.themeColor} count={30} />
+            <FloatingParticles color={product.themeColor || '#000000'} count={30} />
 
             <Sparkles
                 count={30}
@@ -212,7 +216,7 @@ const Scene = ({ product }) => {
                 size={6}
                 speed={0.5}
                 opacity={0.8}
-                color={product.themeColor}
+                color={product.themeColor || '#000000'}
             />
 
             {/* BACKGROUND BLOB FOR DEPTH */}
@@ -220,7 +224,7 @@ const Scene = ({ product }) => {
                 <mesh scale={9}>
                     <sphereGeometry args={[1, 24, 24]} />
                     <meshBasicMaterial
-                        color={product.themeColor}
+                        color={product.themeColor || '#000000'}
                         transparent
                         opacity={0.06}
                         depthWrite={false}
@@ -232,13 +236,13 @@ const Scene = ({ product }) => {
             <Text
                 position={[0, 0, -4]}
                 fontSize={3}
-                color={product.themeColor}
+                color={product.themeColor || '#000000'}
                 fillOpacity={0.05}
                 font="/fonts/TT Firs Neue Trial Bold.ttf"
                 anchorX="center"
                 anchorY="middle"
             >
-                {product.category.toUpperCase()}
+                {categoryName.toUpperCase()}
             </Text>
 
             <ScrollProductModel product={product} />
@@ -251,7 +255,9 @@ const Scene = ({ product }) => {
 };
 
 // --- DOM Content Component (Inside Scroll html) ---
-const DomContent = ({ product }) => {
+const DomContent = ({ product, onFindStores }) => {
+    const categoryName = product.category?.name || 'Product';
+
     return (
         <div className="w-full">
             {/* HERO SECTION - Page 1 */}
@@ -261,13 +267,13 @@ const DomContent = ({ product }) => {
                         className="inline-block py-2 px-6 rounded-full text-xs uppercase tracking-[0.25em] mb-6 backdrop-blur-md border border-black/5 shadow-sm"
                         style={{ background: `${product.themeColor}15`, color: product.themeColor, fontWeight: 700 }}
                     >
-                        {product.category}
+                        {categoryName}
                     </span>
                     <h1 className="text-6xl md:text-8xl font-black mb-6 tracking-tighter text-neutral-900 leading-none drop-shadow-sm">
                         {product.name}
                     </h1>
                     <p className="text-lg md:text-2xl text-neutral-600 max-w-2xl mx-auto font-light leading-relaxed">
-                        {product.tagline || product.description}
+                        {product.tagline || product.shortDescription || product.description}
                     </p>
                     <div className="mt-16 animate-bounce">
                         <span className="text-xs text-neutral-400 font-bold tracking-[0.2em] bg-white/50 px-3 py-1 rounded-full">SCROLL TO DISCOVER</span>
@@ -291,7 +297,7 @@ const DomContent = ({ product }) => {
                             </div>
 
                             <ul className="space-y-4">
-                                {product.keyBenefits.map((b, i) => (
+                                {(product.keyBenefits || []).map((b, i) => (
                                     <li key={i} className="flex gap-4 items-start p-3 hover:bg-white/50 rounded-xl transition-colors">
                                         <div
                                             className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0 mt-0.5 shadow-md"
@@ -368,17 +374,25 @@ const DomContent = ({ product }) => {
                             <h2 className="text-4xl md:text-6xl font-black mb-8 tracking-tight">Ready to Elevate?</h2>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left max-w-xl w-full mb-12 bg-white/5 p-8 rounded-3xl border border-white/10">
-                                {product.howToUse?.slice(0, 2).map((step, i) => (
+                                {product.howToUse?.split('. ').slice(0, 2).map((step, i) => (
                                     <div key={i} className="flex gap-4">
                                         <span className="text-4xl font-bold opacity-30" style={{ color: product.themeColor }}>0{i + 1}</span>
                                         <p className="text-base text-white/90 leading-relaxed pt-2 font-medium">{step}</p>
                                     </div>
-                                ))}
+                                )) || null}
                             </div>
 
-                            {/* REMOVED BUY BUTTONS AS REQUESTED */}
-                            <div className="mt-8 text-white/50 text-sm font-medium tracking-wide">
-                                FIND IT AT YOUR NEAREST STORE
+                            {/* FIND NEARBY STORES BUTTON */}
+                            <button
+                                onClick={onFindStores}
+                                className="flex items-center gap-3 px-8 py-4 rounded-full text-lg font-bold tracking-wide transition-all shadow-xl hover:scale-105"
+                                style={{ background: product.themeColor }}
+                            >
+                                <MapPin className="w-5 h-5" />
+                                Find Nearby Stores
+                            </button>
+                            <div className="mt-6 text-white/50 text-sm font-medium tracking-wide">
+                                AVAILABLE AT SELECT RETAILERS
                             </div>
                         </div>
                     </div>
@@ -392,9 +406,58 @@ const DomContent = ({ product }) => {
 const ProductDeepDive = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const product = useMemo(() => products.find(p => p.id === id) || products[0], [id]);
+    const [product, setProduct] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [showStoreLocator, setShowStoreLocator] = useState(false);
 
-    if (!product) return <div>Product Not Found</div>;
+    // Fetch product by slug
+    useEffect(() => {
+        const fetchProduct = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                const response = await productService.getProductBySlug(id);
+                setProduct(response.data);
+            } catch (err) {
+                console.error('Error fetching product:', err);
+                setError(err.message || 'Product not found');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (id) {
+            fetchProduct();
+        }
+    }, [id]);
+
+    // Loading state
+    if (loading) {
+        return (
+            <div className="h-screen w-full bg-[#f8f6f4] flex items-center justify-center">
+                <div className="flex flex-col items-center gap-4">
+                    <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
+                    <span className="text-neutral-500 text-sm uppercase tracking-widest">Loading Product...</span>
+                </div>
+            </div>
+        );
+    }
+
+    // Error state
+    if (error || !product) {
+        return (
+            <div className="h-screen w-full bg-[#f8f6f4] flex items-center justify-center">
+                <div className="text-center">
+                    <h1 className="text-2xl font-bold mb-2">Product Not Found</h1>
+                    <p className="text-neutral-500 mb-6">We couldn't find the product you're looking for.</p>
+                    <button onClick={() => navigate('/products')} className="bg-black text-white px-6 py-3 rounded-full">
+                        Browse All Products
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="h-screen w-full bg-[#f8f6f4] relative">
@@ -410,7 +473,14 @@ const ProductDeepDive = () => {
 
             {/* Canvas takes full screen, ScrollControls handles scrolling */}
             <Canvas shadows dpr={[1, 1.5]} gl={{ antialias: true, powerPreference: "high-performance" }}>
-                <Suspense fallback={null}>
+                <Suspense fallback={
+                    <Html center>
+                        <div className="flex flex-col items-center">
+                            <div className="w-12 h-12 border-4 border-black/10 border-t-black rounded-full animate-spin mb-4"></div>
+                            <span className="text-xs font-bold tracking-widest uppercase text-black/50">Loading Experience...</span>
+                        </div>
+                    </Html>
+                }>
                     {/* Pages = 4 sections */}
                     <ScrollControls pages={4} damping={0.25}>
 
@@ -419,12 +489,19 @@ const ProductDeepDive = () => {
 
                         {/* DOM Content laid over the 3D scene */}
                         <Scroll html style={{ width: '100%' }}>
-                            <DomContent product={product} />
+                            <DomContent product={product} onFindStores={() => setShowStoreLocator(true)} />
                         </Scroll>
 
                     </ScrollControls>
                 </Suspense>
             </Canvas>
+
+            {/* Store Locator Modal */}
+            <StoreLocator
+                isOpen={showStoreLocator}
+                onClose={() => setShowStoreLocator(false)}
+                productName={product.name}
+            />
         </div>
     );
 };

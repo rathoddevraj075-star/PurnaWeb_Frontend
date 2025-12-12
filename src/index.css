@@ -66,14 +66,17 @@
   display: none !important;
 }
 
-html,
-body {
+html {
   overflow-x: hidden;
-  overflow-y: scroll;
-  overscroll-behavior-y: none;
+}
+
+body {
+  min-height: 100vh;
+  position: relative;
 }
 
 html {
+  font-size: 12px;
   line-height: 1.15;
   -webkit-text-size-adjust: 100%;
   box-sizing: border-box;

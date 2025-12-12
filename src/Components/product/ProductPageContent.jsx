@@ -13,7 +13,6 @@ import Footer from "../Footer";
 import SectionHero from "./SectionHero";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { products } from "../data/product";
 
 const M = motion;
 
@@ -463,10 +462,10 @@ function UsageSection({ howToUse, suitableFor, themeColor }) {
 }
 
 /* ========== CROSS SELL SECTION ========== */
-function CrossSellSection({ crossSellIds, themeColor }) {
-  if (!crossSellIds || crossSellIds.length === 0) return null;
-
-  const crossSellProducts = products.filter(p => crossSellIds.includes(p.id));
+function CrossSellSection({ crossSellProducts, themeColor }) {
+  // CrossSell products should be passed directly or fetched via API
+  // If no products are provided, don't render the section
+  if (!crossSellProducts || crossSellProducts.length === 0) return null;
 
   return (
     <section className="py-16 sm:py-20 lg:py-28 bg-white">
@@ -486,37 +485,40 @@ function CrossSellSection({ crossSellIds, themeColor }) {
 
         {/* Scrollable products */}
         <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:overflow-visible">
-          {crossSellProducts.map((product, index) => (
-            <M.div
-              key={product.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="flex-shrink-0 w-72 sm:w-auto"
-            >
-              <Link to={`/products/${product.id}`} className="group block">
-                <div
-                  className="relative rounded-2xl p-8 mb-6 overflow-hidden transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-xl"
-                  style={{ backgroundColor: `${product.themeColor}15` }}
-                >
-                  <img
-                    src={product.images[0]}
-                    alt={product.name}
-                    className="w-full h-48 sm:h-56 object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute bottom-4 right-4 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                    <ArrowRight size={18} className="text-neutral-900" />
+          {crossSellProducts.map((product, index) => {
+            const imageUrl = product.images?.[0]?.url || product.images?.[0] || '';
+            return (
+              <M.div
+                key={product._id || product.slug}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="flex-shrink-0 w-72 sm:w-auto"
+              >
+                <Link to={`/products/${product.slug}`} className="group block">
+                  <div
+                    className="relative rounded-2xl p-8 mb-6 overflow-hidden transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-xl"
+                    style={{ backgroundColor: `${product.themeColor || themeColor}15` }}
+                  >
+                    <img
+                      src={imageUrl}
+                      alt={product.name}
+                      className="w-full h-48 sm:h-56 object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute bottom-4 right-4 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
+                      <ArrowRight size={18} className="text-neutral-900" />
+                    </div>
                   </div>
-                </div>
-                <h3 className="text-lg font-semibold text-neutral-900 mb-2 group-hover:text-[var(--color-orange)] transition-colors">
-                  {product.name}
-                </h3>
-                <p className="text-sm text-neutral-500 mb-3 line-clamp-2">{product.description}</p>
-                <span className="text-lg font-medium text-neutral-900">${product.price.toFixed(2)}</span>
-              </Link>
-            </M.div>
-          ))}
+                  <h3 className="text-lg font-semibold text-neutral-900 mb-2 group-hover:text-[var(--color-orange)] transition-colors">
+                    {product.name}
+                  </h3>
+                  <p className="text-sm text-neutral-500 mb-3 line-clamp-2">{product.shortDescription || product.description}</p>
+                  <span className="text-lg font-medium text-neutral-900">${product.price?.toFixed(2) || '0.00'}</span>
+                </Link>
+              </M.div>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -588,7 +590,7 @@ export default function ProductPageContent({ product }) {
       <KeyBenefitsSection benefits={product.keyBenefits} themeColor={product.themeColor} />
       <HeroIngredientSection ingredient={product.heroIngredient} themeColor={product.themeColor} />
       <UsageSection howToUse={product.howToUse} suitableFor={product.suitableFor} themeColor={product.themeColor} />
-      <CrossSellSection crossSellIds={product.crossSell} themeColor={product.themeColor} />
+      <CrossSellSection crossSellProducts={[]} themeColor={product.themeColor} />
       <ScrollingBanner product={product} />
 
       {/* Other Sections */}
