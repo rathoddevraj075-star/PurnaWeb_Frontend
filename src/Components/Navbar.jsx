@@ -227,9 +227,9 @@ export default function Navbar() {
         </div>
 
         {/* Optional: Search suggestions area */}
-        <div className="p-6 text-center text-gray-400 text-sm">
+        {/* <div className="p-6 text-center text-gray-400 text-sm">
           Start typing to search...
-        </div>
+        </div> */}
       </div>
     </>
   );
