@@ -1,5 +1,6 @@
 /**
  * Product Edit Page - Premium Dark Design
+ * Enhanced with all product fields for live preview
  */
 
 import { useState, useEffect } from 'react';
@@ -7,10 +8,15 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { productApi, categoryApi } from "../../services/adminApi";
 import SeoFormTabs from "../../components/seo/SeoFormTabs";
-import { Save, ArrowLeft, Eye, Loader2, Package, Layers, Image as ImageIcon, Box } from 'lucide-react';
+import {
+    Save, ArrowLeft, Eye, Loader2, Package, Layers,
+    ImageIcon, Box, Plus, Trash2, Star, Palette,
+    ListChecks, Sparkles, FlaskConical
+} from 'lucide-react';
 
 const tabList = [
     { id: 'General', icon: Package },
+    { id: 'Images', icon: ImageIcon },
     { id: 'Details', icon: Layers },
     { id: 'SEO', icon: SearchIcon },
     { id: 'Variants', icon: Box }
@@ -37,17 +43,84 @@ function SearchIcon(props) {
     )
 }
 
+// Reusable styled input component
+const Input = ({ label, required, ...props }) => (
+    <div>
+        <label className="block text-sm font-medium mb-2 text-gray-400">
+            {label} {required && '*'}
+        </label>
+        <input
+            {...props}
+            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500/50 transition-colors placeholder-gray-600"
+        />
+    </div>
+);
+
+// Reusable styled textarea component
+const TextArea = ({ label, required, rows = 4, ...props }) => (
+    <div>
+        <label className="block text-sm font-medium mb-2 text-gray-400">
+            {label} {required && '*'}
+        </label>
+        <textarea
+            {...props}
+            rows={rows}
+            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500/50 transition-colors placeholder-gray-600"
+        />
+    </div>
+);
+
 export default function ProductEdit() {
     const { id } = useParams();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const isNew = id === 'new';
     const [activeTab, setActiveTab] = useState('General');
+
+    // Extended form data with all product fields
     const [formData, setFormData] = useState({
-        name: '', slug: '', shortDescription: '', description: '', brand: '',
-        price: '', discountPrice: '', category: '', status: 'draft',
-        images: [], seo: {}, tags: [], isFeatured: false
+        // Basic Info
+        name: '',
+        slug: '',
+        shortDescription: '',
+        description: '',
+        brand: '',
+        tagline: '',
+
+        // Pricing & Status
+        price: '',
+        discountPrice: '',
+        category: '',
+        status: 'draft',
+        stock: 0,
+
+        // Media
+        images: [],
+        themeColor: '#000000',
+
+        // Product Details
+        keyBenefits: [],
+        heroIngredient: { name: '', description: '' },
+        howToUse: '',
+        suitableFor: [],
+
+        // Accordion Data
+        accordion: {
+            BENEFITS: [],
+            INGREDIENTS: []
+        },
+
+        // Other
+        seo: {},
+        tags: [],
+        isFeatured: false,
+        variants: []
     });
+
+    // Temp state for adding items
+    const [newBenefit, setNewBenefit] = useState('');
+    const [newImageUrl, setNewImageUrl] = useState('');
+    const [newIngredient, setNewIngredient] = useState({ name: '', percentage: '', description: '' });
 
     const { data: product, isLoading } = useQuery({
         queryKey: ['admin-product', id],
@@ -68,11 +141,19 @@ export default function ProductEdit() {
                 shortDescription: product.shortDescription || '',
                 description: product.description || '',
                 brand: product.brand || '',
+                tagline: product.tagline || '',
                 price: product.price || '',
                 discountPrice: product.discountPrice || '',
                 category: product.category?._id || product.category || '',
                 status: product.status || 'draft',
+                stock: product.stock || 0,
                 images: product.images || [],
+                themeColor: product.themeColor || '#000000',
+                keyBenefits: product.keyBenefits || [],
+                heroIngredient: product.heroIngredient || { name: '', description: '' },
+                howToUse: product.howToUse || '',
+                suitableFor: product.suitableFor || [],
+                accordion: product.accordion || { BENEFITS: [], INGREDIENTS: [] },
                 seo: product.seo || {},
                 tags: product.tags || [],
                 isFeatured: product.isFeatured || false,
@@ -95,6 +176,68 @@ export default function ProductEdit() {
         if (isNew) return null;
         const res = await productApi.getSeoSuggestions(id);
         return res.data.data;
+    };
+
+    // Image management handlers
+    const addImage = () => {
+        if (!newImageUrl.trim()) return;
+        const newImg = {
+            url: newImageUrl.trim(),
+            alt: formData.name || 'Product image',
+            isPrimary: formData.images.length === 0
+        };
+        setFormData({ ...formData, images: [...formData.images, newImg] });
+        setNewImageUrl('');
+    };
+
+    const removeImage = (index) => {
+        const updated = formData.images.filter((_, i) => i !== index);
+        // Ensure first image is primary if we removed the primary
+        if (updated.length > 0 && !updated.some(img => img.isPrimary)) {
+            updated[0].isPrimary = true;
+        }
+        setFormData({ ...formData, images: updated });
+    };
+
+    const setPrimaryImage = (index) => {
+        const updated = formData.images.map((img, i) => ({
+            ...img,
+            isPrimary: i === index
+        }));
+        setFormData({ ...formData, images: updated });
+    };
+
+    // Key Benefits handlers
+    const addBenefit = () => {
+        if (!newBenefit.trim()) return;
+        setFormData({ ...formData, keyBenefits: [...formData.keyBenefits, newBenefit.trim()] });
+        setNewBenefit('');
+    };
+
+    const removeBenefit = (index) => {
+        setFormData({
+            ...formData,
+            keyBenefits: formData.keyBenefits.filter((_, i) => i !== index)
+        });
+    };
+
+    // Ingredient handlers
+    const addIngredient = () => {
+        if (!newIngredient.name.trim()) return;
+        const updatedAccordion = {
+            ...formData.accordion,
+            INGREDIENTS: [...(formData.accordion?.INGREDIENTS || []), { ...newIngredient }]
+        };
+        setFormData({ ...formData, accordion: updatedAccordion });
+        setNewIngredient({ name: '', percentage: '', description: '' });
+    };
+
+    const removeIngredient = (index) => {
+        const updatedAccordion = {
+            ...formData.accordion,
+            INGREDIENTS: formData.accordion.INGREDIENTS.filter((_, i) => i !== index)
+        };
+        setFormData({ ...formData, accordion: updatedAccordion });
     };
 
     if (isLoading && !isNew) return (
@@ -147,8 +290,8 @@ export default function ProductEdit() {
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
                         className={`flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all relative whitespace-nowrap ${activeTab === tab.id
-                                ? 'text-white'
-                                : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
+                            ? 'text-white'
+                            : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
                             }`}
                     >
                         <tab.icon size={16} className={activeTab === tab.id ? 'text-emerald-400' : ''} />
@@ -165,44 +308,43 @@ export default function ProductEdit() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in">
                     <div className="lg:col-span-2 space-y-6">
                         <div className="bg-[#0f1218] rounded-2xl p-6 border border-white/5 shadow-xl shadow-black/20 space-y-5">
-                            <div>
-                                <label className="block text-sm font-medium mb-2 text-gray-400">Product Name *</label>
-                                <input
-                                    type="text"
-                                    value={formData.name}
-                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500/50 transition-colors placeholder-gray-600"
-                                    placeholder="Enter product name"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-2 text-gray-400">Slug</label>
-                                <input
-                                    type="text"
-                                    value={formData.slug}
-                                    onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500/50 transition-colors placeholder-gray-600"
-                                    placeholder="auto-generated-from-name"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-2 text-gray-400">Short Description</label>
-                                <textarea
-                                    value={formData.shortDescription}
-                                    onChange={(e) => setFormData({ ...formData, shortDescription: e.target.value })}
-                                    rows={2}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500/50 transition-colors placeholder-gray-600"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-2 text-gray-400">Full Description *</label>
-                                <textarea
-                                    value={formData.description}
-                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                    rows={8}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500/50 transition-colors placeholder-gray-600"
-                                />
-                            </div>
+                            <Input
+                                label="Product Name"
+                                required
+                                type="text"
+                                value={formData.name}
+                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                placeholder="Enter product name"
+                            />
+                            <Input
+                                label="Slug"
+                                type="text"
+                                value={formData.slug}
+                                onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                                placeholder="auto-generated-from-name"
+                            />
+                            <Input
+                                label="Tagline"
+                                type="text"
+                                value={formData.tagline}
+                                onChange={(e) => setFormData({ ...formData, tagline: e.target.value })}
+                                placeholder="Short catchy tagline for the product"
+                            />
+                            <TextArea
+                                label="Short Description"
+                                rows={2}
+                                value={formData.shortDescription}
+                                onChange={(e) => setFormData({ ...formData, shortDescription: e.target.value })}
+                                placeholder="Brief product summary"
+                            />
+                            <TextArea
+                                label="Full Description"
+                                required
+                                rows={8}
+                                value={formData.description}
+                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                placeholder="Detailed product description"
+                            />
                         </div>
                     </div>
                     <div className="space-y-6">
@@ -232,35 +374,37 @@ export default function ProductEdit() {
                                     ))}
                                 </select>
                             </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-2 text-gray-400">Brand</label>
-                                <input
-                                    type="text"
-                                    value={formData.brand}
-                                    onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500/50 transition-colors placeholder-gray-600"
+                            <Input
+                                label="Brand"
+                                type="text"
+                                value={formData.brand}
+                                onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
+                                placeholder="Brand name"
+                            />
+                            <div className="grid grid-cols-2 gap-4">
+                                <Input
+                                    label="Price"
+                                    required
+                                    type="number"
+                                    value={formData.price}
+                                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                                    placeholder="0"
+                                />
+                                <Input
+                                    label="Sale Price"
+                                    type="number"
+                                    value={formData.discountPrice}
+                                    onChange={(e) => setFormData({ ...formData, discountPrice: e.target.value })}
+                                    placeholder="0"
                                 />
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium mb-2 text-gray-400">Price *</label>
-                                    <input
-                                        type="number"
-                                        value={formData.price}
-                                        onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500/50 transition-colors placeholder-gray-600"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium mb-2 text-gray-400">Sale Price</label>
-                                    <input
-                                        type="number"
-                                        value={formData.discountPrice}
-                                        onChange={(e) => setFormData({ ...formData, discountPrice: e.target.value })}
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500/50 transition-colors placeholder-gray-600"
-                                    />
-                                </div>
-                            </div>
+                            <Input
+                                label="Stock Quantity"
+                                type="number"
+                                value={formData.stock}
+                                onChange={(e) => setFormData({ ...formData, stock: parseInt(e.target.value) || 0 })}
+                                placeholder="0"
+                            />
                             <label className="flex items-center gap-3 cursor-pointer p-4 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-colors">
                                 <input
                                     type="checkbox"
@@ -275,6 +419,293 @@ export default function ProductEdit() {
                 </div>
             )}
 
+            {/* Images Tab */}
+            {activeTab === 'Images' && (
+                <div className="animate-fade-in space-y-6">
+                    {/* Theme Color */}
+                    <div className="bg-[#0f1218] rounded-2xl p-6 border border-white/5 shadow-xl shadow-black/20">
+                        <div className="flex items-center gap-3 mb-4">
+                            <Palette className="text-emerald-400" size={20} />
+                            <h3 className="text-lg font-semibold text-white">Theme Color</h3>
+                        </div>
+                        <p className="text-gray-400 text-sm mb-4">This color is used throughout the product page for accents and theming.</p>
+                        <div className="flex items-center gap-4">
+                            <input
+                                type="color"
+                                value={formData.themeColor}
+                                onChange={(e) => setFormData({ ...formData, themeColor: e.target.value })}
+                                className="w-16 h-16 rounded-xl cursor-pointer border-2 border-white/10"
+                            />
+                            <div>
+                                <input
+                                    type="text"
+                                    value={formData.themeColor}
+                                    onChange={(e) => setFormData({ ...formData, themeColor: e.target.value })}
+                                    className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-emerald-500/50 transition-colors font-mono"
+                                    placeholder="#000000"
+                                />
+                                <p className="text-gray-500 text-xs mt-1">Hex color code</p>
+                            </div>
+                            <div
+                                className="flex-1 h-16 rounded-xl border border-white/10"
+                                style={{ backgroundColor: formData.themeColor }}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Product Images */}
+                    <div className="bg-[#0f1218] rounded-2xl p-6 border border-white/5 shadow-xl shadow-black/20">
+                        <div className="flex items-center gap-3 mb-4">
+                            <ImageIcon className="text-emerald-400" size={20} />
+                            <h3 className="text-lg font-semibold text-white">Product Images</h3>
+                        </div>
+                        <p className="text-gray-400 text-sm mb-4">Add product images via URL. The primary image is displayed on the 3D product packaging.</p>
+
+                        {/* Add Image Input */}
+                        <div className="flex gap-3 mb-6">
+                            <input
+                                type="text"
+                                value={newImageUrl}
+                                onChange={(e) => setNewImageUrl(e.target.value)}
+                                className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500/50 transition-colors placeholder-gray-600"
+                                placeholder="Enter image URL (e.g., https://example.com/image.jpg)"
+                                onKeyDown={(e) => e.key === 'Enter' && addImage()}
+                            />
+                            <button
+                                onClick={addImage}
+                                className="flex items-center gap-2 bg-emerald-500/20 text-emerald-400 px-4 py-2.5 rounded-xl hover:bg-emerald-500/30 transition-colors font-medium"
+                            >
+                                <Plus size={18} /> Add
+                            </button>
+                        </div>
+
+                        {/* Image Grid */}
+                        {formData.images.length > 0 ? (
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                {formData.images.map((img, index) => (
+                                    <div
+                                        key={index}
+                                        className={`relative group rounded-xl overflow-hidden border-2 ${img.isPrimary ? 'border-emerald-500' : 'border-white/10'}`}
+                                    >
+                                        <img
+                                            src={img.url}
+                                            alt={img.alt || 'Product'}
+                                            className="w-full h-32 object-cover"
+                                            onError={(e) => { e.target.src = 'https://via.placeholder.com/200?text=Error'; }}
+                                        />
+                                        {img.isPrimary && (
+                                            <div className="absolute top-2 left-2 bg-emerald-500 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
+                                                <Star size={10} className="fill-current" /> Primary
+                                            </div>
+                                        )}
+                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                            {!img.isPrimary && (
+                                                <button
+                                                    onClick={() => setPrimaryImage(index)}
+                                                    className="p-2 bg-white/20 rounded-lg hover:bg-emerald-500/50 transition-colors"
+                                                    title="Set as primary"
+                                                >
+                                                    <Star size={16} />
+                                                </button>
+                                            )}
+                                            <button
+                                                onClick={() => removeImage(index)}
+                                                className="p-2 bg-white/20 rounded-lg hover:bg-red-500/50 transition-colors"
+                                                title="Remove image"
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center py-12 border-2 border-dashed border-white/10 rounded-xl">
+                                <ImageIcon className="mx-auto text-gray-600 mb-3" size={40} />
+                                <p className="text-gray-400">No images added yet</p>
+                                <p className="text-gray-500 text-sm">Add image URLs above</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
+
+            {/* Details Tab */}
+            {activeTab === 'Details' && (
+                <div className="animate-fade-in space-y-6">
+                    {/* Key Benefits Section */}
+                    <div className="bg-[#0f1218] rounded-2xl p-6 border border-white/5 shadow-xl shadow-black/20">
+                        <div className="flex items-center gap-3 mb-4">
+                            <ListChecks className="text-emerald-400" size={20} />
+                            <h3 className="text-lg font-semibold text-white">Key Benefits</h3>
+                        </div>
+                        <p className="text-gray-400 text-sm mb-4">These appear in the "Why It's Special" section on the product page.</p>
+
+                        {/* Add Benefit Input */}
+                        <div className="flex gap-3 mb-4">
+                            <input
+                                type="text"
+                                value={newBenefit}
+                                onChange={(e) => setNewBenefit(e.target.value)}
+                                className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500/50 transition-colors placeholder-gray-600"
+                                placeholder="Enter a benefit (e.g., Deep hydration for 24 hours)"
+                                onKeyDown={(e) => e.key === 'Enter' && addBenefit()}
+                            />
+                            <button
+                                onClick={addBenefit}
+                                className="flex items-center gap-2 bg-emerald-500/20 text-emerald-400 px-4 py-2.5 rounded-xl hover:bg-emerald-500/30 transition-colors font-medium"
+                            >
+                                <Plus size={18} /> Add
+                            </button>
+                        </div>
+
+                        {/* Benefits List */}
+                        {formData.keyBenefits.length > 0 ? (
+                            <div className="space-y-2">
+                                {formData.keyBenefits.map((benefit, index) => (
+                                    <div
+                                        key={index}
+                                        className="flex items-center justify-between gap-3 p-3 bg-white/5 rounded-xl group"
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <span
+                                                className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white"
+                                                style={{ backgroundColor: formData.themeColor }}
+                                            >
+                                                {index + 1}
+                                            </span>
+                                            <span className="text-white">{benefit}</span>
+                                        </div>
+                                        <button
+                                            onClick={() => removeBenefit(index)}
+                                            className="p-1.5 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-gray-500 text-sm italic">No benefits added yet</p>
+                        )}
+                    </div>
+
+                    {/* Hero Ingredient Section */}
+                    <div className="bg-[#0f1218] rounded-2xl p-6 border border-white/5 shadow-xl shadow-black/20">
+                        <div className="flex items-center gap-3 mb-4">
+                            <Sparkles className="text-emerald-400" size={20} />
+                            <h3 className="text-lg font-semibold text-white">Hero Ingredient</h3>
+                        </div>
+                        <p className="text-gray-400 text-sm mb-4">Featured ingredient highlighted prominently on the product page.</p>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <Input
+                                label="Ingredient Name"
+                                type="text"
+                                value={formData.heroIngredient?.name || ''}
+                                onChange={(e) => setFormData({
+                                    ...formData,
+                                    heroIngredient: { ...formData.heroIngredient, name: e.target.value }
+                                })}
+                                placeholder="e.g., Hyaluronic Acid"
+                            />
+                            <TextArea
+                                label="Description"
+                                rows={2}
+                                value={formData.heroIngredient?.description || ''}
+                                onChange={(e) => setFormData({
+                                    ...formData,
+                                    heroIngredient: { ...formData.heroIngredient, description: e.target.value }
+                                })}
+                                placeholder="Describe the benefits of this ingredient"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Ingredients List Section */}
+                    <div className="bg-[#0f1218] rounded-2xl p-6 border border-white/5 shadow-xl shadow-black/20">
+                        <div className="flex items-center gap-3 mb-4">
+                            <FlaskConical className="text-emerald-400" size={20} />
+                            <h3 className="text-lg font-semibold text-white">Ingredients List</h3>
+                        </div>
+                        <p className="text-gray-400 text-sm mb-4">Additional ingredients shown as tags on the product page.</p>
+
+                        {/* Add Ingredient Form */}
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
+                            <input
+                                type="text"
+                                value={newIngredient.name}
+                                onChange={(e) => setNewIngredient({ ...newIngredient, name: e.target.value })}
+                                className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500/50 transition-colors placeholder-gray-600"
+                                placeholder="Ingredient name"
+                            />
+                            <input
+                                type="text"
+                                value={newIngredient.percentage}
+                                onChange={(e) => setNewIngredient({ ...newIngredient, percentage: e.target.value })}
+                                className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500/50 transition-colors placeholder-gray-600"
+                                placeholder="Percentage (e.g., 5%)"
+                            />
+                            <input
+                                type="text"
+                                value={newIngredient.description}
+                                onChange={(e) => setNewIngredient({ ...newIngredient, description: e.target.value })}
+                                className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500/50 transition-colors placeholder-gray-600"
+                                placeholder="Brief description"
+                            />
+                            <button
+                                onClick={addIngredient}
+                                className="flex items-center justify-center gap-2 bg-emerald-500/20 text-emerald-400 px-4 py-2.5 rounded-xl hover:bg-emerald-500/30 transition-colors font-medium"
+                            >
+                                <Plus size={18} /> Add
+                            </button>
+                        </div>
+
+                        {/* Ingredients List */}
+                        {formData.accordion?.INGREDIENTS?.length > 0 ? (
+                            <div className="flex flex-wrap gap-2">
+                                {formData.accordion.INGREDIENTS.map((ing, index) => (
+                                    <div
+                                        key={index}
+                                        className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-full group"
+                                    >
+                                        <span className="text-white font-medium">{ing.name}</span>
+                                        {ing.percentage && (
+                                            <span className="text-emerald-400 text-sm">({ing.percentage})</span>
+                                        )}
+                                        <button
+                                            onClick={() => removeIngredient(index)}
+                                            className="p-1 text-gray-500 hover:text-red-400 transition-colors"
+                                        >
+                                            <Trash2 size={14} />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-gray-500 text-sm italic">No ingredients added yet</p>
+                        )}
+                    </div>
+
+                    {/* How to Use Section */}
+                    <div className="bg-[#0f1218] rounded-2xl p-6 border border-white/5 shadow-xl shadow-black/20">
+                        <div className="flex items-center gap-3 mb-4">
+                            <Layers className="text-emerald-400" size={20} />
+                            <h3 className="text-lg font-semibold text-white">How to Use</h3>
+                        </div>
+                        <p className="text-gray-400 text-sm mb-4">Usage instructions displayed in the CTA section. Separate steps with periods.</p>
+
+                        <TextArea
+                            label=""
+                            rows={4}
+                            value={formData.howToUse}
+                            onChange={(e) => setFormData({ ...formData, howToUse: e.target.value })}
+                            placeholder="Apply a small amount to clean skin. Massage gently in circular motions. Use daily for best results."
+                        />
+                    </div>
+                </div>
+            )}
+
             {/* SEO Tab */}
             {activeTab === 'SEO' && (
                 <div className="animate-fade-in">
@@ -284,17 +715,6 @@ export default function ProductEdit() {
                         onSuggest={isNew ? null : handleSeoSuggest}
                         entityName={formData.name}
                     />
-                </div>
-            )}
-
-            {/* Details Tab */}
-            {activeTab === 'Details' && (
-                <div className="bg-[#0f1218] rounded-2xl p-12 border border-white/5 shadow-xl shadow-black/20 text-center animate-fade-in">
-                    <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Layers className="text-gray-500" size={32} />
-                    </div>
-                    <h3 className="text-lg font-medium text-white mb-2">Ingredients & Benefits</h3>
-                    <p className="text-gray-400">Detailed benefits editor coming soon...</p>
                 </div>
             )}
 
