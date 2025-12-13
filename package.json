@@ -10,10 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.4.2",
     "@react-three/postprocessing": "^3.0.4",
     "@tailwindcss/vite": "^4.1.13",
+    "@tanstack/react-query": "^5.90.12",
     "@types/three": "^0.181.0",
     "axios": "^1.13.2",
     "framer-motion": "^12.23.12",
@@ -22,11 +24,13 @@
     "postprocessing": "^6.38.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-hook-form": "^7.68.0",
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.9.3",
     "react-swiper": "^0.1.5",
     "swiper": "^11.2.10",
-    "three": "^0.181.0"
+    "three": "^0.181.0",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
