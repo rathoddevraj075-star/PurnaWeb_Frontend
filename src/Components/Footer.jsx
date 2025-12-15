@@ -160,7 +160,7 @@ const Footer = () => {
       {/* Large Text */}
       <div className="mt-6 text-center tracking-tight opacity-50 select-none cursor-default">
         <span className="text-[var(--color-orange)] text-[15vw] sm:text-[15vw] md:text-[15vw] lg:text-[18vw] xl:text-[20vw] leading-none">
-          PurnaRoutine
+          Purna
         </span>
       </div>
     </footer>
