@@ -11,7 +11,7 @@ const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 export default function MaintenanceWrapper({ children }) {
     const [isMaintenanceMode, setIsMaintenanceMode] = useState(false);
     const [maintenanceMessage, setMaintenanceMessage] = useState('');
-    const [siteName, setSiteName] = useState('Purna');
+    const [siteName, setSiteName] = useState('PurnaRoutine');
     const [isLoading, setIsLoading] = useState(true);
     const location = useLocation();
 

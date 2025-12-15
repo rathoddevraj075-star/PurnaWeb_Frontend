@@ -85,7 +85,7 @@ export default function MaintenancePage({ message, siteName }) {
                     </button>
 
                     <a
-                        href="mailto:support@purna.com"
+                        href="mailto:support@purnaroutine.com"
                         className="flex items-center gap-2 px-6 py-3 bg-white/5 text-gray-300 font-medium rounded-xl border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all"
                     >
                         <Mail className="w-5 h-5" />
@@ -96,7 +96,7 @@ export default function MaintenancePage({ message, siteName }) {
                 {/* Footer */}
                 <div className="mt-12 pt-8 border-t border-white/5">
                     <p className="text-gray-600 text-sm">
-                        © {new Date().getFullYear()} {siteName || 'Purna'}. We'll be back soon!
+                        © {new Date().getFullYear()} {siteName || 'PurnaRoutine'}. We'll be back soon!
                     </p>
                 </div>
             </div>

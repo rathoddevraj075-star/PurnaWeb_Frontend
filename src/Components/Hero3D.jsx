@@ -89,7 +89,7 @@ const Hero3D = () => {
                     </h2>
 
                     <h1 className="text-[#151515] text-[15vw] md:text-[min(160px,18vw)] leading-[0.9] tracking-tighter mb-6 md:mb-10 selection:bg-[#d9634c] selection:text-white">
-                        THE <br className="hidden md:block lg:hidden" /> PURNA
+                        PURNAROUTINE
                     </h1>
 
                     <p className="text-[#6667AB] text-base md:text-xl lg:text-2xl max-w-xl md:max-w-2xl mx-auto font-medium leading-relaxed mb-8 md:mb-12 px-4">

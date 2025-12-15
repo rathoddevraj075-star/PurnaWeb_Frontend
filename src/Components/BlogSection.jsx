@@ -39,7 +39,7 @@ const BlogSection = () => {
       <section className="bg-neutral-50 py-16 md:py-20 lg:py-24">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-6">From The Purna Journal</h2>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-6">From The PurnaRoutine Journal</h2>
             <p className="text-base md:text-lg text-neutral-600 max-w-3xl mx-auto leading-relaxed">
               Discover insights, tips, and stories about complete wellness from morning to night.
             </p>
@@ -60,7 +60,7 @@ const BlogSection = () => {
     <section className="bg-neutral-50 py-16 md:py-20 lg:py-24">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-6">From The Purna Journal</h2>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-6">From The PurnaRoutine Journal</h2>
           <p className="text-base md:text-lg text-neutral-600 max-w-3xl mx-auto leading-relaxed">
             Discover insights, tips, and stories about complete wellness from morning to night.
           </p>

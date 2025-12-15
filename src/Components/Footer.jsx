@@ -64,7 +64,7 @@ const Footer = () => {
             </li>
             <li>
               <a href="/routine" className="hover:underline">
-                The Purna Routine
+                PurnaRoutine
               </a>
             </li>
             <li>
@@ -109,9 +109,9 @@ const Footer = () => {
 
         {/* ABOUT */}
         <div>
-          <h3 className="mb-4 text-lg">ABOUT THE PURNA</h3>
+          <h3 className="mb-4 text-lg">ABOUT PURNAROUTINE</h3>
           <p className="text-sm leading-relaxed">
-            The Purna offers complete daily wellness from morning to night. Ayurvedic-inspired essentials for your everyday routine.
+            PurnaRoutine offers complete daily wellness from morning to night. Ayurvedic-inspired essentials for your everyday routine.
           </p>
         </div>
       </div>
@@ -160,10 +160,7 @@ const Footer = () => {
       {/* Large Text */}
       <div className="mt-6 text-center tracking-tight opacity-50 select-none cursor-default">
         <span className="text-[var(--color-orange)] text-[15vw] sm:text-[15vw] md:text-[15vw] lg:text-[18vw] xl:text-[20vw] leading-none">
-          The
-        </span>
-        <span className="text-[var(--color-orange)] text-[15vw] sm:text-[15vw] md:text-[15vw] lg:text-[18vw] xl:text-[20vw] leading-none">
-          Purna
+          PurnaRoutine
         </span>
       </div>
     </footer>

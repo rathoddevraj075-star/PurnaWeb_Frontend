@@ -63,7 +63,7 @@ export default function Navbar() {
 
           {/* Center Logo */}
           <a href="/" className="block">
-            <img src="/images/logo-black.png" alt="The Purna" className="h-10 sm:h-12 w-auto object-contain" />
+            <img src="/images/logo-black.png" alt="PurnaRoutine" className="h-10 sm:h-12 w-auto object-contain" />
           </a>
 
           {/* Right Icons */}
@@ -80,7 +80,7 @@ export default function Navbar() {
           <a href="/" className="logo-wrapper relative block w-32 h-12">
             <img
               src="/images/logo-black.png"
-              alt="THE PURNA"
+              alt="PURNAROUTINE"
               className="absolute top-1/2 left-0 -translate-y-1/2 h-24 max-w-none w-auto object-contain"
             />
           </a>

@@ -205,7 +205,7 @@ export default function AdminLogin() {
 
                 {/* Footer */}
                 <p className={`text-center text-gray-600 text-sm mt-8 transition-all duration-500 ${mounted ? 'opacity-100' : 'opacity-0'}`} style={{ transitionDelay: '0.6s' }}>
-                    &copy; {new Date().getFullYear()} Purna. All rights reserved.
+                    &copy; {new Date().getFullYear()} PurnaRoutine. All rights reserved.
                 </p>
             </div>
 

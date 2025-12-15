@@ -7,7 +7,7 @@ export default function PhilosophySection() {
             Our Philosophy
           </h2>
           <p className="text-base md:text-lg text-neutral-600 max-w-4xl mx-auto leading-relaxed">
-            At The Purna, we believe wellness is not a moment — it's a flow. A daily ritual that begins when you wake up and stays with you till night. Our products are crafted to complete every part of your routine with purity, intention, and care.
+            At PurnaRoutine, we believe wellness is not a moment — it's a flow. A daily ritual that begins when you wake up and stays with you till night. Our products are crafted to complete every part of your routine with purity, intention, and care.
           </p>
         </div>
 

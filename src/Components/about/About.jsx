@@ -46,7 +46,7 @@ const About = () => {
             className="flex flex-col items-center"
           >
             <span className="inline-block text-[#d9634c] tracking-[0.25em] uppercase mb-4 md:mb-6 text-xs md:text-sm border border-[var(--color-orange)]/20 px-4 py-2 rounded-full bg-white/50 backdrop-blur-sm">
-              About The Purna
+              About PurnaRoutine
             </span>
             <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-serif text-[#151515] leading-[1.1] md:leading-[1.1] mb-6 md:mb-8 tracking-tight">
               Rooted in Wholeness. <br className="hidden sm:block" />
@@ -105,7 +105,7 @@ const About = () => {
                 <span className="inline-block text-xs tracking-widest text-[#151515]/40 uppercase mb-4 border border-[#151515]/10 px-3 py-1 rounded-md">Our Mission</span>
                 <h3 className="text-2xl md:text-4xl font-serif mb-4 md:mb-6 text-[#151515]">Simplifying Wellness</h3>
                 <p className="text-base md:text-lg text-gray-600 leading-relaxed mb-6 md:mb-8">
-                  We started The Purna to demystify Ayurveda for the modern generation. To create a brand that feels natural, safe, and trustworthy—without the complexity.
+                  We started PurnaRoutine to demystify Ayurveda for the modern generation. To create a brand that feels natural, safe, and trustworthy—without the complexity.
                 </p>
                 <p className="text-base md:text-lg font-medium text-[#151515] border-l-2 border-[#d9634c] pl-4">
                   Our goal: To make daily self-care effortless and meaningful for every Indian household.
@@ -132,7 +132,7 @@ const About = () => {
             >
               <h2 className="text-3xl sm:text-4xl md:text-6xl font-serif mb-6 tracking-tight">Wellness that flows with you.</h2>
               <p className="text-base sm:text-lg md:text-2xl font-light text-gray-100 max-w-3xl mx-auto mb-10 md:mb-12 leading-relaxed">
-                Discover "The Purna Routine" — a curated rhythm of care designed to support your body and mind from sunrise to sunset.
+                Discover "PurnaRoutine" — a curated rhythm of care designed to support your body and mind from sunrise to sunset.
               </p>
               <a href="/routine" className="inline-flex items-center gap-2 bg-white text-[#1F4D2B] px-8 py-3 md:px-10 md:py-4 rounded-full text-sm md:text-base tracking-wide hover:bg-orange-50 transition-all transform hover:-translate-y-1 duration-300 shadow-lg hover:shadow-xl">
                 EXPLORE THE ROUTINE

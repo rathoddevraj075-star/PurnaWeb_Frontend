@@ -34,7 +34,7 @@ export default function BenefitsSection() {
       <div className="max-w-7xl mx-auto px-6 text-center">
 
         <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-normal mb-12">
-          Why The Purna?
+          Why PurnaRoutine?
         </h2>
 
 

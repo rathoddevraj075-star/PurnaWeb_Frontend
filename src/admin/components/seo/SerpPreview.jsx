@@ -7,7 +7,7 @@ import { Monitor, Smartphone } from 'lucide-react';
 
 export default function SerpPreview({ title, description, url }) {
     const [view, setView] = useState('desktop');
-    const siteUrl = 'https://hiloproot.com';
+    const siteUrl = 'https://purnaroutine.com';
 
     const truncate = (text, max) => {
         if (!text) return '';
