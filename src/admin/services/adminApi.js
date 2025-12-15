@@ -129,6 +129,7 @@ export const contactApi = {
     updateStatus: (id, status) => adminApi.put(`/contacts/${id}/status`, { status }),
     updateNotes: (id, adminNotes) => adminApi.put(`/contacts/${id}/notes`, { adminNotes }),
     delete: (id) => adminApi.delete(`/contacts/${id}`),
+    sendReply: (id, data) => adminApi.post(`/contacts/${id}/reply`, data),
 };
 
 // ============ SETTINGS & PROFILE ============

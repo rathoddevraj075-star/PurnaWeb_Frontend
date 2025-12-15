@@ -9,7 +9,7 @@ import { contactApi } from '../../services/adminApi';
 import {
     Inbox, Search, Trash2, Calendar, Mail, Phone, User,
     ChevronLeft, ChevronRight, AlertCircle, Clock, CheckCircle,
-    XCircle, MessageSquare, Filter, X, Copy, Check
+    XCircle, MessageSquare, Filter, X, Copy, Check, Send, Loader2, Reply
 } from 'lucide-react';
 
 const STATUS_OPTIONS = [
@@ -39,6 +39,10 @@ export default function ContactList() {
     const [deleteId, setDeleteId] = useState(null);
     const [showMobileFilters, setShowMobileFilters] = useState(false);
     const [copied, setCopied] = useState(false);
+    const [showReplyModal, setShowReplyModal] = useState(false);
+    const [replyMessage, setReplyMessage] = useState('');
+    const [replyError, setReplyError] = useState('');
+    const [replySuccess, setReplySuccess] = useState(false);
 
     // Fetch contacts
     const { data, isLoading, error } = useQuery({
@@ -85,6 +89,26 @@ export default function ContactList() {
             queryClient.invalidateQueries({ queryKey: ['admin-contacts-stats'] });
             setDeleteId(null);
             setSelectedContact(null);
+        }
+    });
+
+    // Send reply mutation
+    const sendReplyMutation = useMutation({
+        mutationFn: ({ id, message }) => contactApi.sendReply(id, { message }),
+        onSuccess: (response) => {
+            queryClient.invalidateQueries({ queryKey: ['admin-contacts'] });
+            queryClient.invalidateQueries({ queryKey: ['admin-contacts-stats'] });
+            setSelectedContact(response.data.data);
+            setReplySuccess(true);
+            setReplyMessage('');
+            setReplyError('');
+            setTimeout(() => {
+                setReplySuccess(false);
+                setShowReplyModal(false);
+            }, 2000);
+        },
+        onError: (error) => {
+            setReplyError(error.response?.data?.message || 'Failed to send reply. Please try again.');
         }
     });
 
@@ -420,6 +444,34 @@ export default function ContactList() {
                                 )}
                             </div>
 
+                            {/* Reply History */}
+                            {selectedContact.replies && selectedContact.replies.length > 0 && (
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-400 mb-3">Reply History</label>
+                                    <div className="space-y-3 max-h-60 overflow-y-auto">
+                                        {selectedContact.replies.map((reply, index) => (
+                                            <div key={index} className="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-4">
+                                                <div className="flex items-center justify-between mb-2">
+                                                    <span className="text-emerald-400 text-sm font-medium flex items-center gap-1.5">
+                                                        <Reply size={14} />
+                                                        {reply.sentByName || 'Admin'}
+                                                    </span>
+                                                    <span className="text-gray-500 text-xs">{formatDate(reply.sentAt)}</span>
+                                                </div>
+                                                <p className="text-gray-300 text-sm whitespace-pre-wrap">{reply.message}</p>
+                                                <div className="flex items-center gap-2 mt-2 pt-2 border-t border-white/5">
+                                                    <span className={`text-xs px-2 py-0.5 rounded-full ${reply.status === 'sent' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'
+                                                        }`}>
+                                                        {reply.status === 'sent' ? 'Delivered' : 'Failed'}
+                                                    </span>
+                                                    <span className="text-gray-500 text-xs">to {reply.emailSentTo}</span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Response Info */}
                             {selectedContact.respondedBy && (
                                 <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 text-sm">
@@ -442,13 +494,18 @@ export default function ContactList() {
                                 <Trash2 size={16} />
                                 Delete
                             </button>
-                            <a
-                                href={`mailto:${selectedContact.email}?subject=Re: ${selectedContact.subject}`}
+                            <button
+                                onClick={() => {
+                                    setShowReplyModal(true);
+                                    setReplyMessage('');
+                                    setReplyError('');
+                                    setReplySuccess(false);
+                                }}
                                 className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium rounded-xl hover:shadow-lg hover:shadow-purple-500/25 transition-all"
                             >
-                                <Mail size={16} />
-                                Reply via Email
-                            </a>
+                                <Send size={16} />
+                                Send Reply
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -483,6 +540,110 @@ export default function ContactList() {
                                 className="flex-1 px-4 py-2.5 bg-red-500 text-white font-medium rounded-xl hover:bg-red-600 transition-all disabled:opacity-50"
                             >
                                 {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Reply Modal */}
+            {showReplyModal && selectedContact && (
+                <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+                    <div className="bg-[#0f1218] rounded-2xl border border-white/10 w-full max-w-lg shadow-2xl">
+                        {/* Header */}
+                        <div className="p-6 border-b border-white/10">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2.5 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20">
+                                        <Send size={20} className="text-purple-400" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-lg font-semibold text-white">Reply to {selectedContact.name}</h3>
+                                        <p className="text-sm text-gray-400">{selectedContact.email}</p>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => setShowReplyModal(false)}
+                                    className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-all"
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Content */}
+                        <div className="p-6 space-y-4">
+                            {/* Success State */}
+                            {replySuccess && (
+                                <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 flex items-center gap-3 text-emerald-400">
+                                    <CheckCircle size={20} />
+                                    <span>Reply sent successfully!</span>
+                                </div>
+                            )}
+
+                            {/* Error State */}
+                            {replyError && (
+                                <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex items-start gap-3 text-red-400">
+                                    <AlertCircle size={20} className="flex-shrink-0 mt-0.5" />
+                                    <span>{replyError}</span>
+                                </div>
+                            )}
+
+                            {/* Original Subject */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-400 mb-2">Subject</label>
+                                <p className="text-white bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm">
+                                    Re: {selectedContact.subject}
+                                </p>
+                            </div>
+
+                            {/* Reply Message */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-400 mb-2">Your Reply</label>
+                                <textarea
+                                    value={replyMessage}
+                                    onChange={(e) => setReplyMessage(e.target.value)}
+                                    placeholder="Type your reply message here..."
+                                    rows={6}
+                                    disabled={sendReplyMutation.isPending || replySuccess}
+                                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all text-sm resize-none disabled:opacity-50"
+                                />
+                                <p className="text-xs text-gray-500 mt-2">
+                                    Email will be sent to {selectedContact.email} with a professional template
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Footer */}
+                        <div className="p-6 border-t border-white/10 flex gap-3">
+                            <button
+                                onClick={() => setShowReplyModal(false)}
+                                disabled={sendReplyMutation.isPending}
+                                className="flex-1 px-4 py-2.5 bg-white/5 text-gray-300 font-medium rounded-xl hover:bg-white/10 transition-all disabled:opacity-50"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={() => sendReplyMutation.mutate({ id: selectedContact._id, message: replyMessage })}
+                                disabled={sendReplyMutation.isPending || !replyMessage.trim() || replySuccess}
+                                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium rounded-xl hover:shadow-lg hover:shadow-purple-500/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {sendReplyMutation.isPending ? (
+                                    <>
+                                        <Loader2 size={16} className="animate-spin" />
+                                        Sending...
+                                    </>
+                                ) : replySuccess ? (
+                                    <>
+                                        <CheckCircle size={16} />
+                                        Sent!
+                                    </>
+                                ) : (
+                                    <>
+                                        <Send size={16} />
+                                        Send Reply
+                                    </>
+                                )}
                             </button>
                         </div>
                     </div>
