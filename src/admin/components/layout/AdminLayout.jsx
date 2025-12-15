@@ -4,17 +4,22 @@
 
 import { useState, useEffect } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import {
     LayoutDashboard, Package, FolderTree, Settings,
     ArrowRightLeft, FileText, LogOut, Menu, X,
-    Search, ChevronDown, Activity, Bell, User
+    Search, ChevronDown, Activity, Bell, User, Users, Inbox, AlertTriangle
 } from 'lucide-react';
 import NotificationDropdown from './NotificationDropdown';
+import { settingsApi } from '../../services/adminApi';
 
 const menuItems = [
     { path: '/admin', icon: LayoutDashboard, label: 'Dashboard', exact: true },
     { path: '/admin/products', icon: Package, label: 'Products' },
     { path: '/admin/categories', icon: FolderTree, label: 'Categories' },
+    { path: '/admin/blogs', icon: FileText, label: 'Blog Posts' },
+    { path: '/admin/users', icon: Users, label: 'Users' },
+    { path: '/admin/contacts', icon: Inbox, label: 'Inquiries' },
     {
         label: 'SEO Management',
         icon: Search,
@@ -25,18 +30,53 @@ const menuItems = [
         ]
     },
     { path: '/admin/logs', icon: Activity, label: 'Activity Logs' },
+    {
+        label: 'Settings',
+        icon: Settings,
+        children: [
+            { path: '/admin/profile', label: 'My Profile' },
+            { path: '/admin/settings', label: 'System Settings' },
+        ]
+    },
 ];
 
 export default function AdminLayout() {
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [expandedMenus, setExpandedMenus] = useState(['SEO Management']);
+    const [adminUser, setAdminUser] = useState(null);
+    const [loggingOut, setLoggingOut] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
 
-    // Close mobile menu on route change
+    // Check maintenance mode status
+    const { data: settings } = useQuery({
+        queryKey: ['admin-settings-status'],
+        queryFn: () => settingsApi.getSettings().then(r => r.data.data),
+        staleTime: 30000 // Check every 30 seconds
+    });
+
+    // Load admin user from localStorage
+    useEffect(() => {
+        const storedUser = localStorage.getItem('adminUser');
+        if (storedUser) {
+            try {
+                setAdminUser(JSON.parse(storedUser));
+            } catch (e) {
+                console.error('Failed to parse admin user:', e);
+            }
+        }
+    }, []);
+
+    // Close mobile menu on route change and scroll to top
     useEffect(() => {
         setMobileMenuOpen(false);
+        // Scroll content area to top on route change
+        const contentArea = document.getElementById('admin-content-area');
+        if (contentArea) {
+            contentArea.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }, [location.pathname]);
 
     // Handle screen resize
@@ -65,8 +105,13 @@ export default function AdminLayout() {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem('adminToken');
-        navigate('/admin/login');
+        setLoggingOut(true);
+        // Animate out before actual logout
+        setTimeout(() => {
+            localStorage.removeItem('adminToken');
+            localStorage.removeItem('adminUser');
+            navigate('/admin/login');
+        }, 500);
     };
 
     const isActive = (path, exact = false) => {
@@ -162,8 +207,8 @@ export default function AdminLayout() {
                     </div>
                     {(sidebarOpen || mobileMenuOpen) && (
                         <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-white truncate">Administrator</p>
-                            <p className="text-xs text-gray-500 truncate">admin@hiloproot.com</p>
+                            <p className="text-sm font-medium text-white truncate">{adminUser?.name || 'Admin'}</p>
+                            <p className="text-xs text-gray-500 truncate">{adminUser?.email || ''}</p>
                         </div>
                     )}
                     {(sidebarOpen || mobileMenuOpen) && (
@@ -230,6 +275,17 @@ export default function AdminLayout() {
                     </div>
 
                     <div className="flex items-center gap-4">
+                        {/* Maintenance Mode Indicator */}
+                        {settings?.maintenanceMode && (
+                            <Link
+                                to="/admin/settings"
+                                className="hidden sm:flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-amber-400 bg-amber-500/10 border border-amber-500/30 rounded-full hover:bg-amber-500/20 animate-pulse transition-all"
+                            >
+                                <AlertTriangle size={12} />
+                                Maintenance Mode ON
+                            </Link>
+                        )}
+
                         <Link
                             to="/"
                             target="_blank"
@@ -245,7 +301,10 @@ export default function AdminLayout() {
                 </header>
 
                 {/* Page Content */}
-                <div className="flex-1 overflow-y-auto custom-scrollbar p-6 scroll-smooth">
+                <div
+                    id="admin-content-area"
+                    className={`flex-1 overflow-y-auto custom-scrollbar p-6 scroll-smooth transition-all duration-300 ${loggingOut ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}
+                >
                     <div className="max-w-7xl mx-auto animate-fade-in-up">
                         <Outlet />
                     </div>

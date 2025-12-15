@@ -95,6 +95,53 @@ export const notificationApi = {
     delete: (id) => adminApi.delete(`/notifications/${id}`),
 };
 
+// ============ BLOGS ============
+export const blogApi = {
+    getAll: (params) => adminApi.get('/blogs', { params }),
+    getOne: (id) => adminApi.get(`/blogs/${id}`),
+    create: (data) => adminApi.post('/blogs', data, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+    update: (id, data) => adminApi.put(`/blogs/${id}`, data, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+    togglePublish: (id) => adminApi.put(`/blogs/${id}/publish`),
+    delete: (id) => adminApi.delete(`/blogs/${id}`),
+    getCategories: () => adminApi.get('/blogs/categories'),
+};
+
+// ============ USERS ============
+export const userApi = {
+    getAll: (params) => adminApi.get('/users', { params }),
+    getStats: () => adminApi.get('/users/stats'),
+    getOne: (id) => adminApi.get(`/users/${id}`),
+    create: (data) => adminApi.post('/users', data),
+    update: (id, data) => adminApi.put(`/users/${id}`, data),
+    toggleStatus: (id) => adminApi.put(`/users/${id}/status`),
+    delete: (id) => adminApi.delete(`/users/${id}`),
+};
+
+// ============ CONTACTS ============
+export const contactApi = {
+    getAll: (params) => adminApi.get('/contacts', { params }),
+    getStats: () => adminApi.get('/contacts/stats'),
+    getOne: (id) => adminApi.get(`/contacts/${id}`),
+    updateStatus: (id, status) => adminApi.put(`/contacts/${id}/status`, { status }),
+    updateNotes: (id, adminNotes) => adminApi.put(`/contacts/${id}/notes`, { adminNotes }),
+    delete: (id) => adminApi.delete(`/contacts/${id}`),
+};
+
+// ============ SETTINGS & PROFILE ============
+export const settingsApi = {
+    // Profile
+    getProfile: () => adminApi.get('/profile'),
+    updateProfile: (data) => adminApi.put('/profile', data),
+    changePassword: (data) => adminApi.put('/profile/password', data),
+    // System Settings
+    getSettings: () => adminApi.get('/settings'),
+    updateSettings: (data) => adminApi.put('/settings', data),
+};
+
 // ============ AUTH ============
 export const authApi = {
     login: (credentials) => axios.post(`${API_BASE}/auth/login`, credentials),
@@ -102,3 +149,4 @@ export const authApi = {
 };
 
 export default adminApi;
+
