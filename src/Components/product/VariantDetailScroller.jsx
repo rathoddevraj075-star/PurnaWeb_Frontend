@@ -1,90 +1,273 @@
-import React, { useRef, useMemo, useEffect, useState } from 'react';
+import React, { useRef, useState, useEffect, Suspense, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { useScroll, useTransform, motion, AnimatePresence } from 'framer-motion';
-import { Environment, Float, Text, ContactShadows, Html } from '@react-three/drei';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+    Environment,
+    Float,
+    Text,
+    Image,
+    SpotLight,
+    Sparkles,
+    ScrollControls,
+    Scroll,
+    useScroll,
+    Stars,
+    AdaptiveDpr,
+    AdaptiveEvents
+} from '@react-three/drei';
+import { EffectComposer, Noise, Vignette, Bloom } from '@react-three/postprocessing';
 import * as THREE from 'three';
-import { ArrowLeft, ShoppingBag, Loader2 } from 'lucide-react';
-import Lenis from 'lenis';
+import { ArrowLeft, ArrowDown, MapPin, Maximize2, Share2, Circle } from 'lucide-react';
+import Lenis from 'lenis'; // Keeping Lenis if we need global smooth scroll, but ScrollControls handles the canvas
 import { productService, categoryService } from '../../services/api';
 
-// -- 3D Components --
+// --- CUSTOM FONTS & STYLE ---
+const FONT_URL = '/fonts/TT Firs Neue Trial Bold.ttf';
 
-const ProductModel = ({ index, activeIndex, product }) => {
-    const meshRef = useRef();
+// --- 3D COMPONENTS ---
+
+const CinematicTitle = ({ children, position, scale = 1, color = "white", opacity = 1 }) => {
+    return (
+        <Float speed={2} rotationIntensity={0.1} floatIntensity={0.2}>
+            <Text
+                font={FONT_URL}
+                position={position}
+                scale={scale}
+                color={color}
+                fontSize={1}
+                maxWidth={10}
+                lineHeight={1}
+                letterSpacing={-0.05}
+                anchorX="center"
+                anchorY="middle"
+                fillOpacity={opacity}
+            >
+                {children}
+            </Text>
+        </Float>
+    );
+};
+
+// The Collection Intro "Object" at Index 0
+const CollectionHeroObject = ({ categoryName, themeColor, isMobile }) => {
+    return (
+        <group position={[0, 0, 0]}>
+            <Float speed={1.5} rotationIntensity={0.6} floatIntensity={1}>
+                {/* Abstract Ring Structure */}
+                <mesh rotation={[Math.PI / 3, 0, 0]} scale={isMobile ? 1.5 : 2.5}>
+                    <torusGeometry args={[3, 0.05, 16, 100]} />
+                    <meshStandardMaterial color={themeColor} emissive={themeColor} emissiveIntensity={2} />
+                </mesh>
+                <mesh rotation={[-Math.PI / 3, 0, 0]} scale={isMobile ? 1.2 : 2}>
+                    <torusGeometry args={[2.5, 0.03, 16, 100]} />
+                    <meshStandardMaterial color="white" emissive="white" emissiveIntensity={1} />
+                </mesh>
+            </Float>
+
+            <CinematicTitle position={[0, 0.5, 0]} scale={isMobile ? 0.8 : 1.5} color="white">
+                {categoryName || "COLLECTION"}
+            </CinematicTitle>
+            <Text
+                font={FONT_URL}
+                position={[0, -1, 0]}
+                fontSize={0.2}
+                letterSpacing={0.2}
+                color="white"
+                fillOpacity={0.6}
+            >
+                SCROLL TO EXPLORE
+            </Text>
+        </group>
+    )
+}
+
+const FloatingGalleryItem = ({ product, index, totalItems, isMobile }) => {
     const groupRef = useRef();
 
-    // Animate based on active state
+    // Index 0 is the Hero, so products start at index 1 conceptually for position
+    // But in the map loop, 'index' is 0..N of products. 
+    // Let's bias position by 1 unit of spacing to make room for Hero.
+
+    const virtualIndex = index + 1; // 1, 2, 3...
+    const zPos = -virtualIndex * (isMobile ? 15 : 20);
+    const isOdd = virtualIndex % 2 !== 0;
+
+    const xBase = isMobile ? 0 : (isOdd ? 4 : -4);
+
     useFrame((state, delta) => {
-        if (!groupRef.current) return;
-
-        const isActive = index === activeIndex;
-        const targetScale = isActive ? 1.2 : 0.8;
-        const targetOpacity = isActive ? 1 : 0.3;
-        const targetZ = isActive ? 0 : -2;
-
-        // Smooth lerp
-        groupRef.current.position.z = THREE.MathUtils.lerp(groupRef.current.position.z, targetZ, 4 * delta);
-        groupRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 4 * delta);
-
-        // Rotate constantly
-        meshRef.current.rotation.y += delta * 0.5;
+        if (groupRef.current) {
+            groupRef.current.rotation.y = THREE.MathUtils.lerp(
+                groupRef.current.rotation.y,
+                (state.mouse.x * 0.1) + (isOdd ? -0.1 : 0.1),
+                delta
+            );
+        }
     });
 
     return (
-        <group ref={groupRef} position={[0, 0, -index * 5]}>
-            <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
-                <mesh ref={meshRef}>
-                    <boxGeometry args={[2, 3, 0.2]} />
-                    <meshStandardMaterial
-                        color={product.themeColor || "#ff0000"}
-                        roughness={0.3}
-                        metalness={0.1}
-                    />
-
-                    <Text
-                        position={[0, 0, 0.11]}
-                        fontSize={0.2}
-                        color="white"
-                        maxWidth={1.8}
-                        textAlign="center"
-                        anchorX="center"
-                        anchorY="middle"
-                    >
-                        {product.name}
-                    </Text>
-                </mesh>
+        <group ref={groupRef} position={[xBase, 0, zPos]}>
+            <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
+                <Image
+                    url={product.images?.[0]?.url || product.images?.[0] || 'https://via.placeholder.com/600x800'}
+                    scale={isMobile ? [3, 4, 1] : [4, 5, 1]}
+                    transparent
+                    opacity={0.9}
+                    radius={0.2}
+                />
             </Float>
-            <ContactShadows position={[0, -2, 0]} opacity={0.5} scale={10} blur={2.5} far={4} />
+
+            <group position={[isMobile ? 0 : (isOdd ? -3.5 : 3.5), isMobile ? -2.5 : 0, 0.5]}>
+                <CinematicTitle scale={isMobile ? 0.4 : 0.5} color={product.themeColor || "#E65800"}>
+                    {product.name}
+                </CinematicTitle>
+                <Text
+                    position={[0, -0.6, 0]}
+                    fontSize={0.2}
+                    color="white"
+                    anchorX="center"
+                    anchorY="top"
+                    maxWidth={isMobile ? 3 : 4}
+                    fillOpacity={0.7}
+                >
+                    {product.shortDescription}
+                </Text>
+            </group>
         </group>
     );
 };
 
-const Scene = ({ products, activeIndex }) => {
+const CameraRig = ({ pageCount, isMobile }) => {
+    const scroll = useScroll();
+    const { camera } = useThree();
+
+    useFrame((state, delta) => {
+        // Scroll 0..1
+        // Total distance includes Hero space + all products
+        // Hero is at 0. Products start at -20. Last product at -(count * 20).
+
+        const scrollOffset = scroll.offset;
+        const totalDistance = (pageCount) * (isMobile ? 15 : 20) + 5;
+
+        const targetZ = 10 - (scrollOffset * totalDistance);
+
+        const parallaxX = state.mouse.x * 2;
+        const parallaxY = state.mouse.y * 2;
+
+        camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetZ, 3 * delta);
+        camera.position.x = THREE.MathUtils.lerp(camera.position.x, parallaxX, 1 * delta);
+        camera.position.y = THREE.MathUtils.lerp(camera.position.y, parallaxY, 1 * delta);
+
+        camera.lookAt(0, 0, targetZ - 20);
+    });
+
+    return null;
+};
+
+
+const Scene = ({ products, categoryName, activeIndex }) => {
+    const { viewport } = useThree();
+    const isMobile = viewport.width < 5;
+
+    // Total Items = 1 Hero + N Products
+    const items = [{ type: 'hero' }, ...products];
+
     return (
         <>
-            <ambientLight intensity={0.5} />
-            <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
-            <Environment preset="city" />
+            <color attach="background" args={['#050505']} />
+            <Environment preset="night" />
+            <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
 
-            <group position={[0, -0.5, 0]}>
-                {products.map((product, i) => (
-                    (Math.abs(activeIndex - i) <= 2) && (
-                        <ProductModel
-                            key={product._id || product.slug}
-                            index={i}
-                            activeIndex={activeIndex}
-                            product={product}
-                        />
-                    )
-                ))}
-            </group>
+            <ambientLight intensity={0.2} />
+            <SpotLight position={[10, 10, 10]} intensity={1} angle={0.2} penumbra={1} color="#E65800" castShadow />
+
+            {/* Index 0: Category Hero */}
+            <CollectionHeroObject categoryName={categoryName} themeColor="#E65800" isMobile={isMobile} />
+
+            {/* Index 1..N: Products */}
+            {products.map((product, i) => (
+                <FloatingGalleryItem
+                    key={product._id || i}
+                    product={product}
+                    index={i} // 0-based for products array, but logic inside component shifts it to virtual index
+                    totalItems={items.length}
+                    isMobile={isMobile}
+                />
+            ))}
+
+            <Sparkles count={200} scale={[20, 20, 100]} size={4} speed={0.4} opacity={0.5} />
+
+            <EffectComposer disableNormalPass multisampling={0}>
+                <Bloom luminanceThreshold={0} mipmapBlur intensity={0.4} radius={0.6} />
+                <Noise opacity={0.06} />
+                <Vignette eskil={false} offset={0.1} darkness={0.5} />
+            </EffectComposer>
+
+            <CameraRig pageCount={items.length} isMobile={isMobile} />
         </>
     );
 };
 
+// --- DOM OVERLAY ---
+const CollectionOverlay = ({ products, activeIndex, pageCount, categoryName }) => {
 
-// -- Main Component --
+    // Determine context based on scroll index
+    // activeIndex 0 = Hero
+    // activeIndex 1 = 1st Product
+
+    const virtualIndex = activeIndex;
+    const isHero = virtualIndex === 0;
+    const currentProduct = (!isHero && virtualIndex <= products.length) ? products[virtualIndex - 1] : null;
+
+    return (
+        <div className="absolute inset-0 pointer-events-none">
+
+            {/* Progress Bar */}
+            <div className="fixed top-0 left-0 w-full h-1 bg-white/10 z-50">
+                <motion.div
+                    className="h-full bg-[#E65800]"
+                    style={{ width: `${(activeIndex / pageCount) * 100}%` }}
+                />
+            </div>
+
+            {/* Footer Context */}
+            <AnimatePresence mode="wait">
+                {!isHero && currentProduct && (
+                    <motion.div
+                        initial={{ y: 100, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: 100, opacity: 0 }}
+                        transition={{ duration: 0.5 }}
+                        className="fixed bottom-0 left-0 w-full p-6 md:p-12 flex justify-between items-end bg-gradient-to-t from-black/90 via-black/50 to-transparent pointer-events-auto"
+                        key={currentProduct._id}
+                    >
+                        <div className="text-white">
+                            <div className="text-[#E65800] text-xs font-bold tracking-widest uppercase mb-1">
+                                Product {virtualIndex} / {products.length}
+                            </div>
+                            <h2 className="text-3xl md:text-5xl font-black font-mono leading-none mb-2">
+                                {currentProduct.name}
+                            </h2>
+                            <div className="flex gap-2 text-xs md:text-sm text-white/60 uppercase tracking-wider">
+                                <span>{currentProduct.category?.name || categoryName}</span>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <button
+                                onClick={() => window.location.href = `/products/${currentProduct.slug}`}
+                                className="bg-white text-black px-8 py-4 text-xs font-bold uppercase tracking-widest hover:bg-[#E65800] hover:text-white transition-colors rounded-none"
+                            >
+                                Explore Product
+                            </button>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+        </div>
+    );
+};
 
 
 const VariantDetailScroller = () => {
@@ -93,196 +276,95 @@ const VariantDetailScroller = () => {
 
     const [categoryProducts, setCategoryProducts] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [activeIndex, setActiveIndex] = useState(0);
 
-    // Init Lenis
-    useEffect(() => {
-        const lenis = new Lenis({
-            duration: 1.2,
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            orientation: 'vertical',
-            gestureOrientation: 'vertical',
-            smoothWheel: true,
-        });
-
-        function raf(time) {
-            lenis.raf(time);
-            requestAnimationFrame(raf);
-        }
-        requestAnimationFrame(raf);
-
-        return () => lenis.destroy();
-    }, []);
-
-    // Fetch products by category
+    // Fetch Products
     useEffect(() => {
         const fetchProducts = async () => {
             setLoading(true);
-            setError(null);
             try {
-                // First get categories to find the category ID
+                // Find Category ID
                 const categoriesResponse = await categoryService.getCategories();
                 const categoryData = categoriesResponse.data.find(
                     c => c.slug === category || c.name.toLowerCase().replace(/\s+/g, '-') === category
                 );
 
-                if (!categoryData) {
-                    setError('Category not found');
-                    setLoading(false);
-                    return;
+                if (categoryData) {
+                    const productsResponse = await productService.getProducts({ category: categoryData._id });
+                    setCategoryProducts(productsResponse.data || []);
                 }
-
-                // Then fetch products for this category
-                const productsResponse = await productService.getProducts({ category: categoryData._id });
-                setCategoryProducts(productsResponse.data || []);
             } catch (err) {
                 console.error('Error fetching products:', err);
-                setError(err.message || 'Failed to load products');
             } finally {
                 setLoading(false);
             }
         };
-
-        if (category) {
-            fetchProducts();
-        }
+        if (category) fetchProducts();
     }, [category]);
 
-    // Get category display name
-    const categoryName = useMemo(() => {
-        if (!category) return "";
-        return category
-            .split('-')
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(' ');
+    // Category Name Formatter
+    const categoryDisplayName = useMemo(() => {
+        if (!category) return "Collection";
+        return category.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
     }, [category]);
 
-    // Scroll Logic
-    useEffect(() => {
-        const handleScroll = () => {
-            const viewportHeight = window.innerHeight;
-            const scrollY = window.scrollY;
-            const center = scrollY + (viewportHeight / 2);
-            const index = Math.floor(center / viewportHeight);
-            const clampedIndex = Math.max(0, Math.min(index, categoryProducts.length - 1));
-            setActiveIndex(clampedIndex);
-        };
 
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, [categoryProducts.length]);
+    // Total Scrollable Pages = Hero (1) + Products (N)
+    const pageCount = 1 + categoryProducts.length;
 
-    // Loading state
     if (loading) {
-        return (
-            <div className="flex items-center justify-center min-h-screen bg-neutral-50">
-                <div className="flex flex-col items-center gap-4">
-                    <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
-                    <span className="text-neutral-500 text-sm uppercase tracking-widest">Loading {categoryName}...</span>
-                </div>
-            </div>
-        );
-    }
-
-    // Error state
-    if (error || !categoryProducts.length) {
-        return (
-            <div className="flex items-center justify-center min-h-screen bg-neutral-50">
-                <div className="text-center">
-                    <h1 className="text-2xl font-bold mb-2">No Products Found</h1>
-                    <p className="text-neutral-500 mb-6">Could not find products for "{categoryName}"</p>
-                    <button onClick={() => navigate('/products')} className="bg-black text-white px-6 py-3 rounded-full">
-                        Browse All Products
-                    </button>
-                </div>
-            </div>
-        );
+        return <div className="h-screen w-full bg-[#050505] flex items-center justify-center text-white/50 animate-pulse">LOADING COLLECTION...</div>;
     }
 
     return (
-        <div className="bg-neutral-50 min-h-screen relative">
+        <div className="h-screen w-full bg-[#050505] relative overflow-hidden selection:bg-[#E65800] selection:text-white">
 
-
-            <button
-                onClick={() => navigate(-1)}
-                className="fixed top-6 left-6 z-50 flex items-center gap-2 bg-white/80 backdrop-blur-md px-4 py-2 rounded-full shadow-sm hover:bg-white transition-all text-sm uppercase tracking-wider cursor-pointer"
-            >
-                <ArrowLeft size={16} /> Back
-            </button>
-
-            {/* Fixed 3D Canvas Background/Right Panel */}
-            <div className="fixed top-0 left-0 w-full h-full z-0 lg:left-[50%] lg:w-[50%] bg-neutral-200">
-                <Canvas shadows camera={{ position: [0, 0, 5], fov: 45 }} style={{ width: '100%', height: '100%' }}>
-                    <Scene products={categoryProducts} activeIndex={activeIndex} />
-                </Canvas>
-
-                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-neutral-500 text-xs font-mono uppercase tracking-widest pointer-events-none">
-                    Scroll to Explore
+            {/* Header */}
+            <div className="fixed top-0 left-0 w-full z-50 p-6 flex justify-between items-center text-white mix-blend-difference pointer-events-none">
+                <button onClick={() => navigate(-1)} className="pointer-events-auto flex items-center gap-2 hover:text-[#E65800] transition-colors"><ArrowLeft size={20} /></button>
+                <div className="flex gap-4 pointer-events-auto">
+                    {/* Reuse Header Buttons if needed */}
                 </div>
             </div>
 
-            {/* Scrollable Content */}
-            <div className="relative z-10 lg:w-[50%]">
-                {categoryProducts.map((product, i) => (
-                    <div
-                        key={product._id || product.slug}
-                        className="h-screen flex items-end pb-24 lg:pb-0 lg:items-center p-6 sm:p-12 lg:p-20 relative pointer-events-none"
-                    >
-                        <motion.div
-                            initial={{ opacity: 0, y: 50 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ margin: "-20%" }}
-                            transition={{ duration: 0.8 }}
-                            className={`pointer-events-auto bg-white/90 backdrop-blur-xl p-8 md:p-12 rounded-[2rem] shadow-2xl border border-white/50 w-full max-w-xl mx-auto
-                                ${activeIndex === i ? 'opacity-100 scale-100' : 'opacity-50 scale-95 blur-[2px]'}
-                                transition-all duration-700
-                            `}
-                        >
-                            <span className="text-xs text-neutral-400 uppercase tracking-[0.2em] mb-4 block">
-                                {product.category?.name || categoryName} — {i + 1}/{categoryProducts.length}
-                            </span>
-                            <h2 className="text-4xl md:text-5xl font-black mb-4 leading-tight">{product.name}</h2>
-                            <p className="text-lg text-neutral-600 mb-8 leading-relaxed max-w-md">
-                                {product.shortDescription || product.description}
-                            </p>
+            <Canvas shadows dpr={[1, 1.5]} gl={{ antialias: false, powerPreference: "high-performance" }} camera={{ position: [0, 0, 10], fov: 50 }}>
+                <Suspense fallback={null}>
+                    <AdaptiveDpr pixelated />
+                    <AdaptiveEvents />
 
-                            <div className="space-y-6">
-                                <div className="flex flex-wrap gap-2">
-                                    {(product.tags || []).map(tag => (
-                                        <span key={tag} className="px-3 py-1 bg-neutral-100 rounded-full text-xs text-neutral-500 uppercase">
-                                            {tag}
-                                        </span>
-                                    ))}
-                                </div>
+                    <ScrollControls pages={pageCount} damping={0.3} style={{ scrollbarWidth: 'none' }}>
 
-                                <div className="h-px bg-neutral-100 w-full" />
+                        <ScrollTracker setActiveIndex={setActiveIndex} pageCount={pageCount} />
 
-                                <div className="flex items-center justify-between">
-                                    <button
-                                        onClick={() => navigate(`/products/${product.slug}`)}
-                                        className="flex items-center gap-2 bg-black text-white px-8 py-4 rounded-full uppercase tracking-wider hover:bg-neutral-800 transition-all hover:scale-105 active:scale-95 cursor-pointer"
-                                    >
-                                        View Details
-                                    </button>
-                                </div>
-                            </div>
-                        </motion.div>
-                    </div>
-                ))}
-            </div>
+                        <Scene
+                            products={categoryProducts}
+                            categoryName={categoryDisplayName}
+                            activeIndex={activeIndex}
+                        />
 
-            {/* Progress indicators - Desktop Only */}
-            <div className="fixed right-8 top-1/2 -translate-y-1/2 flex flex-col gap-4 z-20 hidden lg:flex">
-                {categoryProducts.map((_, i) => (
-                    <div
-                        key={i}
-                        className={`w-2 h-2 rounded-full transition-all duration-300 ${activeIndex === i ? 'bg-black h-8' : 'bg-neutral-300'}`}
-                    />
-                ))}
-            </div>
+                    </ScrollControls>
+                </Suspense>
+            </Canvas>
+
+            <CollectionOverlay
+                products={categoryProducts}
+                categoryName={categoryDisplayName}
+                activeIndex={activeIndex}
+                pageCount={pageCount}
+            />
+
         </div>
     );
+};
+
+// Tracks approximate "Page Index" based on scroll measure
+const ScrollTracker = ({ setActiveIndex, pageCount }) => {
+    const scroll = useScroll();
+    useFrame(() => {
+        const offset = scroll.offset * (pageCount); // 0 to N
+        setActiveIndex(Math.round(offset));
+    });
+    return null;
 };
 
 export default VariantDetailScroller;

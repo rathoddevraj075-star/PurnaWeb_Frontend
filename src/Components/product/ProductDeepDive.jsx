@@ -1,403 +1,326 @@
-import React, { useRef, useMemo, useState, useEffect, Suspense } from 'react';
+import React, { useRef, useState, useEffect, Suspense, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Canvas, useFrame, useThree, useLoader } from '@react-three/fiber';
-import { motion } from 'framer-motion';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
     Environment,
     Float,
     Text,
-    ContactShadows,
-    PerspectiveCamera,
-    Sparkles,
+    Image,
+    SpotLight,
     ScrollControls,
-    Scroll,
     useScroll,
+    Stars,
+    AdaptiveDpr,
+    Sparkles,
     Html
 } from '@react-three/drei';
-import { EffectComposer, Bloom } from '@react-three/postprocessing';
+import { EffectComposer, Noise, Vignette, Bloom } from '@react-three/postprocessing';
 import * as THREE from 'three';
-import { ArrowLeft, Droplets, Sun, Sparkles as SparklesIcon, Leaf, Star, ChevronDown, MapPin, Loader2 } from 'lucide-react';
-import StoreLocator from '../store/StoreLocator';
+import { ArrowLeft, ShoppingBag, Maximize2, Share2, MapPin, ChevronDown } from 'lucide-react';
 import { productService } from '../../services/api';
+import StoreLocator from '../store/StoreLocator';
 
-// --- Floating Particles Component ---
-const FloatingParticles = ({ color, count = 100 }) => {
-    const particles = useRef();
+// --- FONTS ---
+const FONT_URL = '/fonts/TT Firs Neue Trial Bold.ttf';
 
-    const positions = useMemo(() => {
-        const pos = new Float32Array(count * 3);
-        const spread = 20;
-        for (let i = 0; i < count; i++) {
-            pos[i * 3] = (Math.random() - 0.5) * spread;
-            pos[i * 3 + 1] = (Math.random() - 0.5) * spread;
-            pos[i * 3 + 2] = (Math.random() - 0.5) * spread;
+// --- 3D ASSETS ---
+
+// --- ERROR BOUNDARY ---
+class ErrorBoundary extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { hasError: false };
+    }
+
+    static getDerivedStateFromError(error) {
+        return { hasError: true };
+    }
+
+    componentDidCatch(error, errorInfo) {
+        console.error("3D Scene Error:", error, errorInfo);
+    }
+
+    render() {
+        if (this.state.hasError) {
+            return <div className="text-white/50 text-xs p-4 border border-white/10 rounded">3D View Unavailable</div>;
         }
-        return pos;
-    }, [count]);
+
+        return this.props.children;
+    }
+}
+
+const IngredientParticle = ({ index, color }) => {
+    const ref = useRef();
+    // Random initial positions
+    const [pos] = useState(() => [
+        (Math.random() - 0.5) * 10,
+        -10 - Math.random() * 10, // Start below viewport
+        (Math.random() - 0.5) * 5
+    ]);
 
     useFrame((state) => {
-        if (particles.current) {
-            particles.current.rotation.y = state.clock.elapsedTime * 0.02;
-            particles.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.01) * 0.1;
-        }
+        if (!ref.current) return;
+        // Float UP continuously - SLOWER SPEED
+        const t = state.clock.elapsedTime;
+        ref.current.position.y = pos[1] + ((t * (0.1 + Math.random() * 0.1)) % 25); // Significantly slower
+        ref.current.rotation.x += 0.005;
+        ref.current.rotation.y += 0.01;
     });
 
     return (
-        <points ref={particles}>
-            <bufferGeometry>
-                <bufferAttribute
-                    attach="attributes-position"
-                    count={positions.length / 3}
-                    array={positions}
-                    itemSize={3}
-                />
-            </bufferGeometry>
-            <pointsMaterial
-                size={0.08}
-                color={color}
-                transparent
-                opacity={0.5}
-                sizeAttenuation
-            />
-        </points>
+        <mesh ref={ref} position={pos} scale={0.1 + Math.random() * 0.1}>
+            <dodecahedronGeometry args={[1, 0]} />
+            <meshStandardMaterial color={color} emissive={color} emissiveIntensity={1} />
+        </mesh>
     );
-};
+}
 
-// --- Premium Product Model Controlled by Scroll ---
-const ScrollProductModel = ({ product }) => {
-    const meshRef = useRef();
-    const groupRef = useRef();
+// The Scroll-Driven Director
+const SpotlightScene = ({ product, setUiState }) => {
     const scroll = useScroll();
-    const { viewport } = useThree();
-    const isMobile = viewport.width < 5;
+    const { camera, viewport, size } = useThree();
 
-    // Load Product Texture
-    const imageUrl = product.images?.[0]?.url || product.images?.[0] || 'https://via.placeholder.com/300';
-    const texture = useLoader(THREE.TextureLoader, imageUrl);
-    texture.colorSpace = THREE.SRGBColorSpace;
+    // More robust mobile check: checks viewport width AND actual screen width
+    const isMobile = viewport.width < 5 || size.width < 768;
+
+    // Refs for lights to animate intensities
+    const rimLightRef = useRef();
+    const fillLightRef = useRef();
+    const studioLightRef = useRef();
+
+    const themeColor = product.themeColor || "#E65800";
 
     useFrame((state, delta) => {
-        if (!groupRef.current) return;
+        const offset = scroll.offset; // 0 to 1
 
-        // Base Rotation (constantly rotating slightly)
-        const time = state.clock.elapsedTime;
-        const baseRotY = Math.sin(time * 0.3) * 0.1;
-
-        // Interpolate Position
-        let targetX = 0;
-        let targetY = 0;
-        let targetZ = 0;
-        let rotX = 0;
-        let rotY = baseRotY;
-        let rotZ = 0;
-
-        if (isMobile) {
-            // Mobile Choreography
-            const off = scroll.offset;
-
-            if (off < 0.33) {
-                // Hero -> Benefit
-                targetY = THREE.MathUtils.lerp(0, 1.5, off * 3);
-                targetZ = THREE.MathUtils.lerp(0, -1, off * 3);
-            } else if (off < 0.66) {
-                // Benefit -> Ing
-                targetY = 1.5;
-                targetZ = -1;
-                rotY += off * Math.PI * 0.5;
-            } else {
-                // Ing -> Usage
-                targetY = THREE.MathUtils.lerp(1.5, 0, (off - 0.66) * 3);
-                targetZ = THREE.MathUtils.lerp(-1, 0, (off - 0.66) * 3);
-            }
-
-        } else {
-            // Desktop Choreography
-            if (scroll.offset < 0.33) {
-                targetX = THREE.MathUtils.lerp(0, 3.5, scroll.range(0, 1 / 3));
-                rotY += scroll.range(0, 1 / 3) * 0.5;
-                rotZ = scroll.range(0, 1 / 3) * 0.1;
-            } else if (scroll.offset < 0.66) {
-                targetX = THREE.MathUtils.lerp(3.5, -3.5, scroll.range(1 / 3, 1 / 3));
-                rotY += 0.5 + scroll.range(1 / 3, 1 / 3) * -0.5;
-                rotZ = 0.1 - scroll.range(1 / 3, 1 / 3) * 0.2;
-            } else {
-                targetX = THREE.MathUtils.lerp(-3.5, 0, scroll.range(2 / 3, 1 / 3));
-                rotY += scroll.range(2 / 3, 1 / 3) * 0.5;
-                rotZ = -0.1 + scroll.range(2 / 3, 1 / 3) * 0.1;
-            }
+        // -- LIGHTING LOGIC --
+        if (rimLightRef.current) {
+            rimLightRef.current.intensity = THREE.MathUtils.lerp(15, 2, offset);
         }
 
-        groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, targetX, 0.1);
-        groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, targetY, 0.1);
-        groupRef.current.position.z = THREE.MathUtils.lerp(groupRef.current.position.z, targetZ, 0.1);
+        if (fillLightRef.current) {
+            const targetFill = offset > 0.15 ? 3 : 0;
+            fillLightRef.current.intensity = THREE.MathUtils.lerp(fillLightRef.current.intensity, targetFill, 2 * delta);
+        }
 
-        groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, rotX, 0.1);
-        groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, rotY, 0.1);
-        groupRef.current.rotation.z = THREE.MathUtils.lerp(groupRef.current.rotation.z, rotZ, 0.1);
+        if (studioLightRef.current) {
+            const targetStudio = offset > 0.8 ? 2 : 0;
+            studioLightRef.current.intensity = THREE.MathUtils.lerp(studioLightRef.current.intensity, targetStudio, 2 * delta);
+        }
+
+        // -- CAMERA LOGIC --
+        // Adjusted for mobile to be further back so the product fits
+        const baseZ = isMobile ? 14 : 9;
+
+        // p1: Low angle, looking up
+        const p1_pos = new THREE.Vector3(0, -3, baseZ - 3);
+
+        // p2: Center level
+        const p2_pos = new THREE.Vector3(0, 0, baseZ);
+
+        // p4: Standard shot
+        const p4_pos = new THREE.Vector3(0, 0, baseZ + (isMobile ? 2 : 0)); // Pull back more on mobile end state
+
+        // Lerping position based on simple curves
+        if (offset < 0.5) {
+            // Lerp P1 -> P2
+            const t = offset * 2; // 0..1
+            camera.position.lerpVectors(p1_pos, p2_pos, t);
+        } else {
+            // Lerp P2 -> P4
+            const t = (offset - 0.5) * 2; // 0..1
+            camera.position.lerpVectors(p2_pos, p4_pos, t);
+        }
+
+        // Always look at center (simplification for smoothness)
+        camera.lookAt(0, 0, 0);
+
+        // -- UI STATE UPDATES --
+        if (offset < 0.2) setUiState('reveal');
+        else if (offset < 0.5) setUiState('ingredients');
+        else if (offset < 0.85) setUiState('benefit');
+        else setUiState('offer');
+
     });
-
-    return (
-        <group ref={groupRef}>
-            <Float speed={2} rotationIntensity={0.2} floatIntensity={0.5} floatingRange={[-0.1, 0.1]}>
-
-                {/* Product Card / Bottle Representation */}
-                <mesh ref={meshRef} castShadow receiveShadow>
-                    {/* Rounded Box Geometry for a modern "bottle/packaging" look */}
-                    <boxGeometry args={[2, 2.5, 0.5]} />
-                    <meshPhysicalMaterial
-                        color={product.themeColor || '#000000'}
-                        metalness={0.1}
-                        roughness={0.2}
-                        transmission={0.0} // Solid but shiny
-                        clearcoat={1}
-                        clearcoatRoughness={0.1}
-                    />
-                </mesh>
-
-                {/* Texture Mapping Plane - Slightly in front */}
-                <mesh position={[0, 0, 0.26]}>
-                    <planeGeometry args={[1.8, 2.3]} />
-                    <meshBasicMaterial
-                        map={texture}
-                        transparent
-                        opacity={1}
-                    />
-                </mesh>
-
-                {/* Glass Casing / Shine Effect */}
-                <mesh position={[0, 0, 0]} castShadow>
-                    <boxGeometry args={[2.05, 2.55, 0.55]} />
-                    <meshPhysicalMaterial
-                        color="white"
-                        transmission={0.6}
-                        thickness={0.5}
-                        roughness={0.1}
-                        ior={1.5}
-                        clearcoat={1}
-                        transparent
-                        opacity={0.3}
-                    />
-                </mesh>
-
-            </Float>
-            <ContactShadows position={[0, -2, 0]} opacity={0.7} scale={10} blur={2.5} far={4} />
-        </group>
-    );
-};
-
-
-// --- Immersive Scene (Enhanced) ---
-const Scene = ({ product }) => {
-    const categoryName = product.category?.name || 'PRODUCT';
 
     return (
         <>
-            <PerspectiveCamera makeDefault position={[0, 0, 9]} fov={45} />
+            <color attach="background" args={['#050505']} />
+            <ambientLight intensity={0.1} />
 
-            {/* ENHANCED LIGHTING */}
-            <ambientLight intensity={0.8} />
-            <spotLight
-                position={[10, 10, 10]}
+            {/* RIM LIGHT (Back) */}
+            <SpotLight
+                ref={rimLightRef}
+                position={[0, 5, -5]}
                 angle={0.6}
                 penumbra={1}
-                intensity={2.5}
+                color={themeColor}
+                distance={30}
+            />
+
+            {/* FILL LIGHT (Front-Left) */}
+            <SpotLight
+                ref={fillLightRef}
+                position={[-5, 2, 8]}
+                angle={0.6}
+                penumbra={1}
+                color="#ffffff"
+            />
+
+            {/* STUDIO LIGHT (Top-Right) */}
+            <SpotLight
+                ref={studioLightRef}
+                position={[5, 5, 8]}
+                angle={0.4}
+                penumbra={0.5}
+                color="#ffffff"
                 castShadow
-                shadow-mapSize={[2048, 2048]}
-            />
-            <pointLight position={[-10, -5, -10]} intensity={1.5} color={product.themeColor || '#000000'} />
-            <Environment preset="studio" />
-
-            {/* ENHANCED PARTICLES */}
-            <FloatingParticles color={product.themeColor || '#000000'} count={30} />
-
-            <Sparkles
-                count={30}
-                scale={15}
-                size={6}
-                speed={0.5}
-                opacity={0.8}
-                color={product.themeColor || '#000000'}
             />
 
-            {/* BACKGROUND BLOB FOR DEPTH */}
-            <Float speed={1} rotationIntensity={0.2} floatIntensity={0.2} position={[0, 0, -6]}>
-                <mesh scale={9}>
-                    <sphereGeometry args={[1, 24, 24]} />
-                    <meshBasicMaterial
-                        color={product.themeColor || '#000000'}
+            {/* The Hero Product */}
+            <group>
+                <Float speed={2} rotationIntensity={0.2} floatIntensity={0.5}>
+                    <Image
+                        url={product.images?.[0]?.url || product.images?.[0] || 'https://via.placeholder.com/600x800'}
+                        scale={isMobile ? [4, 5, 1] : [5, 6.5, 1]} // Scale up slightly
                         transparent
-                        opacity={0.06}
-                        depthWrite={false}
+                        opacity={1}
+                        radius={0.1}
                     />
-                </mesh>
-            </Float>
+                    {/* Backing for rim light catch */}
+                    <mesh position={[0, 0, -0.05]} scale={isMobile ? [4.1, 5.1, 1] : [5.1, 6.6, 1]}>
+                        <planeGeometry />
+                        <meshStandardMaterial color="#111" roughness={0.4} metalness={0.9} />
+                    </mesh>
+                </Float>
+            </group>
 
-            {/* Background Typography - Giant Watermark */}
-            <Text
-                position={[0, 0, -4]}
-                fontSize={3}
-                color={product.themeColor || '#000000'}
-                fillOpacity={0.05}
-                font="/fonts/TT Firs Neue Trial Bold.ttf"
-                anchorX="center"
-                anchorY="middle"
-            >
-                {categoryName.toUpperCase()}
-            </Text>
+            {/* Particle Eruption */}
+            <group>
+                {Array.from({ length: 40 }).map((_, i) => (
+                    <IngredientParticle key={i} index={i} color={themeColor} />
+                ))}
+            </group>
 
-            <ScrollProductModel product={product} />
-
-            <EffectComposer>
-                <Bloom luminanceThreshold={0.85} mipmapBlur intensity={0.6} radius={0.6} />
+            <EffectComposer disableNormalPass multisampling={0}>
+                <Bloom luminanceThreshold={0.5} mipmapBlur intensity={0.8} radius={0.4} />
+                <Noise opacity={0.05} />
+                <Vignette eskil={false} offset={0.1} darkness={0.6} />
             </EffectComposer>
         </>
     );
-};
+}
 
-// --- DOM Content Component (Inside Scroll html) ---
-const DomContent = ({ product, onFindStores }) => {
-    const categoryName = product.category?.name || 'Product';
+// --- DOM OVERLAY ---
+const ScrollOverlay = ({ uiState, product, scroll }) => {
+
+    const variants = {
+        hidden: { opacity: 0, y: 30, scale: 0.95 },
+        visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.8, ease: "easeOut" } }
+    };
+
+    // Safely get benefits - prefer summary, fall back to array
+    const benefitsText = product.benefitsSummary ||
+        (Array.isArray(product.benefits) ? product.benefits.map(b => b.title).join(' ') : '') ||
+        "PURE POWER";
+    const benefitWords = benefitsText.split(' ');
+    const benefit1 = benefitWords[0] || "PURE";
+    const benefit2 = benefitWords.slice(1).join(' ') || "POWER";
+
+    // Safely get ingredients - prefer summary, fall back to array
+    const ingredientsText = product.ingredientsSummary ||
+        (Array.isArray(product.ingredients) ? product.ingredients.map(i => i.name).join(', ') : '') ||
+        "A potent blend of organic botanicals selected for maximum efficacy.";
 
     return (
-        <div className="w-full">
-            {/* HERO SECTION - Page 1 */}
-            <section className="h-screen w-full flex flex-col items-center justify-center p-6 pointer-events-none">
-                <div className="text-center max-w-4xl mx-auto pointer-events-auto">
-                    <span
-                        className="inline-block py-2 px-6 rounded-full text-xs uppercase tracking-[0.25em] mb-6 backdrop-blur-md border border-black/5 shadow-sm"
-                        style={{ background: `${product.themeColor}15`, color: product.themeColor, fontWeight: 700 }}
+        <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-center p-6 text-center z-10">
+
+            {/* PHASE 1: REVEAL */}
+            <AnimatePresence>
+                {uiState === 'reveal' && (
+                    <motion.div
+                        initial="hidden" animate="visible" exit="hidden" variants={variants}
+                        className="absolute bottom-24 md:bottom-20 w-full"
                     >
-                        {categoryName}
-                    </span>
-                    <h1 className="text-6xl md:text-8xl font-black mb-6 tracking-tighter text-neutral-900 leading-none drop-shadow-sm">
-                        {product.name}
-                    </h1>
-                    <p className="text-lg md:text-2xl text-neutral-600 max-w-2xl mx-auto font-light leading-relaxed">
-                        {product.tagline || product.shortDescription || product.description}
-                    </p>
-                    <div className="mt-16 animate-bounce">
-                        <span className="text-xs text-neutral-400 font-bold tracking-[0.2em] bg-white/50 px-3 py-1 rounded-full">SCROLL TO DISCOVER</span>
-                        <ChevronDown className="mx-auto mt-2 text-neutral-400" />
-                    </div>
-                </div>
-            </section>
+                        <h2 className="text-[#E65800] text-xs md:text-sm font-bold tracking-[0.5em] uppercase mb-4 animate-pulse">
+                            Introducing
+                        </h2>
+                        <h1 className="text-4xl md:text-8xl font-black text-white uppercase tracking-widest leading-none drop-shadow-2xl">
+                            {product.name}
+                        </h1>
+                        <ChevronDown className="text-white/50 w-6 h-6 md:w-8 md:h-8 mt-6 animate-bounce mx-auto" />
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
-            {/* BENEFITS SECTION - Page 2 */}
-            <section className="h-screen w-full flex items-center p-6 md:p-20 pointer-events-none">
-                <div className="w-full h-full max-w-7xl mx-auto flex items-center justify-start">
-                    <div className="md:w-1/2 w-full pointer-events-auto text-left">
-                        <div
-                            className="bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-[2.5rem] shadow-2xl border border-white/50 transform transition-all hover:scale-[1.01]"
-                        >
-                            <div className="flex items-center gap-4 mb-8">
-                                <div className="p-3 rounded-2xl bg-gradient-to-br from-neutral-100 to-white shadow-inner">
-                                    <SparklesIcon className="w-6 h-6" style={{ color: product.themeColor }} />
-                                </div>
-                                <h2 className="text-3xl font-bold tracking-tight">Why It's Special</h2>
-                            </div>
-
-                            <ul className="space-y-4">
-                                {(product.keyBenefits || []).map((b, i) => (
-                                    <li key={i} className="flex gap-4 items-start p-3 hover:bg-white/50 rounded-xl transition-colors">
-                                        <div
-                                            className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0 mt-0.5 shadow-md"
-                                            style={{ background: product.themeColor }}
-                                        >
-                                            {i + 1}
-                                        </div>
-                                        <span className="text-xl text-neutral-700 font-medium">{b}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* INGREDIENTS SECTION - Page 3 */}
-            <section className="h-screen w-full flex items-center p-6 md:p-20 pointer-events-none">
-                <div className="w-full h-full max-w-7xl mx-auto flex items-center justify-end">
-                    <div className="md:w-1/2 w-full pointer-events-auto text-right">
-                        <div
-                            className="bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-[2.5rem] shadow-2xl border border-white/50 transform transition-all hover:scale-[1.01]"
-                        >
-                            <div className="flex items-center justify-end gap-4 mb-8">
-                                <div className="p-3 rounded-2xl bg-gradient-to-br from-neutral-100 to-white shadow-inner">
-                                    <Leaf className="w-6 h-6" style={{ color: product.themeColor }} />
-                                </div>
-                                <h2 className="text-3xl font-bold tracking-tight">Pure Ingredients</h2>
-                            </div>
-
-                            {product.heroIngredient && (
-                                <div className="mb-8 p-6 rounded-2xl bg-white/60 border border-white/60 shadow-inner">
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <Star size={14} className="fill-current" style={{ color: product.themeColor }} />
-                                        <span className="text-xs font-bold uppercase tracking-wider" style={{ color: product.themeColor }}>Hero Ingredient</span>
-                                    </div>
-                                    <h3 className="text-2xl font-bold mb-2 text-neutral-800">{product.heroIngredient.name}</h3>
-                                    <p className="text-base text-neutral-600 leading-relaxed">{product.heroIngredient.description}</p>
-                                </div>
-                            )}
-
-                            <div className="flex flex-wrap justify-end gap-2">
-                                {product.accordion?.INGREDIENTS?.map((ing, i) => (
-                                    <span
-                                        key={i}
-                                        className="px-5 py-2.5 bg-white rounded-full text-sm font-semibold text-neutral-700 shadow-sm border border-neutral-100"
-                                    >
-                                        {ing.name}
-                                    </span>
-                                )) || <span className="italic text-neutral-500">See packaging for full list</span>}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* USAGE/CTA SECTION - Page 4 */}
-            <section className="h-screen w-full flex items-center justify-center p-6 pointer-events-none">
-                <div className="w-full max-w-3xl pointer-events-auto">
-                    <div
-                        className="p-10 md:p-16 rounded-[3rem] text-center text-white relative overflow-hidden shadow-2xl ring-4 ring-white/20"
-                        style={{ background: '#111' }}
+            {/* PHASE 2: INGREDIENTS */}
+            <AnimatePresence>
+                {uiState === 'ingredients' && (
+                    <motion.div
+                        initial="hidden" animate="visible" exit="hidden" variants={variants}
+                        className="absolute left-6 md:left-24 top-1/2 -translate-y-1/2 text-left max-w-[200px] md:max-w-md"
                     >
-                        {/* Glow effect */}
-                        <div
-                            className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full opacity-30"
-                            style={{
-                                background: `radial-gradient(circle at 50% 0%, ${product.themeColor}, transparent 70%)`
-                            }}
-                        />
+                        <div className="h-px w-12 md:w-20 bg-[#E65800] mb-4" />
+                        <h3 className="text-white text-2xl md:text-5xl font-bold mb-4 leading-tight">
+                            Powered By<br />Nature's Best
+                        </h3>
+                        <p className="text-white/70 text-xs md:text-sm leading-relaxed">
+                            {ingredientsText}
+                        </p>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
-                        <div className="relative z-10 flex flex-col items-center">
-                            <Sun className="w-14 h-14 mb-6 text-white/90" />
-                            <h2 className="text-4xl md:text-6xl font-black mb-8 tracking-tight">Ready to Elevate?</h2>
+            {/* PHASE 3: BENEFIT */}
+            <AnimatePresence>
+                {uiState === 'benefit' && (
+                    <motion.div
+                        initial="hidden" animate="visible" exit="hidden" variants={variants}
+                        className="absolute right-6 md:right-24 top-1/2 -translate-y-1/2 text-right"
+                    >
+                        <h3 className="text-[#E65800] text-4xl md:text-7xl font-black uppercase mb-2 opacity-90 leading-none">
+                            {benefit1}
+                        </h3>
+                        <h3 className="text-white text-4xl md:text-7xl font-black uppercase mb-4 leading-none">
+                            {benefit2 || "EFFICIENCY"}
+                        </h3>
+                        <div className="h-px w-12 md:w-20 bg-white/50 ml-auto mt-4" />
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left max-w-xl w-full mb-12 bg-white/5 p-8 rounded-3xl border border-white/10">
-                                {product.howToUse?.split('. ').slice(0, 2).map((step, i) => (
-                                    <div key={i} className="flex gap-4">
-                                        <span className="text-4xl font-bold opacity-30" style={{ color: product.themeColor }}>0{i + 1}</span>
-                                        <p className="text-base text-white/90 leading-relaxed pt-2 font-medium">{step}</p>
-                                    </div>
-                                )) || null}
+            {/* PHASE 4: OFFER (The Shrine) */}
+            <AnimatePresence>
+                {uiState === 'offer' && (
+                    <motion.div
+                        initial="hidden" animate="visible" exit="hidden" variants={variants}
+                        className="absolute bottom-0 left-0 w-full p-6 md:p-12 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-auto"
+                    >
+                        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-end justify-between gap-6 md:gap-12">
+                            <div className="text-left flex-1">
+                                <h2 className="text-3xl md:text-5xl text-white font-black mb-2">{product.name}</h2>
+                                <p className="text-white/60 text-xs md:text-sm max-w-lg line-clamp-3 md:line-clamp-none">
+                                    {product.shortDescription || product.description}
+                                </p>
                             </div>
 
-                            {/* FIND NEARBY STORES BUTTON */}
-                            <button
-                                onClick={onFindStores}
-                                className="flex items-center gap-3 px-8 py-4 rounded-full text-lg font-bold tracking-wide transition-all shadow-xl hover:scale-105"
-                                style={{ background: product.themeColor }}
-                            >
-                                <MapPin className="w-5 h-5" />
-                                Find Nearby Stores
-                            </button>
-                            <div className="mt-6 text-white/50 text-sm font-medium tracking-wide">
-                                AVAILABLE AT SELECT RETAILERS
+                            <div className="w-full md:w-auto flex flex-col gap-3 min-w-[200px]">
+                                <button
+                                    className="bg-white text-black px-8 py-4 font-bold uppercase tracking-widest hover:bg-[#E65800] hover:text-white transition-all w-full md:w-auto text-sm md:text-base rounded flex items-center justify-center gap-2"
+                                    onClick={() => document.dispatchEvent(new CustomEvent('open-store-locator'))}
+                                >
+                                    <MapPin size={18} /> Find Nearby Stores
+                                </button>
+                                <button className="text-white/50 text-[10px] md:text-xs uppercase tracking-widest hover:text-white transition-colors">
+                                    View Full Details
+                                </button>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </section>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
         </div>
     );
 };
@@ -408,100 +331,95 @@ const ProductDeepDive = () => {
     const navigate = useNavigate();
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [uiState, setUiState] = useState('reveal');
     const [showStoreLocator, setShowStoreLocator] = useState(false);
+    const [isFullscreen, setIsFullscreen] = useState(false);
 
-    // Fetch product by slug
     useEffect(() => {
         const fetchProduct = async () => {
             setLoading(true);
-            setError(null);
             try {
                 const response = await productService.getProductBySlug(id);
-                setProduct(response.data);
+                setProduct(response.data || response);
             } catch (err) {
-                console.error('Error fetching product:', err);
-                setError(err.message || 'Product not found');
+                console.error('Error fetching details:', err);
             } finally {
                 setLoading(false);
             }
         };
+        if (id) fetchProduct();
 
-        if (id) {
-            fetchProduct();
-        }
+        const openLocator = () => setShowStoreLocator(true);
+        document.addEventListener('open-store-locator', openLocator);
+        return () => document.removeEventListener('open-store-locator', openLocator);
     }, [id]);
 
-    // Loading state
-    if (loading) {
-        return (
-            <div className="h-screen w-full bg-[#f8f6f4] flex items-center justify-center">
-                <div className="flex flex-col items-center gap-4">
-                    <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
-                    <span className="text-neutral-500 text-sm uppercase tracking-widest">Loading Product...</span>
-                </div>
-            </div>
-        );
-    }
+    const handleMaximize = () => {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+            setIsFullscreen(true);
+        } else {
+            if (document.exitFullscreen) document.exitFullscreen();
+            setIsFullscreen(false);
+        }
+    };
 
-    // Error state
-    if (error || !product) {
-        return (
-            <div className="h-screen w-full bg-[#f8f6f4] flex items-center justify-center">
-                <div className="text-center">
-                    <h1 className="text-2xl font-bold mb-2">Product Not Found</h1>
-                    <p className="text-neutral-500 mb-6">We couldn't find the product you're looking for.</p>
-                    <button onClick={() => navigate('/products')} className="bg-black text-white px-6 py-3 rounded-full">
-                        Browse All Products
-                    </button>
-                </div>
-            </div>
-        );
+    const handleShare = async () => {
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: product?.name || 'Purna Product',
+                    text: `Check out ${product?.name}`,
+                    url: window.location.href,
+                });
+            } catch (err) { console.log(err); }
+        } else {
+            alert('Link Copied to Clipboard');
+        }
+    };
+
+    if (loading || !product) {
+        return <div className="h-screen w-full bg-[#050505] flex items-center justify-center text-white/50 animate-pulse text-xs tracking-widest">INITIALIZING...</div>;
     }
 
     return (
-        <div className="h-screen w-full bg-[#f8f6f4] relative">
-            {/* Navigation Overlay */}
-            <div className="fixed top-0 left-0 w-full z-50 p-6 flex justify-between items-center pointer-events-none">
+        <div className="h-screen w-full bg-[#050505] relative overflow-hidden select-none font-sans">
+
+            {/* Functionality Header */}
+            <div className="fixed top-0 left-0 w-full z-50 p-6 flex justify-between items-center text-white mix-blend-difference pointer-events-none">
                 <button
                     onClick={() => navigate(-1)}
-                    className="pointer-events-auto flex items-center gap-2 bg-white/80 backdrop-blur-md px-5 py-3 rounded-full text-sm uppercase tracking-wider hover:bg-white transition-all shadow-lg border border-white/20 font-bold"
+                    className="pointer-events-auto flex items-center gap-2 hover:text-[#E65800] transition-colors"
                 >
-                    <ArrowLeft size={16} /> Back
+                    <ArrowLeft size={24} />
+                    <span className="hidden md:inline text-xs font-bold tracking-widest uppercase">BACK</span>
                 </button>
+                <div className="flex gap-4 pointer-events-auto">
+                    <button onClick={handleMaximize} className="opacity-50 hover:opacity-100 transition-opacity"><Maximize2 size={20} /></button>
+                    <button onClick={handleShare} className="opacity-50 hover:opacity-100 transition-opacity"><Share2 size={20} /></button>
+                </div>
             </div>
 
-            {/* Canvas takes full screen, ScrollControls handles scrolling */}
-            <Canvas shadows dpr={[1, 1.5]} gl={{ antialias: true, powerPreference: "high-performance" }}>
-                <Suspense fallback={
-                    <Html center>
-                        <div className="flex flex-col items-center">
-                            <div className="w-12 h-12 border-4 border-black/10 border-t-black rounded-full animate-spin mb-4"></div>
-                            <span className="text-xs font-bold tracking-widest uppercase text-black/50">Loading Experience...</span>
-                        </div>
-                    </Html>
-                }>
-                    {/* Pages = 4 sections */}
-                    <ScrollControls pages={4} damping={0.25}>
+            <ErrorBoundary>
+                <Canvas shadows dpr={[1, 1.5]} gl={{ antialias: false, powerPreference: "high-performance" }} camera={{ position: [0, 0, 10], fov: 45 }}>
+                    <Suspense fallback={null}>
+                        <AdaptiveDpr pixelated />
 
-                        {/* 3D Scene that reacts to scroll internally */}
-                        <Scene product={product} />
+                        <ScrollControls pages={4} damping={0.3}>
+                            <SpotlightScene product={product} setUiState={setUiState} />
+                        </ScrollControls>
+                    </Suspense>
+                </Canvas>
+            </ErrorBoundary>
 
-                        {/* DOM Content laid over the 3D scene */}
-                        <Scroll html style={{ width: '100%' }}>
-                            <DomContent product={product} onFindStores={() => setShowStoreLocator(true)} />
-                        </Scroll>
+            <ScrollOverlay uiState={uiState} product={product} />
 
-                    </ScrollControls>
-                </Suspense>
-            </Canvas>
-
-            {/* Store Locator Modal */}
             <StoreLocator
                 isOpen={showStoreLocator}
                 onClose={() => setShowStoreLocator(false)}
                 productName={product.name}
             />
+
         </div>
     );
 };

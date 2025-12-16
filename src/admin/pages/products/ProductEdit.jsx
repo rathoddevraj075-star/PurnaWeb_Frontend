@@ -104,6 +104,10 @@ export default function ProductEdit() {
         howToUse: '',
         suitableFor: [],
 
+        // Quick Summary for 3D Page
+        benefitsSummary: '',
+        ingredientsSummary: '',
+
         // Accordion Data
         accordion: {
             BENEFITS: [],
@@ -153,6 +157,8 @@ export default function ProductEdit() {
                 heroIngredient: product.heroIngredient || { name: '', description: '' },
                 howToUse: product.howToUse || '',
                 suitableFor: product.suitableFor || [],
+                benefitsSummary: product.benefitsSummary || '',
+                ingredientsSummary: product.ingredientsSummary || '',
                 accordion: product.accordion || { BENEFITS: [], INGREDIENTS: [] },
                 seo: product.seo || {},
                 tags: product.tags || [],
@@ -530,178 +536,82 @@ export default function ProductEdit() {
                 </div>
             )}
 
-            {/* Details Tab */}
+            {/* Details Tab - Simplified for 3D Product Page */}
             {activeTab === 'Details' && (
                 <div className="animate-fade-in space-y-6">
-                    {/* Key Benefits Section */}
-                    <div className="bg-[#0f1218] rounded-2xl p-6 border border-white/5 shadow-xl shadow-black/20">
-                        <div className="flex items-center gap-3 mb-4">
-                            <ListChecks className="text-emerald-400" size={20} />
-                            <h3 className="text-lg font-semibold text-white">Key Benefits</h3>
-                        </div>
-                        <p className="text-gray-400 text-sm mb-4">These appear in the "Why It's Special" section on the product page.</p>
-
-                        {/* Add Benefit Input */}
-                        <div className="flex gap-3 mb-4">
-                            <input
-                                type="text"
-                                value={newBenefit}
-                                onChange={(e) => setNewBenefit(e.target.value)}
-                                className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500/50 transition-colors placeholder-gray-600"
-                                placeholder="Enter a benefit (e.g., Deep hydration for 24 hours)"
-                                onKeyDown={(e) => e.key === 'Enter' && addBenefit()}
-                            />
-                            <button
-                                onClick={addBenefit}
-                                className="flex items-center gap-2 bg-emerald-500/20 text-emerald-400 px-4 py-2.5 rounded-xl hover:bg-emerald-500/30 transition-colors font-medium"
-                            >
-                                <Plus size={18} /> Add
-                            </button>
-                        </div>
-
-                        {/* Benefits List */}
-                        {formData.keyBenefits.length > 0 ? (
-                            <div className="space-y-2">
-                                {formData.keyBenefits.map((benefit, index) => (
-                                    <div
-                                        key={index}
-                                        className="flex items-center justify-between gap-3 p-3 bg-white/5 rounded-xl group"
-                                    >
-                                        <div className="flex items-center gap-3">
-                                            <span
-                                                className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white"
-                                                style={{ backgroundColor: formData.themeColor }}
-                                            >
-                                                {index + 1}
-                                            </span>
-                                            <span className="text-white">{benefit}</span>
-                                        </div>
-                                        <button
-                                            onClick={() => removeBenefit(index)}
-                                            className="p-1.5 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
-                                        >
-                                            <Trash2 size={16} />
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <p className="text-gray-500 text-sm italic">No benefits added yet</p>
-                        )}
-                    </div>
-
-                    {/* Hero Ingredient Section */}
-                    <div className="bg-[#0f1218] rounded-2xl p-6 border border-white/5 shadow-xl shadow-black/20">
+                    {/* 3D Page Summaries Section */}
+                    <div className="bg-[#0f1218] rounded-2xl p-6 border border-emerald-500/20 shadow-xl shadow-emerald-500/5">
                         <div className="flex items-center gap-3 mb-4">
                             <Sparkles className="text-emerald-400" size={20} />
-                            <h3 className="text-lg font-semibold text-white">Hero Ingredient</h3>
+                            <h3 className="text-lg font-semibold text-white">3D Product Page Content</h3>
                         </div>
-                        <p className="text-gray-400 text-sm mb-4">Featured ingredient highlighted prominently on the product page.</p>
+                        <p className="text-gray-400 text-sm mb-6">These fields are displayed on the immersive 3D product page during the scroll journey.</p>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <Input
-                                label="Ingredient Name"
-                                type="text"
-                                value={formData.heroIngredient?.name || ''}
-                                onChange={(e) => setFormData({
-                                    ...formData,
-                                    heroIngredient: { ...formData.heroIngredient, name: e.target.value }
-                                })}
-                                placeholder="e.g., Hyaluronic Acid"
-                            />
-                            <TextArea
-                                label="Description"
-                                rows={2}
-                                value={formData.heroIngredient?.description || ''}
-                                onChange={(e) => setFormData({
-                                    ...formData,
-                                    heroIngredient: { ...formData.heroIngredient, description: e.target.value }
-                                })}
-                                placeholder="Describe the benefits of this ingredient"
-                            />
-                        </div>
-                    </div>
-
-                    {/* Ingredients List Section */}
-                    <div className="bg-[#0f1218] rounded-2xl p-6 border border-white/5 shadow-xl shadow-black/20">
-                        <div className="flex items-center gap-3 mb-4">
-                            <FlaskConical className="text-emerald-400" size={20} />
-                            <h3 className="text-lg font-semibold text-white">Ingredients List</h3>
-                        </div>
-                        <p className="text-gray-400 text-sm mb-4">Additional ingredients shown as tags on the product page.</p>
-
-                        {/* Add Ingredient Form */}
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
-                            <input
-                                type="text"
-                                value={newIngredient.name}
-                                onChange={(e) => setNewIngredient({ ...newIngredient, name: e.target.value })}
-                                className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500/50 transition-colors placeholder-gray-600"
-                                placeholder="Ingredient name"
-                            />
-                            <input
-                                type="text"
-                                value={newIngredient.percentage}
-                                onChange={(e) => setNewIngredient({ ...newIngredient, percentage: e.target.value })}
-                                className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500/50 transition-colors placeholder-gray-600"
-                                placeholder="Percentage (e.g., 5%)"
-                            />
-                            <input
-                                type="text"
-                                value={newIngredient.description}
-                                onChange={(e) => setNewIngredient({ ...newIngredient, description: e.target.value })}
-                                className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500/50 transition-colors placeholder-gray-600"
-                                placeholder="Brief description"
-                            />
-                            <button
-                                onClick={addIngredient}
-                                className="flex items-center justify-center gap-2 bg-emerald-500/20 text-emerald-400 px-4 py-2.5 rounded-xl hover:bg-emerald-500/30 transition-colors font-medium"
-                            >
-                                <Plus size={18} /> Add
-                            </button>
-                        </div>
-
-                        {/* Ingredients List */}
-                        {formData.accordion?.INGREDIENTS?.length > 0 ? (
-                            <div className="flex flex-wrap gap-2">
-                                {formData.accordion.INGREDIENTS.map((ing, index) => (
-                                    <div
-                                        key={index}
-                                        className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-full group"
-                                    >
-                                        <span className="text-white font-medium">{ing.name}</span>
-                                        {ing.percentage && (
-                                            <span className="text-emerald-400 text-sm">({ing.percentage})</span>
-                                        )}
-                                        <button
-                                            onClick={() => removeIngredient(index)}
-                                            className="p-1 text-gray-500 hover:text-red-400 transition-colors"
-                                        >
-                                            <Trash2 size={14} />
-                                        </button>
-                                    </div>
-                                ))}
+                        <div className="space-y-6">
+                            {/* Benefits Summary */}
+                            <div>
+                                <label className="block text-sm font-medium mb-2 text-gray-400">
+                                    Benefits Title <span className="text-emerald-400">(2-3 words, shown large)</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    value={formData.benefitsSummary}
+                                    onChange={(e) => setFormData({ ...formData, benefitsSummary: e.target.value })}
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-2xl font-bold uppercase tracking-wider focus:outline-none focus:border-emerald-500/50 transition-colors placeholder-gray-600"
+                                    placeholder="PURE RADIANCE"
+                                />
+                                <p className="text-gray-500 text-xs mt-2">Example: "DEEP HYDRATION", "NATURAL GLOW", "PURE POWER"</p>
                             </div>
-                        ) : (
-                            <p className="text-gray-500 text-sm italic">No ingredients added yet</p>
-                        )}
+
+                            {/* Ingredients Summary */}
+                            <div>
+                                <label className="block text-sm font-medium mb-2 text-gray-400">
+                                    Ingredients Description <span className="text-emerald-400">(shown during scroll)</span>
+                                </label>
+                                <textarea
+                                    value={formData.ingredientsSummary}
+                                    onChange={(e) => setFormData({ ...formData, ingredientsSummary: e.target.value })}
+                                    rows={3}
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500/50 transition-colors placeholder-gray-600"
+                                    placeholder="Aloe Vera, Neem Extract, Turmeric, Vitamin E..."
+                                />
+                                <p className="text-gray-500 text-xs mt-2">List key ingredients that float up during the "Powered By Nature's Best" phase</p>
+                            </div>
+
+                            {/* Preview Card */}
+                            <div className="bg-black/50 rounded-xl p-6 border border-white/10">
+                                <h4 className="text-gray-400 text-xs uppercase tracking-wider mb-4">Preview</h4>
+                                <div className="space-y-4">
+                                    <div className="text-center">
+                                        <p className="text-gray-500 text-xs mb-2">Phase 3: Benefits</p>
+                                        <h3 className="text-4xl font-black uppercase" style={{ color: formData.themeColor || '#E65800' }}>
+                                            {formData.benefitsSummary?.split(' ')[0] || 'PURE'}
+                                        </h3>
+                                        <h3 className="text-4xl font-black text-white uppercase">
+                                            {formData.benefitsSummary?.split(' ').slice(1).join(' ') || 'POWER'}
+                                        </h3>
+                                    </div>
+                                    <div className="border-t border-white/10 pt-4">
+                                        <p className="text-gray-500 text-xs mb-2">Phase 2: Ingredients</p>
+                                        <p className="text-white/70 text-sm">
+                                            {formData.ingredientsSummary || 'A potent blend of organic botanicals...'}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    {/* How to Use Section */}
-                    <div className="bg-[#0f1218] rounded-2xl p-6 border border-white/5 shadow-xl shadow-black/20">
-                        <div className="flex items-center gap-3 mb-4">
-                            <Layers className="text-emerald-400" size={20} />
-                            <h3 className="text-lg font-semibold text-white">How to Use</h3>
+                    {/* Info Box */}
+                    <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 flex gap-3">
+                        <div className="text-blue-400 mt-0.5">ℹ️</div>
+                        <div>
+                            <p className="text-blue-300 text-sm font-medium">About the 3D Product Page</p>
+                            <p className="text-blue-200/70 text-xs mt-1">
+                                The immersive product page uses: <strong>Name</strong>, <strong>Images</strong>, <strong>Theme Color</strong>,
+                                <strong> Short Description</strong>, and these summary fields. Other product data is used on standard listing pages.
+                            </p>
                         </div>
-                        <p className="text-gray-400 text-sm mb-4">Usage instructions displayed in the CTA section. Separate steps with periods.</p>
-
-                        <TextArea
-                            label=""
-                            rows={4}
-                            value={formData.howToUse}
-                            onChange={(e) => setFormData({ ...formData, howToUse: e.target.value })}
-                            placeholder="Apply a small amount to clean skin. Massage gently in circular motions. Use daily for best results."
-                        />
                     </div>
                 </div>
             )}
