@@ -63,7 +63,7 @@ export default function Navbar() {
 
           {/* Center Logo */}
           <a href="/" className="block">
-            <img src="/images/logo-black.png" alt="PurnaRoutine" className="h-10 sm:h-12 w-auto object-contain" />
+            <span className="text-xl font-bold tracking-widest uppercase text-[#151515]">the purna</span>
           </a>
 
           {/* Right Icons */}
@@ -77,12 +77,8 @@ export default function Navbar() {
         {/* -------------------- 💻 Desktop Navbar -------------------- */}
         <div className="hidden lg:flex items-center justify-between px-8 py-3">
           {/* Logo */}
-          <a href="/" className="logo-wrapper relative block w-32 h-12">
-            <img
-              src="/images/logo-black.png"
-              alt="PURNAROUTINE"
-              className="absolute top-1/2 left-0 -translate-y-1/2 h-24 max-w-none w-auto object-contain"
-            />
+          <a href="/" className="logo-wrapper relative block h-12 flex items-center">
+            <span className="text-2xl font-bold tracking-widest uppercase text-[#151515]">the purna</span>
           </a>
 
           {/* Nav links */}
