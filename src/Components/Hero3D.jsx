@@ -57,7 +57,7 @@ const Hero3D = () => {
                 {/* Top Left Blob */}
                 <motion.div
                     style={{ x: blob1X, y: blob1Y }}
-                    className="absolute top-[-20%] left-[-10%] w-[70vw] h-[70vw] md:w-[40vw] md:h-[40vw] bg-[#FAB8D6] rounded-full blur-[80px] md:blur-[120px] opacity-40 mix-blend-multiply animate-blob"
+                    className="absolute top-[-20%] left-[-10%] w-[70vw] h-[70vw] md:w-[40vw] md:h-[40vw] bg-[#E65800] rounded-full blur-[80px] md:blur-[120px] opacity-40 mix-blend-multiply animate-blob"
                 />
 
                 {/* Top Right Blob */}
@@ -69,7 +69,7 @@ const Hero3D = () => {
                 {/* Bottom Center Blob */}
                 <motion.div
                     style={{ x: blob3X, y: blob3Y }}
-                    className="absolute bottom-[-10%] left-[20%] w-[80vw] h-[80vw] md:w-[50vw] md:h-[50vw] bg-[#41C280] rounded-full blur-[80px] md:blur-[120px] opacity-40 mix-blend-multiply animate-blob animation-delay-4000"
+                    className="absolute bottom-[-10%] left-[20%] w-[80vw] h-[80vw] md:w-[50vw] md:h-[50vw] bg-[#E65800] rounded-full blur-[80px] md:blur-[120px] opacity-40 mix-blend-multiply animate-blob animation-delay-4000"
                 />
             </motion.div>
 
@@ -170,11 +170,11 @@ const Hero3D = () => {
                         />
                     </div>
 
-                    <h2 className="text-[#d9634c] text-sm md:text-base tracking-[0.3em] mb-4 md:mb-6 uppercase font-semibold">
+                    <h2 className="text-[#E65800] text-sm md:text-base tracking-[0.3em] mb-4 md:mb-6 uppercase font-semibold">
                         Complete Care for the Complete You
                     </h2>
 
-                    <p className="text-[#6667AB] text-base md:text-xl max-w-xl md:max-w-2xl mx-auto font-medium leading-relaxed mb-8 md:mb-12 px-4">
+                    <p className="text-[#151515] text-base md:text-xl max-w-xl md:max-w-2xl mx-auto font-medium leading-relaxed mb-8 md:mb-12 px-4">
                         Modern wellness essentials inspired by ancient wisdom. <br className="hidden md:block" /> Pure, effective, and crafted for your daily flow.
                     </p>
 
@@ -182,7 +182,7 @@ const Hero3D = () => {
                         <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className="w-full sm:w-auto px-8 py-4 bg-[#d9634c] text-white text-base md:text-lg font-medium rounded-full shadow-lg hover:shadow-orange-500/30 transition-all hover:-translate-y-1"
+                            className="w-full sm:w-auto px-8 py-4 bg-[#E65800] text-white text-base md:text-lg font-medium rounded-full shadow-lg hover:shadow-orange-500/30 transition-all hover:-translate-y-1"
                         >
                             Explore Essentials
                         </motion.button>
