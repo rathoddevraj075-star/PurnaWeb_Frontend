@@ -30,7 +30,7 @@ const values = [
 
 const About = () => {
   return (
-    <div className="bg-[#FCF8F2] min-h-screen overflow-x-hidden selection:bg-orange-100 selection:text-orange-900">
+    <div className="bg-[#FCF8F2] min-h-screen w-full selection:bg-orange-100 selection:text-orange-900">
       <AnnoucementBar />
       <Navbar />
 

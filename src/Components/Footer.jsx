@@ -128,7 +128,7 @@ const Footer = () => {
           <span>EN ⌄</span>
         </div> */}
 
-        <div className="flex flex-wrap justify-center gap-3">
+        {/* <div className="flex flex-wrap justify-center gap-3">
           <img
             src="https://upload.wikimedia.org/wikipedia/commons/d/d1/RuPay.svg"
             alt="RuPay"
@@ -154,7 +154,7 @@ const Footer = () => {
             alt="Google Pay"
             className="h-6 w-16 bg-white p-1 rounded object-contain"
           />
-        </div>
+        </div> */}
       </div>
 
       {/* Large Text */}
