@@ -5,355 +5,350 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
     Environment,
     Float,
-    Text,
     Image,
     SpotLight,
     ScrollControls,
     useScroll,
-    Stars,
     AdaptiveDpr,
-    Sparkles,
     Html
 } from '@react-three/drei';
 import { EffectComposer, Noise, Vignette, Bloom } from '@react-three/postprocessing';
 import * as THREE from 'three';
-import { ArrowLeft, ShoppingBag, Maximize2, Share2, MapPin, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Maximize2, Share2, MapPin, ChevronDown, MoveRight } from 'lucide-react';
 import { productService } from '../../services/api';
 import StoreLocator from '../store/StoreLocator';
 
-// --- FONTS ---
-const FONT_URL = '/fonts/TT Firs Neue Trial Bold.ttf';
-
-// --- 3D ASSETS ---
+// --- VISUAL ASSETS ---
+// "The Void" Aesthetic: Deep, Dark, High Contrast, Volumetric feel.
 
 // --- ERROR BOUNDARY ---
 class ErrorBoundary extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = { hasError: false };
-    }
-
-    static getDerivedStateFromError(error) {
-        return { hasError: true };
-    }
-
-    componentDidCatch(error, errorInfo) {
-        console.error("3D Scene Error:", error, errorInfo);
-    }
-
+    constructor(props) { super(props); this.state = { hasError: false }; }
+    static getDerivedStateFromError(error) { return { hasError: true }; }
+    componentDidCatch(error, errorInfo) { console.error("3D Scene Error:", error, errorInfo); }
     render() {
-        if (this.state.hasError) {
-            return <div className="text-white/50 text-xs p-4 border border-white/10 rounded">3D View Unavailable</div>;
-        }
-
+        if (this.state.hasError) return <div className="text-white/30 text-xs p-8 border border-white/5 rounded">Visualization Unavailable</div>;
         return this.props.children;
     }
 }
 
-const IngredientParticle = ({ index, color }) => {
+// --- PARTICLES ---
+const DustMotes = ({ count = 30, color = "#fff" }) => {
+    const { viewport } = useThree();
+    const particles = useMemo(() => {
+        return new Array(count).fill().map(() => ({
+            position: [
+                (Math.random() - 0.5) * 15,
+                (Math.random() - 0.5) * 15,
+                (Math.random() - 0.5) * 10
+            ],
+            scale: Math.random() * 0.05 + 0.02,
+            speed: Math.random() * 0.2 + 0.1
+        }));
+    }, [count]);
+
     const ref = useRef();
-    // Random initial positions
-    const [pos] = useState(() => [
-        (Math.random() - 0.5) * 10,
-        -10 - Math.random() * 10, // Start below viewport
-        (Math.random() - 0.5) * 5
-    ]);
 
     useFrame((state) => {
-        if (!ref.current) return;
-        // Float UP continuously - SLOWER SPEED
-        const t = state.clock.elapsedTime;
-        ref.current.position.y = pos[1] + ((t * (0.1 + Math.random() * 0.1)) % 25); // Significantly slower
-        ref.current.rotation.x += 0.005;
-        ref.current.rotation.y += 0.01;
+        if (ref.current) {
+            // Subtle floating drift
+            ref.current.rotation.y = state.clock.elapsedTime * 0.05;
+        }
     });
 
     return (
-        <mesh ref={ref} position={pos} scale={0.1 + Math.random() * 0.1}>
-            <dodecahedronGeometry args={[1, 0]} />
-            <meshStandardMaterial color={color} emissive={color} emissiveIntensity={1} />
-        </mesh>
+        <group ref={ref}>
+            {particles.map((p, i) => (
+                <mesh key={i} position={p.position}>
+                    <dodecahedronGeometry args={[p.scale, 0]} />
+                    <meshBasicMaterial color={color} transparent opacity={0.4} />
+                </mesh>
+            ))}
+        </group>
     );
-}
+};
 
-// The Scroll-Driven Director
-const SpotlightScene = ({ product, setUiState }) => {
+// --- CINEMATIC RIG ---
+const CinematicRig = ({ product, setUiState }) => {
     const scroll = useScroll();
     const { camera, viewport, size } = useThree();
+    const group = useRef();
+    const lightRef = useRef();
 
-    // More robust mobile check: checks viewport width AND actual screen width
-    const isMobile = viewport.width < 5 || size.width < 768;
+    // Robust mobile detection
+    const isMobile = size.width < 768 || viewport.width < 6;
 
-    // Refs for lights to animate intensities
-    const rimLightRef = useRef();
-    const fillLightRef = useRef();
-    const studioLightRef = useRef();
-
+    // Theme Extraction
     const themeColor = product.themeColor || "#E65800";
 
     useFrame((state, delta) => {
-        const offset = scroll.offset; // 0 to 1
+        const offset = scroll.offset; // 0 (start) -> 1 (end)
 
-        // -- LIGHTING LOGIC --
-        if (rimLightRef.current) {
-            rimLightRef.current.intensity = THREE.MathUtils.lerp(15, 2, offset);
-        }
-
-        if (fillLightRef.current) {
-            const targetFill = offset > 0.15 ? 3 : 0;
-            fillLightRef.current.intensity = THREE.MathUtils.lerp(fillLightRef.current.intensity, targetFill, 2 * delta);
-        }
-
-        if (studioLightRef.current) {
-            const targetStudio = offset > 0.8 ? 2 : 0;
-            studioLightRef.current.intensity = THREE.MathUtils.lerp(studioLightRef.current.intensity, targetStudio, 2 * delta);
-        }
-
-        // -- CAMERA LOGIC --
-        // Adjusted for mobile to be further back so the product fits
-        const baseZ = isMobile ? 14 : 9;
-
-        // p1: Low angle, looking up
-        const p1_pos = new THREE.Vector3(0, -3, baseZ - 3);
-
-        // p2: Center level
-        const p2_pos = new THREE.Vector3(0, 0, baseZ);
-
-        // p4: Standard shot
-        const p4_pos = new THREE.Vector3(0, 0, baseZ + (isMobile ? 2 : 0)); // Pull back more on mobile end state
-
-        // Lerping position based on simple curves
-        if (offset < 0.5) {
-            // Lerp P1 -> P2
-            const t = offset * 2; // 0..1
-            camera.position.lerpVectors(p1_pos, p2_pos, t);
-        } else {
-            // Lerp P2 -> P4
-            const t = (offset - 0.5) * 2; // 0..1
-            camera.position.lerpVectors(p2_pos, p4_pos, t);
-        }
-
-        // Always look at center (simplification for smoothness)
-        camera.lookAt(0, 0, 0);
-
-        // -- UI STATE UPDATES --
-        if (offset < 0.2) setUiState('reveal');
+        // --- SCROLL DRIVEN STATE ---
+        if (offset < 0.25) setUiState('reveal');
         else if (offset < 0.5) setUiState('ingredients');
-        else if (offset < 0.85) setUiState('benefit');
+        else if (offset < 0.8) setUiState('benefit');
         else setUiState('offer');
 
+        // --- CAMERA CHOREOGRAPHY ("The Shot List") ---
+
+        // Shot 1: "The Monolith" (0.0 - 0.3)
+        // Low angle, looking up at hero.
+        const shot1 = { pos: new THREE.Vector3(0, -2, isMobile ? 12 : 9), look: new THREE.Vector3(0, 1, 0) };
+
+        // Shot 2: "The Analysis" (0.3 - 0.6)
+        // Side profile, extreme close up.
+        const shot2 = { pos: new THREE.Vector3(isMobile ? 3 : 5, 0, isMobile ? 8 : 4), look: new THREE.Vector3(0, 0, 0) };
+
+        // Shot 3: "The Promise" (0.6 - 0.85)
+        // Top-down / Dutch angle, artistic.
+        const shot3 = { pos: new THREE.Vector3(isMobile ? -2 : -4, 3, isMobile ? 10 : 6), look: new THREE.Vector3(0, -1, 0) };
+
+        // Shot 4: "The Offering" (0.85 - 1.0)
+        // Center frame, balanced, ready to buy.
+        const shot4 = { pos: new THREE.Vector3(0, 0, isMobile ? 13 : 10), look: new THREE.Vector3(0, 0, 0) };
+
+        // -- INTERPOLATION LOGIC --
+        let targetPos = new THREE.Vector3();
+        let targetLook = new THREE.Vector3();
+
+        if (offset < 0.33) {
+            const t = offset / 0.33;
+            targetPos.lerpVectors(shot1.pos, shot2.pos, t);
+            targetLook.lerpVectors(shot1.look, shot2.look, t);
+        } else if (offset < 0.66) {
+            const t = (offset - 0.33) / 0.33;
+            targetPos.lerpVectors(shot2.pos, shot3.pos, t);
+            targetLook.lerpVectors(shot2.look, shot3.look, t);
+        } else {
+            const t = (offset - 0.66) / 0.34;
+            targetPos.lerpVectors(shot3.pos, shot4.pos, t);
+            targetLook.lerpVectors(shot3.look, shot4.look, t);
+        }
+
+        // Smooth Camera Movement (Damping)
+        camera.position.lerp(targetPos, delta * 3);
+
+        // Smooth LookAt requires a dummy object or simple vector lerp, 
+        // but camera.lookAt updates matrix instantly. We lerp the *target* then look.
+        // We can stick to standard easing for 'lookAt' targets?
+        // For simplicity and smoothness in r3f:
+        const currentLook = new THREE.Vector3(0, 0, 0); // approximating center focus
+        // Actually, let's just look at 0,0,0 always but with slight offset for framing?
+        // No, the shot list 'look' vectors are better.
+
+        // Simple lookAt 0,0,0 is safest to avoid gimble locks or snappy rotations.
+        // Let's bias the look target slightly based on the phase.
+        camera.lookAt(0, 0, 0);
+
+
+        // --- OBJECT BEHAVIOR ---
+        if (group.current) {
+            // Constant gentle levitation
+            group.current.position.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.2;
+
+            // Scroll Rotation: Spin the product as we scroll to show off 3D nature
+            group.current.rotation.y = offset * Math.PI * 2;
+
+            // Mouse interaction (Parallax)
+            // group.current.rotation.x = state.mouse.y * 0.1;
+            // group.current.rotation.z = state.mouse.x * 0.1;
+        }
+
+        // --- LIGHTING DRAMA ---
+        if (lightRef.current) {
+            // Move the spotlight around to create moving shadows/highlights
+            lightRef.current.position.x = Math.sin(offset * Math.PI) * 10;
+            lightRef.current.position.z = Math.cos(offset * Math.PI) * 10;
+            lightRef.current.intensity = 15 + Math.sin(state.clock.elapsedTime) * 2; // Pulse
+        }
     });
 
     return (
         <>
-            <color attach="background" args={['#050505']} />
-            <ambientLight intensity={0.1} />
-
-            {/* RIM LIGHT (Back) */}
-            <SpotLight
-                ref={rimLightRef}
-                position={[0, 5, -5]}
-                angle={0.6}
-                penumbra={1}
-                color={themeColor}
-                distance={30}
-            />
-
-            {/* FILL LIGHT (Front-Left) */}
-            <SpotLight
-                ref={fillLightRef}
-                position={[-5, 2, 8]}
-                angle={0.6}
-                penumbra={1}
-                color="#ffffff"
-            />
-
-            {/* STUDIO LIGHT (Top-Right) */}
-            <SpotLight
-                ref={studioLightRef}
-                position={[5, 5, 8]}
-                angle={0.4}
-                penumbra={0.5}
-                color="#ffffff"
-                castShadow
-            />
-
-            {/* The Hero Product */}
-            <group>
-                <Float speed={2} rotationIntensity={0.2} floatIntensity={0.5}>
+            <group ref={group}>
+                {/* Product Image Plane - High Quality */}
+                <Float speed={2} rotationIntensity={0.2} floatIntensity={0.2}>
                     <Image
                         url={product.images?.[0]?.url || product.images?.[0] || 'https://via.placeholder.com/600x800'}
-                        scale={isMobile ? [4, 5, 1] : [5, 6.5, 1]} // Scale up slightly
+                        scale={isMobile ? [4.5, 6, 1] : [5.5, 7.5, 1]}
                         transparent
                         opacity={1}
-                        radius={0.1}
                     />
-                    {/* Backing for rim light catch */}
-                    <mesh position={[0, 0, -0.05]} scale={isMobile ? [4.1, 5.1, 1] : [5.1, 6.6, 1]}>
+                    {/* Dark backing plate for catching rim lights nicely */}
+                    <mesh position={[0, 0, -0.05]} scale={isMobile ? [4.6, 6.1, 1] : [5.6, 7.6, 1]}>
                         <planeGeometry />
-                        <meshStandardMaterial color="#111" roughness={0.4} metalness={0.9} />
+                        <meshStandardMaterial color="#000" roughness={0.2} metalness={0.8} />
                     </mesh>
                 </Float>
             </group>
 
-            {/* Particle Eruption */}
-            <group>
-                {Array.from({ length: 40 }).map((_, i) => (
-                    <IngredientParticle key={i} index={i} color={themeColor} />
-                ))}
-            </group>
+            {/* VOLUMETRIC-STYLE LIGHTING */}
+            <SpotLight
+                ref={lightRef}
+                position={[5, 10, 5]}
+                angle={0.4}
+                penumbra={0.5}
+                color={themeColor}
+                distance={40}
+                decay={2}
+            />
 
-            <EffectComposer disableNormalPass multisampling={0}>
-                <Bloom luminanceThreshold={0.5} mipmapBlur intensity={0.8} radius={0.4} />
-                <Noise opacity={0.05} />
-                <Vignette eskil={false} offset={0.1} darkness={0.6} />
-            </EffectComposer>
+            {/* Rim Light for separation */}
+            <SpotLight position={[-10, 5, -5]} angle={0.5} intensity={10} color="#ffffff" />
+
+            {/* Fill Light (Subtle) */}
+            <ambientLight intensity={0.2} />
+
+            <DustMotes color={themeColor} />
+
+            {/* ENVIRONMENT: Studio Gloom */}
+            {/* We use a very low intensity env map just for reflections on the "black glass" backing */}
+            <Environment preset="city" opacity={0.2} blur={1} />
         </>
     );
-}
+};
 
-// --- DOM OVERLAY ---
-const ScrollOverlay = ({ uiState, product, scroll }) => {
+
+// --- UI OVERLAY (The "Editorial" Layer) ---
+const EditorialOverlay = ({ uiState, product }) => {
+
+    // TEXT CONTENT
+    const benefitWords = (product.benefitsSummary || "PURE . POWER").split(' ');
+    const benefitMain = benefitWords[0];
+    const benefitSub = benefitWords.slice(1).join(' ');
 
     const variants = {
-        hidden: { opacity: 0, y: 30, scale: 0.95 },
-        visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.8, ease: "easeOut" } }
+        hidden: { opacity: 0, y: 50, filter: 'blur(10px)' },
+        visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } },
+        exit: { opacity: 0, y: -50, filter: 'blur(10px)', transition: { duration: 0.5 } }
     };
 
-    // Safely get benefits - prefer summary, fall back to array
-    const benefitsText = product.benefitsSummary ||
-        (Array.isArray(product.benefits) ? product.benefits.map(b => b.title).join(' ') : '') ||
-        "PURE POWER";
-    const benefitWords = benefitsText.split(' ');
-    const benefit1 = benefitWords[0] || "PURE";
-    const benefit2 = benefitWords.slice(1).join(' ') || "POWER";
-
-    // Safely get ingredients - prefer summary, fall back to array
-    const ingredientsText = product.ingredientsSummary ||
-        (Array.isArray(product.ingredients) ? product.ingredients.map(i => i.name).join(', ') : '') ||
-        "A potent blend of organic botanicals selected for maximum efficacy.";
-
     return (
-        <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-center p-6 text-center z-10">
+        <div className="absolute inset-0 pointer-events-none z-10 font-sans text-white mix-blend-difference px-6 py-12 md:p-24 flex flex-col justify-between">
 
-            {/* PHASE 1: REVEAL */}
-            <AnimatePresence>
-                {uiState === 'reveal' && (
-                    <motion.div
-                        initial="hidden" animate="visible" exit="hidden" variants={variants}
-                        className="absolute bottom-24 md:bottom-20 w-full"
-                    >
-                        <h2 className="text-[#E65800] text-xs md:text-sm font-bold tracking-[0.5em] uppercase mb-4 animate-pulse">
-                            Introducing
-                        </h2>
-                        <h1 className="text-4xl md:text-8xl font-black text-white uppercase tracking-widest leading-none drop-shadow-2xl">
-                            {product.name}
-                        </h1>
-                        <ChevronDown className="text-white/50 w-6 h-6 md:w-8 md:h-8 mt-6 animate-bounce mx-auto" />
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            {/* TOP NAVIGATION / HUD */}
+            <div className="w-full flex justify-between items-start opacity-50">
+                <div className="flex flex-col gap-1">
+                    <span className="text-[10px] uppercase tracking-[0.4em] font-bold">Project / Deep Dive</span>
+                    <span className="text-[10px] font-mono">ID: {product.slug?.substring(0, 6).toUpperCase()} // v.1.0</span>
+                </div>
+                <div className="hidden md:flex gap-8">
+                    <span className="text-[10px] uppercase tracking-widest animate-pulse">Live Render</span>
+                </div>
+            </div>
 
-            {/* PHASE 2: INGREDIENTS */}
-            <AnimatePresence>
-                {uiState === 'ingredients' && (
-                    <motion.div
-                        initial="hidden" animate="visible" exit="hidden" variants={variants}
-                        className="absolute left-6 md:left-24 top-1/2 -translate-y-1/2 text-left max-w-[200px] md:max-w-md"
-                    >
-                        <div className="h-px w-12 md:w-20 bg-[#E65800] mb-4" />
-                        <h3 className="text-white text-2xl md:text-5xl font-bold mb-4 leading-tight">
-                            Powered By<br />Nature's Best
-                        </h3>
-                        <p className="text-white/70 text-xs md:text-sm leading-relaxed">
-                            {ingredientsText}
-                        </p>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            {/* CENTER CONTENT ZONES */}
+            <div className="relative flex-1 flex items-center justify-center">
+                <AnimatePresence mode="wait">
 
-            {/* PHASE 3: BENEFIT */}
-            <AnimatePresence>
-                {uiState === 'benefit' && (
-                    <motion.div
-                        initial="hidden" animate="visible" exit="hidden" variants={variants}
-                        className="absolute right-6 md:right-24 top-1/2 -translate-y-1/2 text-right"
-                    >
-                        <h3 className="text-[#E65800] text-4xl md:text-7xl font-black uppercase mb-2 opacity-90 leading-none">
-                            {benefit1}
-                        </h3>
-                        <h3 className="text-white text-4xl md:text-7xl font-black uppercase mb-4 leading-none">
-                            {benefit2 || "EFFICIENCY"}
-                        </h3>
-                        <div className="h-px w-12 md:w-20 bg-white/50 ml-auto mt-4" />
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
-            {/* PHASE 4: OFFER (The Shrine) */}
-            <AnimatePresence>
-                {uiState === 'offer' && (
-                    <motion.div
-                        initial="hidden" animate="visible" exit="hidden" variants={variants}
-                        className="absolute bottom-0 left-0 w-full p-6 md:p-12 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-auto"
-                    >
-                        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-end justify-between gap-6 md:gap-12">
-                            <div className="text-left flex-1">
-                                <h2 className="text-3xl md:text-5xl text-white font-black mb-2">{product.name}</h2>
-                                <p className="text-white/60 text-xs md:text-sm max-w-lg line-clamp-3 md:line-clamp-none">
-                                    {product.shortDescription || product.description}
-                                </p>
+                    {/* PHASE 1: REVEAL */}
+                    {uiState === 'reveal' && (
+                        <motion.div key="reveal" variants={variants} initial="hidden" animate="visible" exit="exit" className="absolute text-center">
+                            <h2 className="text-[#F3F3F3] text-xs md:text-sm font-bold tracking-[0.8em] uppercase mb-6">Object No. 01</h2>
+                            <h1 className="text-5xl md:text-9xl font-black uppercase tracking-tighter leading-[0.85] md:leading-[0.8]">
+                                {product.name.split(' ').map((word, i) => (
+                                    <span key={i} className="block">{word}</span>
+                                ))}
+                            </h1>
+                            <div className="mt-8 flex justify-center">
+                                <ChevronDown className="w-6 h-6 opacity-50 animate-bounce" />
                             </div>
+                        </motion.div>
+                    )}
 
-                            <div className="w-full md:w-auto flex flex-col gap-3 min-w-[200px]">
-                                <button
-                                    className="bg-white text-black px-8 py-4 font-bold uppercase tracking-widest hover:bg-[#E65800] hover:text-white transition-all w-full md:w-auto text-sm md:text-base rounded flex items-center justify-center gap-2"
-                                    onClick={() => document.dispatchEvent(new CustomEvent('open-store-locator'))}
-                                >
-                                    <MapPin size={18} /> Find Nearby Stores
-                                </button>
-                                <button className="text-white/50 text-[10px] md:text-xs uppercase tracking-widest hover:text-white transition-colors">
-                                    View Full Details
-                                </button>
+                    {/* PHASE 2: INGREDIENTS */}
+                    {uiState === 'ingredients' && (
+                        <motion.div key="ingredients" variants={variants} initial="hidden" animate="visible" exit="exit" className="absolute left-0 md:left-[-4rem] top-1/2 -translate-y-1/2 max-w-[300px] text-left">
+                            <div className="w-12 h-[2px] bg-white mb-6" />
+                            <h3 className="text-3xl md:text-5xl font-bold uppercase leading-none mb-4">Core<br />Matrix</h3>
+                            <p className="text-xs md:text-sm leading-relaxed opacity-70 font-mono">
+                                {product.ingredientsSummary || "Active botanical compounds extracted for maximum efficacy. Pure. Potent. Field-tested."}
+                            </p>
+                            <div className="mt-6 flex gap-2">
+                                <div className="px-3 py-1 border border-white/20 rounded-full text-[10px] uppercase tracking-wider">Organic</div>
+                                <div className="px-3 py-1 border border-white/20 rounded-full text-[10px] uppercase tracking-wider">Vegan</div>
                             </div>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                        </motion.div>
+                    )}
 
+                    {/* PHASE 3: BENEFIT */}
+                    {uiState === 'benefit' && (
+                        <motion.div key="benefit" variants={variants} initial="hidden" animate="visible" exit="exit" className="absolute right-0 md:right-[-4rem] top-1/2 -translate-y-1/2 text-right">
+                            <h3 className="text-[10px] uppercase tracking-[0.5em] opacity-50 mb-4">Observed Effect</h3>
+                            <div className="text-4xl md:text-8xl font-black uppercase tracking-tighter leading-none">
+                                <span className="block text-transparent stroke-text">{benefitMain}</span>
+                                <span className="block">{benefitSub}</span>
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {/* PHASE 4: OFFER (The Purchase) */}
+                    {uiState === 'offer' && (
+                        <motion.div key="offer" variants={variants} initial="hidden" animate="visible" exit="exit" className="absolute bottom-0 w-full pointer-events-auto">
+                            <div className="flex flex-col md:flex-row items-end justify-between gap-8 pb-12 border-b border-white/10">
+                                <div>
+                                    <h2 className="text-4xl md:text-6xl font-black uppercase mb-4">{product.name}</h2>
+                                    <p className="max-w-md text-sm opacity-60">Ready to integrate this ritual into your daily protocol? Available at select flagship locations.</p>
+                                </div>
+                                <div className="flex flex-col gap-3 w-full md:w-auto">
+                                    <button
+                                        onClick={() => document.dispatchEvent(new CustomEvent('open-store-locator'))}
+                                        className="h-14 px-8 bg-white text-black font-bold uppercase tracking-widest hover:bg-[#E65800] hover:text-white transition-colors flex items-center justify-center gap-3 rounded-sm"
+                                    >
+                                        <MapPin size={18} /> Locate Stock
+                                    </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+
+                </AnimatePresence>
+            </div>
+
+            {/* SCROLL INDICATOR BAR */}
+            <div className="fixed right-6 top-1/2 -translate-y-1/2 h-32 w-[2px] bg-white/10 hidden md:block">
+                <motion.div
+                    className="w-full bg-white"
+                    animate={{
+                        height: uiState === 'reveal' ? '25%' : uiState === 'ingredients' ? '50%' : uiState === 'benefit' ? '75%' : '100%'
+                    }}
+                />
+            </div>
         </div>
     );
 };
 
 
+// --- MAIN PAGE COMPONENT ---
 const ProductDeepDive = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [uiState, setUiState] = useState('reveal');
+    const [uiState, setUiState] = useState('reveal'); // reveal, ingredients, benefit, offer
     const [showStoreLocator, setShowStoreLocator] = useState(false);
     const [isFullscreen, setIsFullscreen] = useState(false);
 
+    // FETCHING
     useEffect(() => {
         const fetchProduct = async () => {
             setLoading(true);
             try {
                 const response = await productService.getProductBySlug(id);
                 setProduct(response.data || response);
-            } catch (err) {
-                console.error('Error fetching details:', err);
-            } finally {
-                setLoading(false);
-            }
+            } catch (err) { console.error(err); }
+            finally { setLoading(false); }
         };
         if (id) fetchProduct();
 
+        // Event for locator
         const openLocator = () => setShowStoreLocator(true);
         document.addEventListener('open-store-locator', openLocator);
         return () => document.removeEventListener('open-store-locator', openLocator);
     }, [id]);
 
+    // HANDLERS
     const handleMaximize = () => {
         if (!document.fullscreenElement) {
             document.documentElement.requestFullscreen();
@@ -366,60 +361,53 @@ const ProductDeepDive = () => {
 
     const handleShare = async () => {
         if (navigator.share) {
-            try {
-                await navigator.share({
-                    title: product?.name || 'Purna Product',
-                    text: `Check out ${product?.name}`,
-                    url: window.location.href,
-                });
-            } catch (err) { console.log(err); }
-        } else {
-            alert('Link Copied to Clipboard');
-        }
+            try { await navigator.share({ title: product?.name, url: window.location.href }); } catch (err) { }
+        } else { alert('Link Copied'); }
     };
 
-    if (loading || !product) {
-        return <div className="h-screen w-full bg-[#050505] flex items-center justify-center text-white/50 animate-pulse text-xs tracking-widest">INITIALIZING...</div>;
-    }
+    if (loading || !product) return <div className="h-screen w-full bg-[#050505] flex items-center justify-center text-white/30 text-xs tracking-widest uppercase">Initializing Artifact...</div>;
 
     return (
-        <div className="h-screen w-full bg-[#050505] relative overflow-hidden select-none font-sans">
+        <div className="h-screen w-full bg-[#030303] relative overflow-hidden select-none">
 
-            {/* Functionality Header */}
+            {/* GLOBAL HDR */}
             <div className="fixed top-0 left-0 w-full z-50 p-6 flex justify-between items-center text-white mix-blend-difference pointer-events-none">
-                <button
-                    onClick={() => navigate(-1)}
-                    className="pointer-events-auto flex items-center gap-2 hover:text-[#E65800] transition-colors"
-                >
-                    <ArrowLeft size={24} />
-                    <span className="hidden md:inline text-xs font-bold tracking-widest uppercase">BACK</span>
+                <button onClick={() => navigate(-1)} className="pointer-events-auto flex items-center gap-2 hover:opacity-50 transition-opacity">
+                    <ArrowLeft size={20} /> <span className="hidden md:inline text-xs font-bold tracking-widest uppercase">Return</span>
                 </button>
-                <div className="flex gap-4 pointer-events-auto">
-                    <button onClick={handleMaximize} className="opacity-50 hover:opacity-100 transition-opacity"><Maximize2 size={20} /></button>
-                    <button onClick={handleShare} className="opacity-50 hover:opacity-100 transition-opacity"><Share2 size={20} /></button>
+                <div className="flex gap-4 pointer-events-auto opacity-50">
+                    <button onClick={handleMaximize} className="hover:opacity-100"><Maximize2 size={20} /></button>
+                    <button onClick={handleShare} className="hover:opacity-100"><Share2 size={20} /></button>
                 </div>
             </div>
 
             <ErrorBoundary>
-                <Canvas shadows dpr={[1, 1.5]} gl={{ antialias: false, powerPreference: "high-performance" }} camera={{ position: [0, 0, 10], fov: 45 }}>
+                <Canvas shadows dpr={[1, 1.5]} gl={{ antialias: false, powerPreference: "high-performance" }} camera={{ fov: 45 }}>
+                    <color attach="background" args={['#030303']} />
                     <Suspense fallback={null}>
                         <AdaptiveDpr pixelated />
-
-                        <ScrollControls pages={4} damping={0.3}>
-                            <SpotlightScene product={product} setUiState={setUiState} />
+                        <ScrollControls pages={4} damping={0.2}>
+                            <CinematicRig product={product} setUiState={setUiState} />
                         </ScrollControls>
+                        <EffectComposer disableNormalPass>
+                            <Noise opacity={0.06} />
+                            <Bloom luminanceThreshold={0.5} mipmapBlur intensity={0.8} radius={0.4} />
+                            <Vignette eskil={false} offset={0.1} darkness={0.7} />
+                        </EffectComposer>
                     </Suspense>
                 </Canvas>
             </ErrorBoundary>
 
-            <ScrollOverlay uiState={uiState} product={product} />
+            <EditorialOverlay uiState={uiState} product={product} />
 
-            <StoreLocator
-                isOpen={showStoreLocator}
-                onClose={() => setShowStoreLocator(false)}
-                productName={product.name}
-            />
+            <StoreLocator isOpen={showStoreLocator} onClose={() => setShowStoreLocator(false)} productName={product.name} />
 
+            <style>{`
+                .stroke-text {
+                    -webkit-text-stroke: 1px white;
+                    color: transparent;
+                }
+            `}</style>
         </div>
     );
 };
