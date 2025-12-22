@@ -74,12 +74,15 @@ function HomePage() {
   );
 }
 
+import PageTransition from "./Components/ui/PageTransition";
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <Router>
           <ScrollToTop />
+          <PageTransition />
           <MaintenanceWrapper>
             <Routes>
               <Route path="/" element={<HomePage />} />
