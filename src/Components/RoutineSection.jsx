@@ -73,10 +73,14 @@ const RoutineSection = () => {
 
     useEffect(() => {
         const unsubscribe = scrollYProgress.on("change", (latest) => {
-            if (latest < 0.25) setActiveIndex(0);
-            else if (latest < 0.5) setActiveIndex(1);
-            else if (latest < 0.75) setActiveIndex(2);
-            else setActiveIndex(3);
+            let newIndex = 0;
+            if (latest < 0.25) newIndex = 0;
+            else if (latest < 0.5) newIndex = 1;
+            else if (latest < 0.75) newIndex = 2;
+            else newIndex = 3;
+
+            // OPTIMIZATION: Dedupe state updates to prevent re-renders
+            setActiveIndex(prev => prev !== newIndex ? newIndex : prev);
         });
         return () => unsubscribe();
     }, [scrollYProgress]);
@@ -92,8 +96,9 @@ const RoutineSection = () => {
             <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col md:flex-row items-center justify-center p-6 md:p-12 lg:p-24 perspective-1000">
 
                 {/* Background Decor - Dynamic Gradient Orb */}
+                {/* OPTIMIZATION: Reduced opacity and hardware acceleration */}
                 <motion.div
-                    className={`absolute rounded-full blur-[120px] opacity-40 z-0 transition-colors duration-1000 bg-gradient-to-br ${activeStep.visualColor}`}
+                    className={`absolute rounded-full blur-3xl opacity-30 z-0 transition-colors duration-1000 bg-gradient-to-br ${activeStep.visualColor} transform-gpu will-change-transform`}
                     initial={false}
                     animate={{
                         scale: [1, 1.2, 1],
@@ -175,7 +180,7 @@ const RoutineSection = () => {
                             className="relative w-full max-w-md aspect-[4/5] md:aspect-square flex items-center justify-center"
                         >
                             {/* Card Container */}
-                            <div className="relative w-full h-full bg-white/40 backdrop-blur-xl border border-white/50 rounded-[2rem] shadow-2xl overflow-hidden flex items-center justify-center group">
+                            <div className="relative w-full h-full bg-white/40 backdrop-blur-xl border border-white/50 rounded-[2rem] shadow-2xl overflow-hidden flex items-center justify-center group transform-gpu">
 
                                 {/* Inner Gradient Mesh */}
                                 <div className={`absolute inset-0 bg-gradient-to-br ${activeStep.visualColor} opacity-20 group-hover:opacity-30 transition-opacity duration-700`} />
