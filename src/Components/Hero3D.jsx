@@ -1,8 +1,10 @@
 import React, { useRef } from "react";
 import { motion, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const Hero3D = () => {
     const ref = useRef(null);
+    const navigate = useNavigate();
     const { scrollYProgress } = useScroll({
         target: ref,
         offset: ["start start", "end start"],
@@ -175,21 +177,24 @@ const Hero3D = () => {
                     </h2>
 
                     <p className="text-[#151515] text-base md:text-xl max-w-xl md:max-w-2xl mx-auto font-medium leading-relaxed mb-8 md:mb-12 px-4">
-                        Modern wellness essentials inspired by ancient wisdom. <br className="hidden md:block" /> Pure, effective, and crafted for your daily flow.
+                        From your morning routine to your nightly wind-down,  <br className="hidden md:block" /> The Purna brings you pure, effective essentials inspired by <br className="hidden md:block" />
+                        Age Old Natural and crafted for modern wellness.
                     </p>
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto px-4 sm:px-0">
                         <motion.button
+                            onClick={() => navigate('/products')}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className="w-full sm:w-auto px-8 py-4 bg-[#E65800] text-white text-base md:text-lg font-medium rounded-full shadow-lg hover:shadow-orange-500/30 transition-all hover:-translate-y-1"
+                            className="w-full sm:w-auto px-8 py-4 bg-[#E65800] text-white text-base md:text-lg font-medium rounded-full shadow-lg hover:shadow-orange-500/30 transition-all hover:-translate-y-1 cursor-pointer"
                         >
                             Explore Essentials
                         </motion.button>
                         <motion.button
+                            onClick={() => navigate('/about')}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className="w-full sm:w-auto px-8 py-4 border-2 border-[#151515] text-[#151515] text-base md:text-lg font-medium rounded-full hover:bg-[#151515] hover:text-white transition-all"
+                            className="w-full sm:w-auto px-8 py-4 border-2 border-[#151515] text-[#151515] text-base md:text-lg font-medium rounded-full hover:bg-[#151515] hover:text-white transition-all cursor-pointer"
                         >
                             Our Story
                         </motion.button>
