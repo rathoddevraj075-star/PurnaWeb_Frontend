@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
-import { Sun, CloudSun, Moon, Stars, CheckCircle2, ArrowDown } from "lucide-react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { Sun, CloudSun, Moon, Stars, CheckCircle2, ArrowDown, Droplets, Sparkles, Sunset } from "lucide-react";
 
 export default function RoutineSection() {
     const containerRef = useRef(null);
@@ -9,73 +9,108 @@ export default function RoutineSection() {
         {
             id: "morning",
             time: "6:00 AM",
-            label: "Morning Ritual",
-            title: "Wake Up & Refresh",
-            description: "Start fresh with oral care and gentle cleansers. Awaken your senses and prepare for the day with intention.",
+            label: "Oral Care Essentials",
+            title: "Start Fresh",
+            description: "Start fresh with safe, gentle, natural formulations.",
             icon: Sun,
             bg: "bg-[#FFFBF0]",
             accent: "text-amber-600",
             border: "border-amber-900/10",
             gradient: "from-orange-100 to-amber-50",
-            visualGradient: "from-orange-400 to-amber-300"
+            visualGradient: "from-orange-400 to-yellow-300"
         },
         {
-            id: "midday",
-            time: "12:00 PM",
-            label: "Midday Boost",
-            title: "Stay Active & Vibrant",
-            description: "Stay active with refreshing hygiene essentials. Keep your energy high and your spirit lifted throughout the day.",
-            icon: CloudSun,
-            bg: "bg-[#F0FDFA]",
-            accent: "text-teal-700",
+            id: "midmorning",
+            time: "10:00 AM",
+            label: "Body Care",
+            title: "Stay Energized",
+            description: "Stay energized with cleansing and nourishing essentials.",
+            icon: Droplets,
+            bg: "bg-[#F0F9FF]", // Light Sky
+            accent: "text-sky-600",
+            border: "border-sky-900/10",
+            gradient: "from-sky-100 to-blue-50",
+            visualGradient: "from-sky-400 to-blue-300"
+        },
+        {
+            id: "afternoon",
+            time: "4:00 PM",
+            label: "Hand & Hygiene",
+            title: "Midday Freshness",
+            description: "Midday freshness that keeps you active and confident.",
+            icon: Sparkles,
+            bg: "bg-[#F0FDFA]", // Mint/Teal
+            accent: "text-teal-600",
             border: "border-teal-900/10",
             gradient: "from-teal-100 to-emerald-50",
-            visualGradient: "from-teal-400 to-cyan-300"
+            visualGradient: "from-teal-400 to-emerald-300"
         },
         {
             id: "evening",
-            time: "6:00 PM",
-            label: "Evening Reset",
-            title: "Wash Away The Day",
-            description: "Wash off the day with nourishing care. Transition from the busyness of the outside world to the comfort of home.",
-            icon: Moon,
-            bg: "bg-[#EEF2FF]",
-            accent: "text-indigo-700",
+            time: "8:00 PM",
+            label: "Hair & Skin Ritual",
+            title: "Calm & Nourish",
+            description: "Wash away the day with calm, herbal nourishment.",
+            icon: Sunset,
+            bg: "bg-[#EEF2FF]", // Indigo
+            accent: "text-indigo-600",
             border: "border-indigo-900/10",
             gradient: "from-indigo-100 to-violet-50",
-            visualGradient: "from-indigo-400 to-purple-400"
+            visualGradient: "from-indigo-400 to-violet-400"
         },
         {
             id: "night",
             time: "10:00 PM",
-            label: "Nightly Nourishment",
-            title: "Rest & Restore",
-            description: "Calm your senses with restorative routines. Prepare your body and mind for deep, rejuvenating sleep.",
+            label: "Night Care",
+            title: "Rest & Repair",
+            description: "End the day with products crafted for rest, repair, and renewal.",
             icon: Stars,
-            bg: "bg-[#F5F3FF]",
-            accent: "text-violet-800",
-            border: "border-violet-900/10",
-            gradient: "from-violet-100 to-fuchsia-50",
-            visualGradient: "from-violet-500 to-fuchsia-400"
+            bg: "bg-[#FAF5FF]", // Deep Violet
+            accent: "text-purple-700",
+            border: "border-purple-900/10",
+            gradient: "from-purple-100 to-fuchsia-50",
+            visualGradient: "from-purple-500 to-fuchsia-500"
         }
     ];
 
     return (
         <section ref={containerRef} className="relative bg-[#FFFBF0]">
-            {/* Scroll Hint */}
-            <div className="absolute top-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 opacity-40">
-                <span className="text-[10px] font-mono tracking-widest uppercase">The Routine</span>
-                <ArrowDown size={14} className="animate-bounce" />
+
+            {/* Intro Header */}
+            <div className="relative z-0 py-24 md:py-32 px-6 text-center bg-[#FFFBF0]">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8 }}
+                    className="max-w-3xl mx-auto space-y-6"
+                >
+                    {/* <span className="text-xs font-bold tracking-[0.2em] uppercase text-amber-600">The Purna Routine</span> */}
+                    <h2 className="text-5xl md:text-7xl font-serif text-neutral-900">Your Day, Made Whole</h2>
+                    <p className="text-lg md:text-xl text-neutral-600 leading-relaxed font-light">
+                        From refreshing oral care to nurturing night-time rituals, experience wellness that completes your entire day.
+                    </p>
+                </motion.div>
+
+                {/* Scroll Hint */}
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 0.4 }}
+                    transition={{ delay: 0.5 }}
+                    className="flex justify-center mt-16"
+                >
+                    <ArrowDown size={24} className="animate-bounce text-neutral-400" />
+                </motion.div>
             </div>
 
-            <div className="flex flex-col">
+            <div className="flex flex-col relative z-10">
                 {steps.map((step, index) => (
                     <RoutineCard key={step.id} step={step} index={index} total={steps.length} />
                 ))}
             </div>
 
             {/* Spacer for final aesthetic scroll */}
-            <div className="h-[20vh] bg-[#F5F3FF]" />
+            <div className="h-[20vh] bg-[#FAF5FF]" />
         </section>
     );
 }
@@ -100,7 +135,7 @@ function RoutineCard({ step, index, total }) {
                 zIndex: index + 10,
                 // Only apply transform effects on desktop to keep mobile absolute 60fps simple
             }}
-            className={`sticky top-0 w-full min-h-screen flex items-center justify-center overflow-hidden border-t-2 border-white/40 ${step.bg}`}
+            className={`sticky top-0 w-full min-h-screen flex items-center justify-center overflow-hidden border-t border-white/40 ${step.bg}`}
         >
             <motion.div
                 style={{ scale, opacity, y }}
