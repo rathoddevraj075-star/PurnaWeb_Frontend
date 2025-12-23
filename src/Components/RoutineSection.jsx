@@ -1,231 +1,146 @@
-import React, { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { Sun, CloudSun, Moon, Stars, CheckCircle2, ArrowDown, Droplets, Sparkles, Sunset } from "lucide-react";
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowRight, Clock } from "lucide-react";
+
+const STEPS = [
+    {
+        id: "01",
+        time: "6 AM",
+        title: "Oral Care Essentials",
+        description: "Start fresh with safe, gentle, natural formulations.",
+        image: "https://images.unsplash.com/photo-1555820585-c5ae44394b79?q=80&w=1000&auto=format&fit=crop",
+        accent: "text-amber-600",
+        bgAccent: "bg-amber-600"
+    },
+    {
+        id: "02",
+        time: "10 AM",
+        title: "Body Care",
+        description: "Stay energized with cleansing and nourishing essentials.",
+        image: "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?q=80&w=1000&auto=format&fit=crop",
+        accent: "text-teal-600",
+        bgAccent: "bg-teal-600"
+    },
+    {
+        id: "03",
+        time: "4 PM",
+        title: "Hand & Hygiene",
+        description: "Midday freshness that keeps you active and confident.",
+        image: "https://images.unsplash.com/photo-1571781926291-280553da1e54?q=80&w=1000&auto=format&fit=crop",
+        accent: "text-blue-600",
+        bgAccent: "bg-blue-600"
+    },
+    {
+        id: "04",
+        time: "8 PM",
+        title: "Hair & Skin Ritual",
+        description: "Wash away the day with calm, herbal nourishment.",
+        image: "https://images.unsplash.com/photo-1512290923902-8a9281aa0f46?q=80&w=1000&auto=format&fit=crop",
+        accent: "text-indigo-600",
+        bgAccent: "bg-indigo-600"
+    },
+    {
+        id: "05",
+        time: "10 PM",
+        title: "Night Care",
+        description: "End the day with products crafted for rest, repair, and renewal.",
+        image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=1000&auto=format&fit=crop",
+        accent: "text-purple-600",
+        bgAccent: "bg-purple-600"
+    }
+];
 
 export default function RoutineSection() {
-    const containerRef = useRef(null);
-
-    const steps = [
-        {
-            id: "morning",
-            time: "6:00 AM",
-            label: "Oral Care Essentials",
-            title: "Start Fresh",
-            description: "Start fresh with safe, gentle, natural formulations.",
-            icon: Sun,
-            bg: "bg-[#FFFBF0]",
-            accent: "text-amber-600",
-            border: "border-amber-900/10",
-            gradient: "from-orange-100 to-amber-50",
-            visualGradient: "from-orange-400 to-yellow-300"
-        },
-        {
-            id: "midmorning",
-            time: "10:00 AM",
-            label: "Body Care",
-            title: "Stay Energized",
-            description: "Stay energized with cleansing and nourishing essentials.",
-            icon: Droplets,
-            bg: "bg-[#F0F9FF]", // Light Sky
-            accent: "text-sky-600",
-            border: "border-sky-900/10",
-            gradient: "from-sky-100 to-blue-50",
-            visualGradient: "from-sky-400 to-blue-300"
-        },
-        {
-            id: "afternoon",
-            time: "4:00 PM",
-            label: "Hand & Hygiene",
-            title: "Midday Freshness",
-            description: "Midday freshness that keeps you active and confident.",
-            icon: Sparkles,
-            bg: "bg-[#F0FDFA]", // Mint/Teal
-            accent: "text-teal-600",
-            border: "border-teal-900/10",
-            gradient: "from-teal-100 to-emerald-50",
-            visualGradient: "from-teal-400 to-emerald-300"
-        },
-        {
-            id: "evening",
-            time: "8:00 PM",
-            label: "Hair & Skin Ritual",
-            title: "Calm & Nourish",
-            description: "Wash away the day with calm, herbal nourishment.",
-            icon: Sunset,
-            bg: "bg-[#EEF2FF]", // Indigo
-            accent: "text-indigo-600",
-            border: "border-indigo-900/10",
-            gradient: "from-indigo-100 to-violet-50",
-            visualGradient: "from-indigo-400 to-violet-400"
-        },
-        {
-            id: "night",
-            time: "10:00 PM",
-            label: "Night Care",
-            title: "Rest & Repair",
-            description: "End the day with products crafted for rest, repair, and renewal.",
-            icon: Stars,
-            bg: "bg-[#FAF5FF]", // Deep Violet
-            accent: "text-purple-700",
-            border: "border-purple-900/10",
-            gradient: "from-purple-100 to-fuchsia-50",
-            visualGradient: "from-purple-500 to-fuchsia-500"
-        }
-    ];
+    const [activeStep, setActiveStep] = useState(0);
 
     return (
-        <section ref={containerRef} className="relative bg-[#FFFBF0]">
+        <section className="bg-[#FFFBF0] py-16 md:py-24 relative overflow-hidden">
+            <div className="max-w-[1440px] mx-auto px-6">
 
-            {/* Intro Header */}
-            <div className="relative z-0 py-24 md:py-32 px-6 text-center bg-[#FFFBF0]">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.8 }}
-                    className="max-w-3xl mx-auto space-y-6"
-                >
-                    {/* <span className="text-xs font-bold tracking-[0.2em] uppercase text-amber-600">The Purna Routine</span> */}
-                    <h2 className="text-5xl md:text-7xl font-serif text-neutral-900">Your Day, Made Whole</h2>
-                    <p className="text-lg md:text-xl text-neutral-600 leading-relaxed font-light">
+                {/* Header - Compact */}
+                <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 md:mb-16 gap-6">
+                    <div>
+                        <span className="text-amber-600 font-mono text-xs tracking-widest uppercase mb-3 block">Daily Rituals</span>
+                        <h2 className="text-4xl md:text-5xl font-serif text-neutral-900 leading-tight">
+                            Your Day, <br /> <span className="text-neutral-400 italic">Made Whole.</span>
+                        </h2>
+                    </div>
+                    <p className="text-neutral-500 text-sm md:text-base max-w-md leading-relaxed">
                         From refreshing oral care to nurturing night-time rituals, experience wellness that completes your entire day.
                     </p>
-                </motion.div>
-
-                {/* Scroll Hint */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 0.4 }}
-                    transition={{ delay: 0.5 }}
-                    className="flex justify-center mt-16"
-                >
-                    <ArrowDown size={24} className="animate-bounce text-neutral-400" />
-                </motion.div>
-            </div>
-
-            <div className="flex flex-col relative z-10">
-                {steps.map((step, index) => (
-                    <RoutineCard key={step.id} step={step} index={index} total={steps.length} />
-                ))}
-            </div>
-
-            {/* Spacer for final aesthetic scroll */}
-            <div className="h-[20vh] bg-[#FAF5FF]" />
-        </section>
-    );
-}
-
-function RoutineCard({ step, index, total }) {
-    const ref = useRef(null);
-    const { scrollYProgress } = useScroll({
-        target: ref,
-        offset: ["start start", "end start"]
-    });
-
-    // Subtle transformations for the card as it scrolls away
-    // Instead of causing a re-render, this uses CSS variables/transforms directly on GPU
-    const scale = useTransform(scrollYProgress, [0, 1], [1, 0.95]);
-    const opacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
-    const y = useTransform(scrollYProgress, [0, 1], ["0%", "-10%"]);
-
-    return (
-        <motion.div
-            ref={ref}
-            style={{
-                zIndex: index + 10,
-                // Only apply transform effects on desktop to keep mobile absolute 60fps simple
-            }}
-            className={`sticky top-0 w-full min-h-screen flex items-center justify-center overflow-hidden border-t border-white/40 ${step.bg}`}
-        >
-            <motion.div
-                style={{ scale, opacity, y }}
-                className="w-full h-full absolute inset-0 pointer-events-none hidden lg:block"
-            />
-
-            <div className="relative w-full max-w-[1440px] px-6 md:px-12 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center h-full py-20 lg:py-0">
-
-                {/* Content Side */}
-                <div className="flex flex-col justify-center order-2 lg:order-1">
-                    <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true, margin: "-20%" }}
-                        transition={{ duration: 0.6 }}
-                        className="flex items-center gap-3 mb-8"
-                    >
-                        <div className={`p-2 rounded-full ${step.bg} border border-black/5`}>
-                            <step.icon size={20} className={step.accent} />
-                        </div>
-                        <span className={`text-sm font-bold tracking-widest uppercase ${step.accent} opacity-80`}>
-                            {step.label}
-                        </span>
-                        <span className="h-px w-10 bg-black/10" />
-                        <span className="font-mono text-sm opacity-50">{step.time}</span>
-                    </motion.div>
-
-                    <motion.h2
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, margin: "-20%" }}
-                        transition={{ duration: 0.6, delay: 0.1 }}
-                        className={`text-5xl md:text-7xl lg:text-8xl font-serif leading-[0.9] text-neutral-900 mb-8 tracking-tight`}
-                    >
-                        {step.title}
-                    </motion.h2>
-
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, margin: "-20%" }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
-                        className="text-lg md:text-xl text-neutral-600 leading-relaxed max-w-md"
-                    >
-                        {step.description}
-                    </motion.p>
-
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.4 }}
-                        className="mt-12 flex items-center gap-2 text-sm font-medium opacity-40 uppercase tracking-widest"
-                    >
-                        Step 0{index + 1} / 0{total}
-                    </motion.div>
                 </div>
 
-                {/* Visual Side */}
-                <div className="relative order-1 lg:order-2 flex items-center justify-center">
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9, rotate: -5 }}
-                        whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
-                        viewport={{ once: true, margin: "-20%" }}
-                        transition={{ duration: 0.8, ease: "easeOut" }}
-                        className="relative w-full aspect-square max-w-lg"
-                    >
-                        {/* Optimized Gradient Blob - No Blur Filter, just Gradient */}
-                        <div className={`absolute inset-0 rounded-full bg-gradient-to-tr ${step.visualGradient} opacity-20 animate-pulse-slow`} />
+                {/* --- Desktop: Interactive Split --- */}
+                <div className="hidden lg:grid grid-cols-12 gap-12 items-start min-h-[600px]">
 
-                        {/* Glass Card */}
-                        <div className="absolute inset-4 md:inset-8 bg-white/40 backdrop-blur-xl border border-white/60 rounded-[2.5rem] shadow-2xl overflow-hidden flex items-center justify-center">
-
-                            {/* Inner Content */}
-                            <div className="text-center p-12">
-                                <step.icon size={120} strokeWidth={0.5} className={`${step.accent} opacity-80 mb-6 mx-auto`} />
-                                <div className="font-serif italic text-3xl opacity-40">
-                                    {step.label}
+                    {/* Left: List */}
+                    <div className="col-span-5 flex flex-col justify-center h-full gap-2">
+                        {STEPS.map((step, index) => (
+                            <div
+                                key={step.id}
+                                onMouseEnter={() => setActiveStep(index)}
+                                className={`group cursor-pointer relative pl-8 py-6 border-l-2 transition-all duration-300 ${activeStep === index ? 'border-neutral-900' : 'border-neutral-200'}`}
+                            >
+                                <div className={`text-xs font-mono font-bold tracking-widest uppercase mb-1 transition-colors ${activeStep === index ? step.accent : 'text-neutral-400'}`}>
+                                    {step.time}
+                                </div>
+                                <h3 className={`text-3xl font-serif transition-colors ${activeStep === index ? 'text-neutral-900' : 'text-neutral-300 group-hover:text-neutral-400'}`}>
+                                    {step.title}
+                                </h3>
+                                <div className={`overflow-hidden transition-all duration-500 ${activeStep === index ? 'max-h-20 opacity-100 mt-2' : 'max-h-0 opacity-0'}`}>
+                                    <p className="text-neutral-500 leading-relaxed text-sm">{step.description}</p>
                                 </div>
                             </div>
+                        ))}
+                    </div>
 
-                            {/* Decorative */}
-                            <div className="absolute top-6 right-6 opacity-30">
-                                <CheckCircle2 size={32} />
+                    {/* Right: Fixed Image Stage */}
+                    <div className="col-span-7 relative h-[600px] rounded-[2rem] overflow-hidden bg-white shadow-xl">
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key={activeStep}
+                                initial={{ opacity: 0, scale: 1.1 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.5 }}
+                                className="absolute inset-0"
+                            >
+                                <img
+                                    src={STEPS[activeStep].image}
+                                    alt={STEPS[activeStep].title}
+                                    className="w-full h-full object-cover"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+
+                                {/* Floating Badge */}
+                                <div className="absolute bottom-8 left-8 bg-white/90 backdrop-blur-md px-6 py-3 rounded-full flex items-center gap-3">
+                                    <div className={`w-2 h-2 rounded-full ${STEPS[activeStep].bgAccent}`} />
+                                    <span className="text-xs font-bold uppercase tracking-widest text-neutral-900">{STEPS[activeStep].title}</span>
+                                </div>
+                            </motion.div>
+                        </AnimatePresence>
+                    </div>
+                </div>
+
+                {/* --- Mobile: Compact List --- */}
+                <div className="lg:hidden flex flex-col gap-4">
+                    {STEPS.map((step) => (
+                        <div key={step.id} className="bg-white p-4 rounded-2xl shadow-sm border border-neutral-100 flex items-start gap-4">
+                            <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-neutral-100">
+                                <img src={step.image} alt={step.title} className="w-full h-full object-cover" />
+                            </div>
+                            <div>
+                                <div className={`text-[10px] font-mono font-bold tracking-widest uppercase mb-1 ${step.accent}`}>
+                                    {step.time}
+                                </div>
+                                <h3 className="text-lg font-serif text-neutral-900 leading-tight mb-1">{step.title}</h3>
+                                <p className="text-xs text-neutral-500 leading-relaxed line-clamp-2">{step.description}</p>
                             </div>
                         </div>
-                    </motion.div>
+                    ))}
                 </div>
 
             </div>
-        </motion.div>
+        </section>
     );
 }
