@@ -38,7 +38,7 @@ export default function BlogSection() {
             viewport={{ once: true }}
             className="max-w-xl"
           >
-            <span className="text-amber-600 font-mono text-xs tracking-widest uppercase mb-4 block">The Journal</span>
+            <span className="text-amber-600 font-mono text-xs tracking-widest uppercase mb-4 block">Blogs</span>
             <h2 className="text-4xl md:text-6xl font-serif text-neutral-900 leading-none">
               Stories of <br />
               <span className="text-neutral-400 italic">Wellness & Ritual.</span>
@@ -50,7 +50,7 @@ export default function BlogSection() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
           >
-            <Link to="/journal" className="group flex items-center gap-2 text-neutral-900 border-b border-neutral-300 pb-1 hover:border-neutral-900 transition-colors">
+            <Link to="/blog" className="group flex items-center gap-2 text-neutral-900 border-b border-neutral-300 pb-1 hover:border-neutral-900 transition-colors">
               <span className="uppercase tracking-widest text-xs">Read All Stories</span>
               <ArrowUpRight size={14} className="group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />
             </Link>
@@ -96,7 +96,7 @@ function JournalCard({ post, index, isMobile }) {
       transition={{ delay: index * 0.1 }}
       className="group flex flex-col h-full cursor-pointer"
     >
-      <Link to={`/journal/${post.slug}`} className="block overflow-hidden rounded-[2rem] mb-6 relative aspect-[4/5]">
+      <Link to={`/blog/${post.slug}`} className="block overflow-hidden rounded-[2rem] mb-6 relative aspect-[4/5]">
         {post.featuredImage ? (
           <img
             src={post.featuredImage}
@@ -123,7 +123,7 @@ function JournalCard({ post, index, isMobile }) {
         </div>
 
         <h3 className="text-2xl md:text-3xl font-serif text-neutral-900 leading-tight mb-4 group-hover:underline decoration-1 underline-offset-4">
-          <Link to={`/journal/${post.slug}`}>
+          <Link to={`/blog/${post.slug}`}>
             {post.title}
           </Link>
         </h3>
@@ -133,7 +133,7 @@ function JournalCard({ post, index, isMobile }) {
         </p>
 
         <Link
-          to={`/journal/${post.slug}`}
+          to={`/blog/${post.slug}`}
           className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-neutral-900 group/link"
         >
           Read Story

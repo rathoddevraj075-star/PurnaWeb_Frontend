@@ -99,8 +99,8 @@ function App() {
               <Route path="/science" element={<SciencePage />} />
               <Route path="/about" element={<About />} />
               <Route path="/routine" element={<ThePurnaRoutine />} />
-              <Route path="/journal" element={<BlogPage />} />
-              <Route path="/journal/:slug" element={<BlogDetailPage />} />
+              <Route path="/blog" element={<BlogPage />} />
+              <Route path="/blog/:slug" element={<BlogDetailPage />} />
               <Route path="/account" element={<AccountPage />} />
 
               {/* Admin Panel Routes */}

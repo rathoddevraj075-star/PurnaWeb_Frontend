@@ -52,7 +52,7 @@ const BlogPage = () => {
                     transition={{ duration: 0.8 }}
                 >
                     <span className="text-[var(--color-orange)] tracking-[0.2em] uppercase text-sm md:text-base">
-                        The Journal
+                        Blogs
                     </span>
                     <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif mt-6 text-[#151515]">
                         Stories of <span className="italic font-light text-gray-600">Wholeness</span>
@@ -103,7 +103,7 @@ const BlogPage = () => {
                                 transition={{ delay: index * 0.1, duration: 0.6 }}
                                 className="flex flex-col group cursor-pointer"
                             >
-                                <Link to={`/journal/${post.slug}`} className="block overflow-hidden rounded-2xl mb-6 shadow-sm group-hover:shadow-md transition-shadow duration-300">
+                                <Link to={`/blog/${post.slug}`} className="block overflow-hidden rounded-2xl mb-6 shadow-sm group-hover:shadow-md transition-shadow duration-300">
                                     <div className="aspect-[4/3] overflow-hidden bg-gray-100">
                                         {post.featuredImage ? (
                                             <img
@@ -125,7 +125,7 @@ const BlogPage = () => {
                                         <span className="capitalize">{post.category || 'Wellness'}</span>
                                     </div>
                                     <h2 className="text-2xl font-serif text-[#151515] leading-tight mb-4 group-hover:text-[var(--color-orange)] transition-colors duration-300">
-                                        <Link to={`/journal/${post.slug}`}>
+                                        <Link to={`/blog/${post.slug}`}>
                                             {post.title}
                                         </Link>
                                     </h2>
@@ -133,7 +133,7 @@ const BlogPage = () => {
                                         {post.excerpt}
                                     </p>
 
-                                    <Link to={`/journal/${post.slug}`} className="inline-flex items-center text-sm uppercase tracking-widest text-[#151515] hover:text-[var(--color-orange)] transition-colors group/link">
+                                    <Link to={`/blog/${post.slug}`} className="inline-flex items-center text-sm uppercase tracking-widest text-[#151515] hover:text-[var(--color-orange)] transition-colors group/link">
                                         Read Story
                                         <span className="ml-2 transform group-hover/link:translate-x-1 transition-transform duration-300">→</span>
                                     </Link>

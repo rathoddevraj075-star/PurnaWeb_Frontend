@@ -184,7 +184,7 @@ const About = () => {
         </motion.div>
       </section>
 
-      <Newsletter />
+      {/* <Newsletter /> */}
       <Footer />
     </div>
   );

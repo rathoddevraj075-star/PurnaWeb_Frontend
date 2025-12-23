@@ -80,7 +80,7 @@ const BlogDetailPage = () => {
                 <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
                     <h1 className="text-4xl font-serif mb-4">Post Not Found</h1>
                     <p className="text-gray-600 mb-6">{error || 'The blog post you are looking for does not exist.'}</p>
-                    <Link to="/journal" className="underline hover:text-[var(--color-orange)]">Back to Journal</Link>
+                    <Link to="/blog" className="underline hover:text-[var(--color-orange)]">Back to Blog</Link>
                 </div>
                 <Footer />
             </div>
@@ -180,9 +180,9 @@ const BlogDetailPage = () => {
 
                         {/* Back Link */}
                         <div className="mt-16 pt-10 border-t border-gray-200 flex justify-between items-center">
-                            <Link to="/journal" className="inline-flex items-center gap-3 text-sm tracking-[0.2em] uppercase hover:text-[var(--color-orange)] transition-colors group">
+                            <Link to="/blog" className="inline-flex items-center gap-3 text-sm tracking-[0.2em] uppercase hover:text-[var(--color-orange)] transition-colors group">
                                 <span className="w-8 h-[1px] bg-black group-hover:bg-[var(--color-orange)] transition-colors"></span>
-                                Back to Journal
+                                Back to Blog
                             </Link>
                         </div>
                     </div>
@@ -197,7 +197,7 @@ const BlogDetailPage = () => {
                                     <span className="text-[var(--color-orange)] tracking-[0.2em] uppercase text-sm block mb-4">Curated for you</span>
                                     <h3 className="text-4xl md:text-5xl font-serif text-[#151515]">Continue Reading</h3>
                                 </div>
-                                <Link to="/journal" className="hidden md:inline-block text-sm underline decoration-gray-300 underline-offset-8 hover:text-[var(--color-orange)] hover:decoration-[var(--color-orange)] transition-all">
+                                <Link to="/blog" className="hidden md:inline-block text-sm underline decoration-gray-300 underline-offset-8 hover:text-[var(--color-orange)] hover:decoration-[var(--color-orange)] transition-all">
                                     View All Stories
                                 </Link>
                             </div>
@@ -211,7 +211,7 @@ const BlogDetailPage = () => {
                                         viewport={{ once: true }}
                                         transition={{ delay: idx * 0.1 }}
                                     >
-                                        <Link to={`/journal/${related.slug}`} className="group block h-full flex flex-col">
+                                        <Link to={`/blog/${related.slug}`} className="group block h-full flex flex-col">
                                             <div className="aspect-[4/3] rounded-2xl overflow-hidden mb-6 bg-gray-100 relative">
                                                 <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
                                                 {related.featuredImage ? (

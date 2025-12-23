@@ -239,7 +239,7 @@ export default function BlogEdit() {
                             {isNew ? 'New Blog Post' : 'Edit Blog Post'}
                         </h1>
                         <p className="text-gray-400 text-sm mt-0.5 hidden sm:block">
-                            {isNew ? 'Create a new article for your journal' : 'Update article details'}
+                            {isNew ? 'Create a new article for your blog' : 'Update article details'}
                         </p>
                     </div>
                 </div>

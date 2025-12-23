@@ -104,7 +104,7 @@ export default function BlogList() {
                         Blog Posts
                     </h1>
                     <p className="text-gray-400 text-sm mt-1 hidden sm:block">
-                        Manage your journal articles and blog posts
+                        Manage your blogs articles and posts
                     </p>
                 </div>
                 <Link
