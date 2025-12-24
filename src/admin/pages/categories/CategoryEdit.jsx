@@ -7,7 +7,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { categoryApi } from "../../services/adminApi";
 import SeoFormTabs from "../../components/seo/SeoFormTabs";
-import { Save, ArrowLeft, Loader2, FolderTree, Search } from 'lucide-react';
+import { Save, ArrowLeft, Loader2, FolderTree, Search, CheckCircle, XCircle } from 'lucide-react';
 
 export default function CategoryEdit() {
     const { id } = useParams();
@@ -15,10 +15,19 @@ export default function CategoryEdit() {
     const queryClient = useQueryClient();
     const isNew = id === 'new';
     const [activeTab, setActiveTab] = useState('General');
+    const [notification, setNotification] = useState(null); // { type: 'success' | 'error', message: string }
     const [formData, setFormData] = useState({
         name: '', slug: '', description: '', longDescription: '',
         parent: '', isActive: true, isFeatured: false, order: 0, seo: {}
     });
+
+    // Auto-hide notification after 5 seconds
+    useEffect(() => {
+        if (notification) {
+            const timer = setTimeout(() => setNotification(null), 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [notification]);
 
     const { data: category, isLoading } = useQuery({
         queryKey: ['admin-category', id],
@@ -51,7 +60,23 @@ export default function CategoryEdit() {
         mutationFn: (data) => isNew ? categoryApi.create(data) : categoryApi.update(id, data),
         onSuccess: (res) => {
             queryClient.invalidateQueries(['admin-categories']);
+            queryClient.invalidateQueries(['admin-categories-tree']);
+            queryClient.invalidateQueries(['admin-categories-all']);
+            setNotification({ type: 'success', message: isNew ? 'Category created successfully!' : 'Category updated successfully!' });
             if (isNew) navigate(`/admin/categories/${res.data.data._id}`);
+        },
+        onError: (error) => {
+            const errorMessage = error.response?.data?.message || error.message || 'Failed to save category';
+            setNotification({ type: 'error', message: errorMessage });
+            console.error('Save error:', error);
+
+            // If 403, suggest re-login
+            if (error.response?.status === 403) {
+                setNotification({
+                    type: 'error',
+                    message: 'Access denied. Please log out and log back in to refresh your session.'
+                });
+            }
         }
     });
 
@@ -69,6 +94,26 @@ export default function CategoryEdit() {
 
     return (
         <div className="space-y-6">
+            {/* Notification Toast */}
+            {notification && (
+                <div className={`fixed top-4 right-4 z-50 flex items-center gap-3 px-6 py-4 rounded-xl shadow-2xl border transition-all animate-slide-in ${notification.type === 'success'
+                        ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400'
+                        : 'bg-red-500/20 border-red-500/30 text-red-400'
+                    }`}>
+                    {notification.type === 'success'
+                        ? <CheckCircle size={20} />
+                        : <XCircle size={20} />
+                    }
+                    <span className="font-medium">{notification.message}</span>
+                    <button
+                        onClick={() => setNotification(null)}
+                        className="ml-2 text-gray-400 hover:text-white transition-colors"
+                    >
+                        ×
+                    </button>
+                </div>
+            )}
+
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
                     <button
@@ -101,8 +146,8 @@ export default function CategoryEdit() {
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
                         className={`flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all relative whitespace-nowrap ${activeTab === tab.id
-                                ? 'text-white'
-                                : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
+                            ? 'text-white'
+                            : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
                             }`}
                     >
                         <tab.icon size={16} className={activeTab === tab.id ? 'text-emerald-400' : ''} />
