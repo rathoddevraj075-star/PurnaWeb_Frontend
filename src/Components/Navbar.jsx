@@ -83,7 +83,7 @@ export default function Navbar() {
 
           {/* Nav links */}
           <nav className="flex space-x-6 xl:space-x-8 text-xs">
-            {["SHOP", "ABOUT", "ROUTINE", "BLOGS", "FAQ", "CONTACT"].map((item) => (
+            {["SHOP", "ABOUT", "ROUTINE", "BLOG", "FAQ", "CONTACT"].map((item) => (
               <a
                 key={item}
                 href={item === "SHOP" ? "/products" : `/${item.toLowerCase()}`}

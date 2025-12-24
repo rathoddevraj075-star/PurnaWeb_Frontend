@@ -124,6 +124,7 @@ export default function ProductEdit() {
     // Temp state for adding items
     const [newBenefit, setNewBenefit] = useState('');
     const [newImageUrl, setNewImageUrl] = useState('');
+    const [newSuitableFor, setNewSuitableFor] = useState('');
     const [newIngredient, setNewIngredient] = useState({ name: '', percentage: '', description: '' });
 
     const { data: product, isLoading } = useQuery({
@@ -536,7 +537,7 @@ export default function ProductEdit() {
                 </div>
             )}
 
-            {/* Details Tab - Simplified for 3D Product Page */}
+            {/* Details Tab - Enhanced for 3D Product Page */}
             {activeTab === 'Details' && (
                 <div className="animate-fade-in space-y-6">
                     {/* 3D Page Summaries Section */}
@@ -600,6 +601,167 @@ export default function ProductEdit() {
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    {/* Key Benefits Section */}
+                    <div className="bg-[#0f1218] rounded-2xl p-6 border border-white/5 shadow-xl shadow-black/20">
+                        <div className="flex items-center gap-3 mb-4">
+                            <ListChecks className="text-emerald-400" size={20} />
+                            <h3 className="text-lg font-semibold text-white">Key Benefits</h3>
+                        </div>
+                        <p className="text-gray-400 text-sm mb-4">Add the main benefits of this product. These appear as bullet points on the product page.</p>
+
+                        {/* Add Benefit Input */}
+                        <div className="flex gap-3 mb-4">
+                            <input
+                                type="text"
+                                value={newBenefit}
+                                onChange={(e) => setNewBenefit(e.target.value)}
+                                className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500/50 transition-colors placeholder-gray-600"
+                                placeholder="e.g., Deeply hydrates skin for 24 hours"
+                                onKeyDown={(e) => e.key === 'Enter' && addBenefit()}
+                            />
+                            <button
+                                onClick={addBenefit}
+                                className="flex items-center gap-2 bg-emerald-500/20 text-emerald-400 px-4 py-2.5 rounded-xl hover:bg-emerald-500/30 transition-colors font-medium"
+                            >
+                                <Plus size={18} /> Add
+                            </button>
+                        </div>
+
+                        {/* Benefits List */}
+                        {formData.keyBenefits.length > 0 ? (
+                            <div className="space-y-2">
+                                {formData.keyBenefits.map((benefit, index) => (
+                                    <div key={index} className="flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3 group">
+                                        <span className="text-emerald-400">✓</span>
+                                        <span className="flex-1 text-white text-sm">{benefit}</span>
+                                        <button
+                                            onClick={() => removeBenefit(index)}
+                                            className="text-gray-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all"
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center py-6 border-2 border-dashed border-white/10 rounded-xl">
+                                <p className="text-gray-500 text-sm">No benefits added yet</p>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Hero Ingredient Section */}
+                    <div className="bg-[#0f1218] rounded-2xl p-6 border border-white/5 shadow-xl shadow-black/20">
+                        <div className="flex items-center gap-3 mb-4">
+                            <FlaskConical className="text-emerald-400" size={20} />
+                            <h3 className="text-lg font-semibold text-white">Hero Ingredient</h3>
+                        </div>
+                        <p className="text-gray-400 text-sm mb-4">Highlight the star ingredient of this product.</p>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <Input
+                                label="Ingredient Name"
+                                type="text"
+                                value={formData.heroIngredient?.name || ''}
+                                onChange={(e) => setFormData({
+                                    ...formData,
+                                    heroIngredient: { ...formData.heroIngredient, name: e.target.value }
+                                })}
+                                placeholder="e.g., Hyaluronic Acid"
+                            />
+                            <div className="md:col-span-2">
+                                <TextArea
+                                    label="Description"
+                                    rows={2}
+                                    value={formData.heroIngredient?.description || ''}
+                                    onChange={(e) => setFormData({
+                                        ...formData,
+                                        heroIngredient: { ...formData.heroIngredient, description: e.target.value }
+                                    })}
+                                    placeholder="Describe why this ingredient is special and its benefits..."
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Suitable For Section */}
+                    <div className="bg-[#0f1218] rounded-2xl p-6 border border-white/5 shadow-xl shadow-black/20">
+                        <div className="flex items-center gap-3 mb-4">
+                            <Sparkles className="text-emerald-400" size={20} />
+                            <h3 className="text-lg font-semibold text-white">Suitable For</h3>
+                        </div>
+                        <p className="text-gray-400 text-sm mb-4">Specify skin types, hair types, or conditions this product is suitable for.</p>
+
+                        {/* Add Suitable For Input */}
+                        <div className="flex gap-3 mb-4">
+                            <input
+                                type="text"
+                                value={newSuitableFor}
+                                onChange={(e) => setNewSuitableFor(e.target.value)}
+                                className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500/50 transition-colors placeholder-gray-600"
+                                placeholder="e.g., Oily Skin, Dry Hair, All Skin Types"
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' && newSuitableFor.trim()) {
+                                        setFormData({ ...formData, suitableFor: [...formData.suitableFor, newSuitableFor.trim()] });
+                                        setNewSuitableFor('');
+                                    }
+                                }}
+                            />
+                            <button
+                                onClick={() => {
+                                    if (newSuitableFor.trim()) {
+                                        setFormData({ ...formData, suitableFor: [...formData.suitableFor, newSuitableFor.trim()] });
+                                        setNewSuitableFor('');
+                                    }
+                                }}
+                                className="flex items-center gap-2 bg-emerald-500/20 text-emerald-400 px-4 py-2.5 rounded-xl hover:bg-emerald-500/30 transition-colors font-medium"
+                            >
+                                <Plus size={18} /> Add
+                            </button>
+                        </div>
+
+                        {/* Suitable For Tags */}
+                        {formData.suitableFor.length > 0 ? (
+                            <div className="flex flex-wrap gap-2">
+                                {formData.suitableFor.map((item, index) => (
+                                    <div key={index} className="flex items-center gap-2 bg-white/5 rounded-full px-4 py-2 group">
+                                        <span className="text-white text-sm">{item}</span>
+                                        <button
+                                            onClick={() => setFormData({
+                                                ...formData,
+                                                suitableFor: formData.suitableFor.filter((_, i) => i !== index)
+                                            })}
+                                            className="text-gray-500 hover:text-red-400 transition-colors"
+                                        >
+                                            <Trash2 size={14} />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center py-6 border-2 border-dashed border-white/10 rounded-xl">
+                                <p className="text-gray-500 text-sm">No skin/hair types added yet</p>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* How To Use Section */}
+                    <div className="bg-[#0f1218] rounded-2xl p-6 border border-white/5 shadow-xl shadow-black/20">
+                        <div className="flex items-center gap-3 mb-4">
+                            <ListChecks className="text-emerald-400" size={20} />
+                            <h3 className="text-lg font-semibold text-white">How To Use</h3>
+                        </div>
+                        <p className="text-gray-400 text-sm mb-4">Provide clear usage instructions for this product.</p>
+
+                        <TextArea
+                            label="Usage Instructions"
+                            rows={4}
+                            value={formData.howToUse}
+                            onChange={(e) => setFormData({ ...formData, howToUse: e.target.value })}
+                            placeholder="1. Apply a small amount to damp skin...&#10;2. Massage gently in circular motions...&#10;3. Rinse with warm water..."
+                        />
                     </div>
 
                     {/* Info Box */}

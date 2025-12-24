@@ -45,6 +45,8 @@ import BlogEdit from "./admin/pages/blogs/BlogEdit";
 import UserList from "./admin/pages/users/UserList";
 import UserEdit from "./admin/pages/users/UserEdit";
 import ContactList from "./admin/pages/contacts/ContactList";
+import StoreList from "./admin/pages/stores/StoreList";
+import StoreEdit from "./admin/pages/stores/StoreEdit";
 import AdminProfile from "./admin/pages/settings/AdminProfile";
 import SystemSettings from "./admin/pages/settings/SystemSettings";
 
@@ -116,6 +118,8 @@ function App() {
                 <Route path="users" element={<UserList />} />
                 <Route path="users/:id" element={<UserEdit />} />
                 <Route path="contacts" element={<ContactList />} />
+                <Route path="stores" element={<StoreList />} />
+                <Route path="stores/:id" element={<StoreEdit />} />
                 <Route path="profile" element={<AdminProfile />} />
                 <Route path="settings" element={<SystemSettings />} />
                 <Route path="seo/global" element={<GlobalSeoSettings />} />

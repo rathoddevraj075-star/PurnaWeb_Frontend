@@ -156,6 +156,13 @@ export const storeService = {
         return response.data;
     },
 
+    getNearbyStoresByProduct: async (lat, lng, productId, radius = 25) => {
+        const response = await api.get('/stores/nearby-by-product', {
+            params: { lat, lng, productId, radius },
+        });
+        return response.data;
+    },
+
     getStoreById: async (id) => {
         const response = await api.get(`/stores/${id}`);
         return response.data;

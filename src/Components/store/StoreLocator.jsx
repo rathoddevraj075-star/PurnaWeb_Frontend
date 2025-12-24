@@ -3,13 +3,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MapPin, X, Navigation, Phone, Clock, Loader2 } from "lucide-react";
 import { storeService } from "../../services/api";
 
-export default function StoreLocator({ isOpen, onClose, productName = "this product" }) {
+export default function StoreLocator({ isOpen, onClose, productName = "this product", productId = null }) {
     const [stores, setStores] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [locationError, setLocationError] = useState("");
     const [userLocation, setUserLocation] = useState(null);
-    const [searchRadius, setSearchRadius] = useState(10);
+    const [searchRadius, setSearchRadius] = useState(25);
 
     useEffect(() => {
         if (isOpen) {
@@ -58,11 +58,18 @@ export default function StoreLocator({ isOpen, onClose, productName = "this prod
         setError("");
 
         try {
-            const response = await storeService.getNearbyStores(lat, lng, searchRadius);
+            // Use product-filtered API if productId is provided
+            const response = productId
+                ? await storeService.getNearbyStoresByProduct(lat, lng, productId, searchRadius)
+                : await storeService.getNearbyStores(lat, lng, searchRadius);
+
             setStores(response.data || []);
 
             if (response.data?.length === 0) {
-                setError(`No stores found within ${searchRadius}km of your location`);
+                setError(productId
+                    ? `No stores carrying this product found within ${searchRadius}km`
+                    : `No stores found within ${searchRadius}km of your location`
+                );
             }
         } catch (err) {
             console.error("Error fetching stores:", err);

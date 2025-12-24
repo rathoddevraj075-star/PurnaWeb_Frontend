@@ -8,7 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import {
     LayoutDashboard, Package, FolderTree, Settings,
     ArrowRightLeft, FileText, LogOut, Menu, X,
-    Search, ChevronDown, Activity, Bell, User, Users, Inbox, AlertTriangle
+    Search, ChevronDown, Activity, Bell, User, Users, Inbox, AlertTriangle, Store
 } from 'lucide-react';
 import NotificationDropdown from './NotificationDropdown';
 import { settingsApi } from '../../services/adminApi';
@@ -20,6 +20,7 @@ const menuItems = [
     { path: '/admin/blogs', icon: FileText, label: 'Blog Posts' },
     { path: '/admin/users', icon: Users, label: 'Users' },
     { path: '/admin/contacts', icon: Inbox, label: 'Inquiries' },
+    { path: '/admin/stores', icon: Store, label: 'Store Locator' },
     {
         label: 'SEO Management',
         icon: Search,

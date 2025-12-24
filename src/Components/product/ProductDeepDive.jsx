@@ -400,7 +400,7 @@ const ProductDeepDive = () => {
 
             <EditorialOverlay uiState={uiState} product={product} />
 
-            <StoreLocator isOpen={showStoreLocator} onClose={() => setShowStoreLocator(false)} productName={product.name} />
+            <StoreLocator isOpen={showStoreLocator} onClose={() => setShowStoreLocator(false)} productName={product.name} productId={product._id} />
 
             <style>{`
                 .stroke-text {

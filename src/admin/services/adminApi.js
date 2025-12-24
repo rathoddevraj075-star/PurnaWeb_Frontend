@@ -50,8 +50,40 @@ export const categoryApi = {
 export const productApi = {
     getAll: (params) => adminApi.get('/products', { params }),
     getOne: (id) => adminApi.get(`/products/${id}`),
-    create: (data) => adminApi.post('/products', data),
-    update: (id, data) => adminApi.put(`/products/${id}`, data),
+    create: (data) => {
+        // Convert to FormData for multer middleware
+        const formData = new FormData();
+        Object.keys(data).forEach(key => {
+            if (data[key] !== undefined && data[key] !== null) {
+                // Stringify objects/arrays for FormData
+                if (typeof data[key] === 'object') {
+                    formData.append(key, JSON.stringify(data[key]));
+                } else {
+                    formData.append(key, data[key]);
+                }
+            }
+        });
+        return adminApi.post('/products', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
+    },
+    update: (id, data) => {
+        // Convert to FormData for multer middleware
+        const formData = new FormData();
+        Object.keys(data).forEach(key => {
+            if (data[key] !== undefined && data[key] !== null) {
+                // Stringify objects/arrays for FormData
+                if (typeof data[key] === 'object') {
+                    formData.append(key, JSON.stringify(data[key]));
+                } else {
+                    formData.append(key, data[key]);
+                }
+            }
+        });
+        return adminApi.put(`/products/${id}`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
+    },
     delete: (id) => adminApi.delete(`/products/${id}`),
     bulkUpdate: (ids, updates) => adminApi.put('/products/bulk', { ids, updates }),
     updateStatus: (id, status) => adminApi.put(`/products/${id}/status`, { status }),
@@ -132,7 +164,6 @@ export const contactApi = {
     sendReply: (id, data) => adminApi.post(`/contacts/${id}/reply`, data),
 };
 
-// ============ SETTINGS & PROFILE ============
 export const settingsApi = {
     // Profile
     getProfile: () => adminApi.get('/profile'),
@@ -141,6 +172,64 @@ export const settingsApi = {
     // System Settings
     getSettings: () => adminApi.get('/settings'),
     updateSettings: (data) => adminApi.put('/settings', data),
+};
+
+// ============ STORES ============
+// Note: Store routes are at /api/stores, not /api/admin/stores
+const storeBaseUrl = `${API_BASE}/stores`;
+export const storeApi = {
+    getAll: (params) => axios.get(storeBaseUrl, {
+        params,
+        headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` }
+    }),
+    getOne: (id) => axios.get(`${storeBaseUrl}/${id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` }
+    }),
+    create: (data) => {
+        const formData = new FormData();
+        Object.keys(data).forEach(key => {
+            if (data[key] !== undefined && data[key] !== null) {
+                if (typeof data[key] === 'object' && !(data[key] instanceof File)) {
+                    formData.append(key, JSON.stringify(data[key]));
+                } else {
+                    formData.append(key, data[key]);
+                }
+            }
+        });
+        return axios.post(storeBaseUrl, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                Authorization: `Bearer ${localStorage.getItem('adminToken')}`
+            }
+        });
+    },
+    update: (id, data) => {
+        const formData = new FormData();
+        Object.keys(data).forEach(key => {
+            if (data[key] !== undefined && data[key] !== null) {
+                if (typeof data[key] === 'object' && !(data[key] instanceof File)) {
+                    formData.append(key, JSON.stringify(data[key]));
+                } else {
+                    formData.append(key, data[key]);
+                }
+            }
+        });
+        return axios.put(`${storeBaseUrl}/${id}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                Authorization: `Bearer ${localStorage.getItem('adminToken')}`
+            }
+        });
+    },
+    delete: (id) => axios.delete(`${storeBaseUrl}/${id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` }
+    }),
+    toggleActive: (id, isActive) => axios.put(`${storeBaseUrl}/${id}`, { isActive }, {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('adminToken')}`
+        }
+    }),
 };
 
 // ============ AUTH ============
