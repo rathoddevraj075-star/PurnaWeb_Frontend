@@ -53,7 +53,16 @@ export const authService = {
 
     login: async (credentials) => {
         const response = await api.post('/auth/login', credentials);
-        if (response.data.data.token) {
+        if (response.data.data?.token) {
+            localStorage.setItem('token', response.data.data.token);
+            localStorage.setItem('user', JSON.stringify(response.data.data));
+        }
+        return response.data;
+    },
+
+    verify2FA: async (data) => {
+        const response = await api.post('/auth/2fa/verify', data);
+        if (response.data.data?.token) {
             localStorage.setItem('token', response.data.data.token);
             localStorage.setItem('user', JSON.stringify(response.data.data));
         }
@@ -78,6 +87,27 @@ export const authService = {
     isAuthenticated: () => {
         return !!localStorage.getItem('token');
     },
+
+    // 2FA Management (Private)
+    setup2FA: async () => {
+        const response = await api.post('/auth/2fa/setup');
+        return response.data;
+    },
+
+    verify2FASetup: async (token) => {
+        const response = await api.post('/auth/2fa/verify-setup', { token });
+        return response.data;
+    },
+
+    disable2FA: async (password) => {
+        const response = await api.post('/auth/2fa/disable', { password });
+        return response.data;
+    },
+
+    updatePassword: async (passwordData) => {
+        const response = await api.put('/auth/change-password', passwordData);
+        return response.data;
+    },
 };
 
 // ============================================
@@ -90,7 +120,10 @@ export const userService = {
     },
 
     updateProfile: async (userData) => {
-        const response = await api.put('/users/profile', userData);
+        const response = await api.put('/auth/profile', userData);
+        if (response.data.success) {
+            localStorage.setItem('user', JSON.stringify(response.data.data));
+        }
         return response.data;
     },
 };

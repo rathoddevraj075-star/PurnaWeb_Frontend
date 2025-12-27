@@ -3,12 +3,16 @@ import Navbar from "../Navbar";
 import Footer from "../Footer";
 import { motion, AnimatePresence } from "framer-motion";
 const M = motion;
-import { User, Package, MapPin, Heart, Settings, Edit, LogIn, LogOut } from "lucide-react";
+import { User, Settings, Edit, LogIn, LogOut, Eye, EyeOff, Save, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 
 export default function AccountPage() {
-  const { user, isAuthenticated, login, register, logout, loading: authLoading, error: authError, clearError } = useAuth();
+  const {
+    user, isAuthenticated, login, register, logout,
+    loading: authLoading, error: authError, clearError,
+    updateProfile, updatePassword, setup2FA, verify2FASetup, disable2FA, verify2FA
+  } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,7 +20,25 @@ export default function AccountPage() {
   const [phone, setPhone] = useState("");
   const [mode, setMode] = useState("login");
   const [showModal, setShowModal] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [editName, setEditName] = useState("");
+  const [editPhone, setEditPhone] = useState("");
   const [toast, setToast] = useState("");
+  const [show2FALogin, setShow2FALogin] = useState(false);
+  const [twoFactorToken, setTwoFactorToken] = useState("");
+  const [pendingEmail, setPendingEmail] = useState("");
+  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [is2FASetupOpen, setIs2FASetupOpen] = useState(false);
+  const [qrCode, setQrCode] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [backupCodes, setBackupCodes] = useState([]);
+  const [setupStep, setSetupStep] = useState(1); // 1: QR, 2: Backup Codes
+  const [disable2FAPassword, setDisable2FAPassword] = useState("");
+  const [isDisable2FAOpen, setIsDisable2FAOpen] = useState(false);
 
   const fadeIn = {
     initial: { opacity: 0, y: 24 },
@@ -40,6 +62,14 @@ export default function AccountPage() {
     clearError();
   }, [mode]);
 
+  // Sync settings state when user data changes
+  useEffect(() => {
+    if (user) {
+      setEditName(user.name || "");
+      setEditPhone(user.phone || "");
+    }
+  }, [user]);
+
   async function handleLogin(e) {
     e.preventDefault();
     if (!email || !password) {
@@ -48,10 +78,29 @@ export default function AccountPage() {
 
     const result = await login(email, password);
     if (result.success) {
+      if (result.require2FA) {
+        setPendingEmail(result.email);
+        setShow2FALogin(true);
+        // Don't close modal, just show 2FA screen
+      } else {
+        setShowModal(false);
+        setToast("Signed in successfully");
+        setEmail("");
+        setPassword("");
+      }
+    }
+  }
+
+  async function handle2FAVerify(e) {
+    e.preventDefault();
+    const result = await verify2FA(pendingEmail, twoFactorToken);
+    if (result.success) {
       setShowModal(false);
+      setShow2FALogin(false);
       setToast("Signed in successfully");
       setEmail("");
       setPassword("");
+      setTwoFactorToken("");
     }
   }
 
@@ -81,6 +130,60 @@ export default function AccountPage() {
     }
   }
 
+  async function handleUpdateProfile(e) {
+    e.preventDefault();
+    const result = await updateProfile({ name: editName, phone: editPhone });
+    if (result.success) {
+      setIsSettingsOpen(false);
+      setToast("Profile updated successfully");
+    }
+  }
+
+  async function handleChangePassword(e) {
+    e.preventDefault();
+    if (newPassword !== confirmPassword) {
+      setToast("Passwords do not match");
+      return;
+    }
+    const result = await updatePassword({ currentPassword, newPassword });
+    if (result.success) {
+      setIsChangePasswordOpen(false);
+      setToast("Password updated successfully");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    }
+  }
+
+  async function handleStart2FA() {
+    const result = await setup2FA();
+    if (result.success) {
+      setQrCode(result.data.qrCode);
+      setIs2FASetupOpen(true);
+      setSetupStep(1);
+    }
+  }
+
+  async function handleVerify2FASetup(e) {
+    e.preventDefault();
+    const result = await verify2FASetup(verificationCode);
+    if (result.success) {
+      setBackupCodes(result.backupCodes);
+      setSetupStep(2);
+      setToast("2FA logic verified");
+    }
+  }
+
+  async function handleDisable2FA(e) {
+    e.preventDefault();
+    const result = await disable2FA(disable2FAPassword);
+    if (result.success) {
+      setIsDisable2FAOpen(false);
+      setDisable2FAPassword("");
+      setToast("2FA disabled successfully");
+    }
+  }
+
   return (
     <>
       <AnnoucementBar />
@@ -103,10 +206,10 @@ export default function AccountPage() {
             transition={{ delay: 0.2, duration: 0.5 }}
           >
             {isAuthenticated
-              ? "Manage your details, orders, and preferences in one place."
+              ? "Manage your details and preferences in one place."
               : mode === "login"
-                ? "Sign in to view orders, saved addresses, and personalize your experience."
-                : "Create your account to manage orders and addresses."}
+                ? "Sign in to personalize your experience and manage your profile."
+                : "Create your account to start your routine."}
           </M.p>
         </div>
       </section>
@@ -133,23 +236,15 @@ export default function AccountPage() {
                       Log out
                     </span>
                   </M.button>
-                  <div className="grid grid-cols-2 gap-4">
-                    <M.a href="#" className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl border border-black bg-white" {...hoverScale}>
-                      <Package />
-                      <span className="text-xs font-semibold">Orders</span>
-                    </M.a>
-                    <M.a href="#" className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl border border-black bg-white" {...hoverScale}>
-                      <MapPin />
-                      <span className="text-xs font-semibold">Addresses</span>
-                    </M.a>
-                    <M.a href="#" className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl border border-black bg-white" {...hoverScale}>
-                      <Heart />
-                      <span className="text-xs font-semibold">Wishlist</span>
-                    </M.a>
-                    <M.a href="#" className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl border border-black bg-white" {...hoverScale}>
-                      <Settings />
-                      <span className="text-xs font-semibold">Settings</span>
-                    </M.a>
+                  <div className="grid grid-cols-1 gap-4">
+                    <M.button
+                      className="flex items-center justify-center gap-2 p-4 rounded-xl border border-black bg-white w-full"
+                      {...hoverScale}
+                      onClick={() => setIsSettingsOpen(true)}
+                    >
+                      <Settings size={20} />
+                      <span className="text-sm font-semibold">Settings</span>
+                    </M.button>
                   </div>
                 </div>
               </M.div>
@@ -185,20 +280,31 @@ export default function AccountPage() {
                 <M.div className="rounded-2xl border border-black bg-white p-6" {...hoverScale}>
                   <div className="flex items-start justify-between">
                     <div>
-                      <h3 className="text-lg">Saved Addresses</h3>
-                      <p className="text-sm text-black/60">Manage your delivery addresses</p>
+                      <h3 className="text-lg uppercase font-bold tracking-tight">Security & Access</h3>
+                      <p className="text-sm text-black/60">Manage your password and security settings</p>
                     </div>
                   </div>
-                  <div className="mt-6">
-                    {user?.address?.street ? (
-                      <div className="rounded-xl border border-black p-4">
-                        <p className="text-sm font-medium">{user.address.street}</p>
-                        <p className="text-xs text-black/60">
-                          {user.address.city}, {user.address.state} - {user.address.pincode}
-                        </p>
-                      </div>
+                  <div className="mt-6 flex flex-col sm:flex-row gap-4">
+                    <button
+                      className="px-6 py-3 rounded-lg bg-black text-white text-sm font-semibold tracking-wide hover:bg-black/90 transition-colors"
+                      onClick={() => setIsChangePasswordOpen(true)}
+                    >
+                      Change Password
+                    </button>
+                    {user?.twoFactorEnabled ? (
+                      <button
+                        className="px-6 py-3 rounded-lg border border-red-200 text-red-600 text-sm font-semibold tracking-wide hover:bg-red-50 transition-colors"
+                        onClick={() => setIsDisable2FAOpen(true)}
+                      >
+                        Disable 2FA
+                      </button>
                     ) : (
-                      <p className="text-sm text-black/60">No addresses saved yet.</p>
+                      <button
+                        className="px-6 py-3 rounded-lg border border-black text-black text-sm font-semibold tracking-wide hover:bg-black/5 transition-colors"
+                        onClick={handleStart2FA}
+                      >
+                        Enable 2FA
+                      </button>
                     )}
                   </div>
                 </M.div>
@@ -242,69 +348,111 @@ export default function AccountPage() {
           <M.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center px-4">
             <M.div initial={{ scale: 0.95, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 20 }} transition={{ duration: 0.25 }} className="w-full max-w-md md:max-w-lg bg-white rounded-2xl border border-black p-6 shadow-2xl">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg">{mode === "login" ? "Sign in" : "Create account"}</h3>
-                <button onClick={() => { setShowModal(false); clearError(); }} className="text-sm underline">Close</button>
+                <h3 className="text-lg">
+                  {show2FALogin ? "Verification Required" : mode === "login" ? "Sign in" : "Create account"}
+                </h3>
+                <button onClick={() => { setShowModal(false); clearError(); setShow2FALogin(false); }} className="text-sm underline">Close</button>
               </div>
-              <form className="space-y-4" onSubmit={mode === "login" ? handleLogin : handleSignup}>
-                {mode === "signup" && (
-                  <>
-                    <input
-                      type="text"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="Name *"
-                      required
-                      className="w-full border border-black rounded-lg px-4 py-3 text-sm"
-                    />
-                    <input
-                      type="tel"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder="Phone (optional)"
-                      className="w-full border border-black rounded-lg px-4 py-3 text-sm"
-                    />
-                  </>
-                )}
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Email *"
-                  required
-                  className="w-full border border-black rounded-lg px-4 py-3 text-sm"
-                />
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Password *"
-                  required
-                  minLength={6}
-                  className="w-full border border-black rounded-lg px-4 py-3 text-sm"
-                />
-                {authError && <p className="text-xs text-red-600">{authError}</p>}
-                <div className="flex gap-3">
+
+              {show2FALogin ? (
+                <form className="space-y-4" onSubmit={handle2FAVerify}>
+                  <p className="text-sm text-black/60">Enter the 6-digit code from your authenticator app or a backup code.</p>
+                  <input
+                    type="text"
+                    value={twoFactorToken}
+                    onChange={(e) => setTwoFactorToken(e.target.value)}
+                    placeholder="Verification Code"
+                    required
+                    className="w-full border border-black rounded-lg px-4 py-3 text-sm text-center tracking-[1em] font-bold"
+                  />
+                  {authError && <p className="text-xs text-red-600">{authError}</p>}
                   <M.button
                     type="submit"
-                    className="flex-1 bg-black text-white py-3 rounded-lg text-sm font-semibold tracking-wide disabled:opacity-60 shadow hover:shadow-md"
+                    className="w-full bg-black text-white py-3 rounded-lg text-sm font-semibold tracking-wide shadow hover:shadow-md"
                     {...hoverScale}
                     disabled={authLoading}
                   >
-                    {authLoading
-                      ? (mode === "login" ? "Signing in..." : "Creating...")
-                      : mode === "login" ? "Sign in" : "Create account"
-                    }
+                    {authLoading ? "Verifying..." : "Verify & Login"}
                   </M.button>
-                  <M.button
+                  <button
                     type="button"
-                    className="flex-1 bg-white border border-black py-3 rounded-lg text-sm font-semibold tracking-wide shadow hover:shadow-md"
-                    {...hoverScale}
-                    onClick={() => { setMode(mode === "login" ? "signup" : "login"); clearError(); }}
+                    className="w-full text-xs underline text-black/60"
+                    onClick={() => setShow2FALogin(false)}
                   >
-                    {mode === "login" ? "Create account" : "Have an account?"}
-                  </M.button>
-                </div>
-              </form>
+                    Back to Login
+                  </button>
+                </form>
+              ) : (
+                <form className="space-y-4" onSubmit={mode === "login" ? handleLogin : handleSignup}>
+                  {mode === "signup" && (
+                    <>
+                      <input
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Name *"
+                        required
+                        className="w-full border border-black rounded-lg px-4 py-3 text-sm"
+                      />
+                      <input
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="Phone (optional)"
+                        className="w-full border border-black rounded-lg px-4 py-3 text-sm"
+                      />
+                    </>
+                  )}
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Email *"
+                    required
+                    className="w-full border border-black rounded-lg px-4 py-3 text-sm"
+                  />
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Password *"
+                      required
+                      minLength={6}
+                      className="w-full border border-black rounded-lg px-4 py-3 text-sm pr-12"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-black/60 hover:text-black transition-colors"
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                  {authError && <p className="text-xs text-red-600">{authError}</p>}
+                  <div className="flex gap-3">
+                    <M.button
+                      type="submit"
+                      className="flex-1 bg-black text-white py-3 rounded-lg text-sm font-semibold tracking-wide disabled:opacity-60 shadow hover:shadow-md"
+                      {...hoverScale}
+                      disabled={authLoading}
+                    >
+                      {authLoading
+                        ? (mode === "login" ? "Signing in..." : "Creating...")
+                        : mode === "login" ? "Sign in" : "Create account"
+                      }
+                    </M.button>
+                    <M.button
+                      type="button"
+                      className="flex-1 bg-white border border-black py-3 rounded-lg text-sm font-semibold tracking-wide shadow hover:shadow-md"
+                      {...hoverScale}
+                      onClick={() => { setMode(mode === "login" ? "signup" : "login"); clearError(); }}
+                    >
+                      {mode === "login" ? "Create account" : "Have an account?"}
+                    </M.button>
+                  </div>
+                </form>
+              )}
             </M.div>
           </M.div>
         )}
@@ -316,6 +464,173 @@ export default function AccountPage() {
             <div className="px-4 py-2 rounded-lg bg-black text-white shadow">
               {toast}
             </div>
+          </M.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {isSettingsOpen && (
+          <M.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center px-4">
+            <M.div initial={{ scale: 0.95, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 20 }} className="w-full max-w-md bg-[#FCF8F2] rounded-2xl border border-black p-6 shadow-2xl relative">
+              <button
+                onClick={() => setIsSettingsOpen(false)}
+                className="absolute top-4 right-4 p-2 hover:bg-black/5 rounded-full"
+              >
+                <XCircle size={24} />
+              </button>
+
+              <h3 className="text-xl font-bold uppercase tracking-tight mb-6">Edit Profile</h3>
+
+              <form onSubmit={handleUpdateProfile} className="space-y-4">
+                <div>
+                  <label className="text-xs uppercase font-bold text-black/60 mb-1 block px-1">Full Name</label>
+                  <input
+                    type="text"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    placeholder="Enter full name"
+                    className="w-full border border-black rounded-lg px-4 py-3 text-sm bg-white"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs uppercase font-bold text-black/60 mb-1 block px-1">Phone Number</label>
+                  <input
+                    type="tel"
+                    value={editPhone}
+                    onChange={(e) => setEditPhone(e.target.value)}
+                    placeholder="Enter phone number"
+                    className="w-full border border-black rounded-lg px-4 py-3 text-sm bg-white"
+                  />
+                </div>
+
+                <div className="pt-4">
+                  <M.button
+                    type="submit"
+                    className="w-full bg-black text-white py-3 rounded-lg text-sm font-semibold tracking-wide flex items-center justify-center gap-2 shadow hover:shadow-md"
+                    {...hoverScale}
+                  >
+                    <Save size={18} />
+                    Save Changes
+                  </M.button>
+                </div>
+              </form>
+            </M.div>
+          </M.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {isChangePasswordOpen && (
+          <M.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center px-4">
+            <M.div initial={{ scale: 0.95, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 20 }} className="w-full max-w-md bg-[#FCF8F2] rounded-2xl border border-black p-6 shadow-2xl relative">
+              <button onClick={() => setIsChangePasswordOpen(false)} className="absolute top-4 right-4 p-2 hover:bg-black/5 rounded-full"><XCircle size={24} /></button>
+              <h3 className="text-xl font-bold uppercase tracking-tight mb-6">Change Password</h3>
+              <form onSubmit={handleChangePassword} className="space-y-4">
+                <input
+                  type="password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  placeholder="Current Password"
+                  className="w-full border border-black rounded-lg px-4 py-3 text-sm bg-white"
+                  required
+                />
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="New Password"
+                  className="w-full border border-black rounded-lg px-4 py-3 text-sm bg-white"
+                  required
+                />
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Confirm New Password"
+                  className="w-full border border-black rounded-lg px-4 py-3 text-sm bg-white"
+                  required
+                />
+                <div className="pt-4">
+                  <M.button type="submit" className="w-full bg-black text-white py-3 rounded-lg text-sm font-semibold tracking-wide shadow hover:shadow-md" {...hoverScale}>
+                    Update Password
+                  </M.button>
+                </div>
+              </form>
+            </M.div>
+          </M.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {is2FASetupOpen && (
+          <M.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center px-4">
+            <M.div initial={{ scale: 0.95, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 20 }} className="w-full max-w-md bg-white rounded-2xl border border-black p-6 shadow-2xl relative text-center">
+              {setupStep === 1 ? (
+                <>
+                  <h3 className="text-xl font-bold uppercase mb-4">Setup 2FA</h3>
+                  <p className="text-sm text-black/60 mb-6">Scan this QR code with your Authenticator app (Google Authenticator, Authy, etc.)</p>
+                  <div className="bg-white p-4 border border-black rounded-xl inline-block mb-6">
+                    <img src={qrCode} alt="2FA QR Code" className="w-48 h-48" />
+                  </div>
+                  <form onSubmit={handleVerify2FASetup} className="space-y-4">
+                    <input
+                      type="text"
+                      value={verificationCode}
+                      onChange={(e) => setVerificationCode(e.target.value)}
+                      placeholder="6-digit PIN"
+                      required
+                      className="w-full border border-black rounded-lg px-4 py-3 text-sm text-center font-bold tracking-widest"
+                    />
+                    <M.button type="submit" className="w-full bg-black text-white py-3 rounded-lg text-sm font-semibold tracking-wide shadow hover:shadow-md" {...hoverScale}>
+                      Verify & Enable
+                    </M.button>
+                  </form>
+                </>
+              ) : (
+                <>
+                  <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Save size={32} />
+                  </div>
+                  <h3 className="text-xl font-bold uppercase mb-4">2FA Enabled!</h3>
+                  <p className="text-sm text-black/60 mb-6">Save these backup codes in a safe place. You can use them to log in if you lose access to your authenticator app.</p>
+                  <div className="grid grid-cols-2 gap-2 mb-6">
+                    {backupCodes.map((code, i) => (
+                      <div key={i} className="bg-gray-100 border border-black/10 py-2 rounded font-mono text-sm">{code}</div>
+                    ))}
+                  </div>
+                  <M.button onClick={() => setIs2FASetupOpen(false)} className="w-full bg-black text-white py-3 rounded-lg text-sm font-semibold tracking-wide shadow hover:shadow-md" {...hoverScale}>
+                    I've Saved Them
+                  </M.button>
+                </>
+              )}
+            </M.div>
+          </M.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {isDisable2FAOpen && (
+          <M.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center px-4">
+            <M.div initial={{ scale: 0.95, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 20 }} className="w-full max-w-md bg-white rounded-2xl border border-black p-6 shadow-2xl relative">
+              <button onClick={() => setIsDisable2FAOpen(false)} className="absolute top-4 right-4 p-2 hover:bg-black/5 rounded-full"><XCircle size={24} /></button>
+              <h3 className="text-xl font-bold uppercase mb-4 text-red-600">Disable 2FA</h3>
+              <p className="text-sm text-black/60 mb-6 font-medium">To disable Two-Factor Authentication, please enter your password for verification.</p>
+              <form onSubmit={handleDisable2FA} className="space-y-4">
+                <input
+                  type="password"
+                  value={disable2FAPassword}
+                  onChange={(e) => setDisable2FAPassword(e.target.value)}
+                  placeholder="Enter Password"
+                  className="w-full border border-black rounded-lg px-4 py-3 text-sm"
+                  required
+                />
+                <M.button type="submit" className="w-full bg-red-600 text-white py-3 rounded-lg text-sm font-semibold tracking-wide shadow hover:shadow-md" {...hoverScale}>
+                  Disable Security
+                </M.button>
+              </form>
+            </M.div>
           </M.div>
         )}
       </AnimatePresence>

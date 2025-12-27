@@ -47,10 +47,31 @@ export const AuthProvider = ({ children }) => {
         setLoading(true);
         try {
             const response = await authService.login({ email, password });
+
+            if (response.require2FA) {
+                return { success: true, require2FA: true, email: response.email };
+            }
+
             setUser(response.data);
             return { success: true, data: response.data };
         } catch (err) {
             const message = err.response?.data?.message || 'Login failed. Please try again.';
+            setError(message);
+            return { success: false, error: message };
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const verify2FA = async (email, token) => {
+        setError(null);
+        setLoading(true);
+        try {
+            const response = await authService.verify2FA({ email, token });
+            setUser(response.data);
+            return { success: true, data: response.data };
+        } catch (err) {
+            const message = err.response?.data?.message || 'Invalid 2FA code.';
             setError(message);
             return { success: false, error: message };
         } finally {
@@ -93,6 +114,56 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const updatePassword = async (passwordData) => {
+        setError(null);
+        try {
+            const response = await authService.updatePassword(passwordData);
+            return { success: true, message: response.message };
+        } catch (err) {
+            const message = err.response?.data?.message || 'Password update failed.';
+            setError(message);
+            return { success: false, error: message };
+        }
+    };
+
+    const setup2FA = async () => {
+        try {
+            return await authService.setup2FA();
+        } catch (err) {
+            setError(err.response?.data?.message || 'Failed to setup 2FA');
+            return { success: false };
+        }
+    };
+
+    const verify2FASetup = async (token) => {
+        try {
+            const res = await authService.verify2FASetup(token);
+            if (res.success) {
+                // Refresh user data to show 2FA as enabled
+                const profileRes = await userService.getProfile();
+                setUser(profileRes.data);
+            }
+            return res;
+        } catch (err) {
+            setError(err.response?.data?.message || 'Verification failed');
+            return { success: false };
+        }
+    };
+
+    const disable2FA = async (password) => {
+        try {
+            const res = await authService.disable2FA(password);
+            if (res.success) {
+                const profileRes = await userService.getProfile();
+                setUser(profileRes.data);
+            }
+            return res;
+        } catch (err) {
+            setError(err.response?.data?.message || 'Failed to disable 2FA');
+            return { success: false };
+        }
+    };
+
     const clearError = () => setError(null);
 
     const value = {
@@ -104,6 +175,11 @@ export const AuthProvider = ({ children }) => {
         register,
         logout,
         updateProfile,
+        updatePassword,
+        verify2FA,
+        setup2FA,
+        verify2FASetup,
+        disable2FA,
         clearError,
     };
 
