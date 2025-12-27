@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowUpRight, ArrowRight, Calendar } from "lucide-react";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
 import { blogService } from "../services/api";
 
 export default function BlogSection() {
@@ -65,12 +67,20 @@ export default function BlogSection() {
         </div>
 
         {/* --- MOBILE: Horizontal Snap Scroll --- */}
-        <div className="lg:hidden flex overflow-x-auto snap-x snap-mandatory gap-6 pb-8 -mx-6 px-6 no-scrollbar">
-          {blogs.map((post, index) => (
-            <div key={post._id} className="min-w-[85vw] snap-center">
-              <JournalCard post={post} index={index} isMobile />
-            </div>
-          ))}
+        {/* --- MOBILE: Touch Slider (Swiper) --- */}
+        <div className="lg:hidden -mx-6 px-6">
+          <Swiper
+            spaceBetween={24}
+            slidesPerView={1.2}
+            className="w-full !overflow-visible"
+            grabCursor={true}
+          >
+            {blogs.map((post, index) => (
+              <SwiperSlide key={post._id} className="h-auto">
+                <JournalCard post={post} index={index} isMobile />
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </div>
 
       </div>

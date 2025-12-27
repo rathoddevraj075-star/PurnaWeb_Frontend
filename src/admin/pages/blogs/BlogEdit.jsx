@@ -13,6 +13,8 @@ import {
     Eye, EyeOff, Loader2, AlertCircle, Check, X,
     Upload, Trash2, Type, AlignLeft, Layers
 } from 'lucide-react';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 
 const CATEGORIES = [
     { value: 'wellness', label: 'Wellness' },
@@ -384,23 +386,68 @@ export default function BlogEdit() {
 
                 {/* Content Tab */}
                 {activeTab === 'content' && (
-                    <div className="space-y-4">
-                        <TextArea
-                            label="Content"
-                            required
-                            placeholder="Write your blog post content here... (Supports basic HTML)"
-                            rows={20}
-                            value={formData.content}
-                            onChange={(e) => handleChange('content', e.target.value)}
-                        />
+                    <div className="space-y-4 quill-dark-theme mb-8">
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                            Content <span className="text-red-400">*</span>
+                        </label>
+                        <div className="relative">
+                            <ReactQuill
+                                theme="snow"
+                                value={formData.content}
+                                onChange={(content) => handleChange('content', content)}
+                                modules={{
+                                    toolbar: [
+                                        [{ 'header': [1, 2, 3, false] }],
+                                        ['bold', 'italic', 'underline', 'strike'],
+                                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                                        ['link', 'image', 'clean'],
+                                        [{ 'color': [] }, { 'background': [] }],
+                                        [{ 'align': [] }]
+                                    ],
+                                }}
+                                className="bg-white/5 border border-white/10 rounded-xl text-white overflow-hidden"
+                            />
+                        </div>
                         {errors.content && (
                             <p className="text-red-400 text-sm flex items-center gap-1">
                                 <AlertCircle size={14} /> {errors.content}
                             </p>
                         )}
-                        <p className="text-gray-500 text-sm">
-                            Tip: You can use HTML tags for formatting (e.g., &lt;h2&gt;, &lt;p&gt;, &lt;strong&gt;, &lt;em&gt;, &lt;ul&gt;, &lt;li&gt;)
-                        </p>
+                        <style>{`
+                            .quill-dark-theme .ql-toolbar {
+                                background: rgba(255, 255, 255, 0.05);
+                                border-color: rgba(255, 255, 255, 0.1) !important;
+                                border-top-left-radius: 0.75rem;
+                                border-top-right-radius: 0.75rem;
+                            }
+                            .quill-dark-theme .ql-container {
+                                border-color: rgba(255, 255, 255, 0.1) !important;
+                                border-bottom-left-radius: 0.75rem;
+                                border-bottom-right-radius: 0.75rem;
+                                min-height: 400px;
+                                font-size: 1rem;
+                                color: white;
+                                background: transparent;
+                            }
+                            .quill-dark-theme .ql-editor.ql-blank::before {
+                                color: #6b7280;
+                                font-style: normal;
+                            }
+                            .quill-dark-theme .ql-stroke {
+                                stroke: #9ca3af !important;
+                            }
+                            .quill-dark-theme .ql-fill {
+                                fill: #9ca3af !important;
+                            }
+                            .quill-dark-theme .ql-picker {
+                                color: #9ca3af !important;
+                            }
+                            .quill-dark-theme .ql-picker-options {
+                                background-color: #0f1218 !important;
+                                border-color: rgba(255, 255, 255, 0.1) !important;
+                                color: white !important;
+                            }
+                        `}</style>
                     </div>
                 )}
 
