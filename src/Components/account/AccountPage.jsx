@@ -3,7 +3,8 @@ import Navbar from "../Navbar";
 import Footer from "../Footer";
 import { motion, AnimatePresence } from "framer-motion";
 const M = motion;
-import { User, Settings, Edit, LogIn, LogOut, Eye, EyeOff, Save, XCircle } from "lucide-react";
+import { User, Settings, Edit, LogIn, LogOut, Eye, EyeOff, Save, XCircle, Check, X, AlertTriangle } from "lucide-react";
+import zxcvbn from "zxcvbn";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 
@@ -116,6 +117,25 @@ export default function AccountPage() {
   async function handleSignup(e) {
     e.preventDefault();
     if (!name || !email || !password) {
+      return;
+    }
+
+    // Validate password policy before submitting
+    const score = zxcvbn(password).score;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecialChar = /[@$!%*?&_]/.test(password);
+    const isLongEnough = password.length >= 8;
+
+    if (!isLongEnough || !hasUpperCase || !hasLowerCase || !hasNumber || !hasSpecialChar) {
+      setToast("Password does not meet requirements");
+      return;
+    }
+
+    // Optional: Enforce minimum score (e.g., must be Fair or better)
+    if (score < 2) {
+      setToast("Password is too weak");
       return;
     }
 
@@ -429,7 +449,57 @@ export default function AccountPage() {
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
-                  {authError && <p className="text-xs text-red-600">{authError}</p>}
+
+                  {/* Password Strength Meter - Only shown during signup */}
+                  {mode === "signup" && password.length > 0 && (
+                    <div className="space-y-3 p-3 bg-gray-50 rounded-lg border border-black/10">
+                      <div className="flex items-center justify-between text-xs mb-1">
+                        <span className="font-semibold text-black/60">Password Strength</span>
+                        <span className={`font-bold ${zxcvbn(password).score < 2 ? "text-red-600" :
+                            zxcvbn(password).score < 3 ? "text-yellow-600" :
+                              "text-green-600"
+                          }`}>
+                          {["Weak", "Fair", "Good", "Strong", "Very Strong"][zxcvbn(password).score]}
+                        </span>
+                      </div>
+                      <div className="flex gap-1 h-1.5 mb-3">
+                        {[0, 1, 2, 3].map((i) => (
+                          <div
+                            key={i}
+                            className={`h-full flex-1 rounded-full transition-all duration-300 ${i < zxcvbn(password).score
+                                ? i < 2 ? "bg-red-500" : i < 3 ? "bg-yellow-500" : "bg-green-500"
+                                : "bg-gray-200"
+                              }`}
+                          />
+                        ))}
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                        <div className={`flex items-center gap-1.5 ${password.length >= 8 ? "text-green-600" : "text-black/40"}`}>
+                          {password.length >= 8 ? <Check size={12} strokeWidth={3} /> : <div className="w-3 h-3 rounded-full border border-current" />}
+                          <span>At least 8 characters</span>
+                        </div>
+                        <div className={`flex items-center gap-1.5 ${/[A-Z]/.test(password) ? "text-green-600" : "text-black/40"}`}>
+                          {/[A-Z]/.test(password) ? <Check size={12} strokeWidth={3} /> : <div className="w-3 h-3 rounded-full border border-current" />}
+                          <span>One uppercase letter</span>
+                        </div>
+                        <div className={`flex items-center gap-1.5 ${/[a-z]/.test(password) ? "text-green-600" : "text-black/40"}`}>
+                          {/[a-z]/.test(password) ? <Check size={12} strokeWidth={3} /> : <div className="w-3 h-3 rounded-full border border-current" />}
+                          <span>One lowercase letter</span>
+                        </div>
+                        <div className={`flex items-center gap-1.5 ${/[0-9]/.test(password) ? "text-green-600" : "text-black/40"}`}>
+                          {/[0-9]/.test(password) ? <Check size={12} strokeWidth={3} /> : <div className="w-3 h-3 rounded-full border border-current" />}
+                          <span>One number</span>
+                        </div>
+                        <div className={`flex items-center gap-1.5 ${/[@$!%*?&_]/.test(password) ? "text-green-600" : "text-black/40"}`}>
+                          {/[@$!%*?&_]/.test(password) ? <Check size={12} strokeWidth={3} /> : <div className="w-3 h-3 rounded-full border border-current" />}
+                          <span>One special char (@$!%*?&_)</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {authError && <p className="text-xs text-red-600 flex items-center gap-1"><AlertTriangle size={12} /> {authError}</p>}
                   <div className="flex gap-3">
                     <M.button
                       type="submit"
