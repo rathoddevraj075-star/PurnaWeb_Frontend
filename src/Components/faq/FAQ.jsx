@@ -8,11 +8,11 @@ import React from 'react'
 const FAQ = () => {
   return (
     <>
-    <AnnoucementBar />
-    <Navbar />
-    <VideoSection />
-    <FAQSection />
-    <Footer />
+      <AnnoucementBar />
+      <Navbar />
+      {/* <VideoSection /> */}
+      <FAQSection />
+      <Footer />
     </>
   )
 }

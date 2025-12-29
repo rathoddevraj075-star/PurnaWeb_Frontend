@@ -7,24 +7,54 @@ export default function FAQSection() {
 
   const faqs = [
     {
-      question: "ARE WELLNESS SUPPLEMENTS SAFE TO USE?",
+      question: "What does “The Purna” stand for?",
       answer:
-        "Absolutely! All our products are manufactured in certified facilities and meet strict safety and quality standards. We recommend consulting your healthcare provider if you have specific health conditions or are taking medications. This is the demo store.",
+        "Purna means 'complete.' The Purna is built on the belief that everyday wellness should be simple, holistic, Natural and accessible covering every essential need, from morning to night.",
     },
     {
-      question: "HOW SHOULD I STORE MY SUPPLEMENTS?",
+      question: "What kind of products does The Purna offer?",
       answer:
-        "To ensure the freshness and effectiveness of our products, store them in a cool, dry place away from direct sunlight. Always keep them out of reach of children.",
+        "The Purna offers everyday personal care essentials across oral care, body care, hair care, and skin care designed to be used daily as part of a balanced routine.",
     },
     {
-      question: "DO YOU OFFER INTERNATIONAL SHIPPING?",
+      question: "Are The Purna products herbal or Ayurvedic?",
       answer:
-        "Yes, we ship worldwide! Shipping costs and delivery times may vary depending on your location. You can find more details on our Shipping Policy page",
+        "The Purna products are inspired by traditional herbal wisdom and formulated using carefully selected natural ingredients, while being designed for modern lifestyle and everyday use.",
     },
     {
-      question: "WHAT IS YOUR RETURN POLICY?",
+      question: "Are The Purna products safe for daily use?",
       answer:
-        "We offer a 30-day satisfaction guarantee. If you're not completely happy with your purchase, you can return it for a refund or exchange. Please visit our Return Policy page for more details.",
+        "Yes. All The Purna products are formulated for regular, everyday use, with a strong focus on safety, quality, and comfort.",
+    },
+    {
+      question: "Are your products suitable for all age groups?",
+      answer:
+        "The Purna products are suitable across all age groups. Specific usage instructions and precautions are mentioned clearly on each product.",
+    },
+    {
+      question: "Do The Purna products contain harsh chemicals?",
+      answer:
+        "The Purna focuses on gentle and age old natural wellness. The products are thoughtfully formulated, avoiding unnecessary harsh ingredients wherever possible, while maintaining effectiveness and stability.",
+    },
+    {
+      question: "How is The Purna different from other personal care brands?",
+      answer:
+        "The Purna is not built around trends, it is built around completeness ! Every product is designed to be a meaningful part of a daily routine, offering care that feels balanced, honest, and dependable.",
+    },
+    {
+      question: "Are The Purna products tested for quality?",
+      answer:
+        "Yes. All products undergo quality checks and standard testing to ensure safety, consistency, and performance before reaching consumers.",
+    },
+    {
+      question: "Where are The Purna products made?",
+      answer:
+        "The Purna products are made in India, supporting local manufacturing while maintaining high-quality standards.",
+    },
+    {
+      question: "How can I incorporate The Purna into my daily routine?",
+      answer:
+        "The Purna is designed to fit naturally into your day: from oral care in the morning, to body and hair care during the day, to skin care at night—creating a complete everyday wellness routine.",
     },
   ];
 
