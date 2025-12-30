@@ -49,7 +49,7 @@ const Hero3D = () => {
         <section
             ref={ref}
             onMouseMove={handleMouseMove}
-            className="relative w-full min-h-[100dvh] overflow-hidden bg-[#FDF8F0] flex items-center justify-center z-0"
+            className="relative w-full min-h-[100dvh] overflow-hidden bg-[#e17100] flex items-center justify-center z-0"
         >
             {/* Background Elements - Organic Blobs Reacting to Mouse */}
             <motion.div
@@ -59,19 +59,15 @@ const Hero3D = () => {
                 {/* Top Left Blob */}
                 <motion.div
                     style={{ x: blob1X, y: blob1Y }}
-                    className="absolute top-[-20%] left-[-10%] w-[70vw] h-[70vw] md:w-[40vw] md:h-[40vw] bg-[#E65800] rounded-full blur-[80px] md:blur-[120px] opacity-40 mix-blend-multiply animate-blob"
+                    className="absolute top-[-20%] left-[-10%] w-[70vw] h-[70vw] md:w-[40vw] md:h-[40vw] bg-[#ffb380] rounded-full blur-[80px] md:blur-[120px] opacity-30 mix-blend-screen animate-blob"
                 />
 
-                {/* Top Right Blob */}
-                <motion.div
-                    style={{ x: blob2X, y: blob2Y }}
-                    className="absolute top-[-10%] right-[-10%] w-[60vw] h-[60vw] md:w-[45vw] md:h-[45vw] bg-[#0CC0DF] rounded-full blur-[80px] md:blur-[120px] opacity-40 mix-blend-multiply animate-blob animation-delay-2000"
-                />
+
 
                 {/* Bottom Center Blob */}
                 <motion.div
                     style={{ x: blob3X, y: blob3Y }}
-                    className="absolute bottom-[-10%] left-[20%] w-[80vw] h-[80vw] md:w-[50vw] md:h-[50vw] bg-[#E65800] rounded-full blur-[80px] md:blur-[120px] opacity-40 mix-blend-multiply animate-blob animation-delay-4000"
+                    className="absolute bottom-[-10%] left-[20%] w-[80vw] h-[80vw] md:w-[50vw] md:h-[50vw] bg-[#ff9966] rounded-full blur-[80px] md:blur-[120px] opacity-30 mix-blend-screen animate-blob animation-delay-4000"
                 />
             </motion.div>
 
@@ -112,7 +108,7 @@ const Hero3D = () => {
             {/* Main Content */}
             <motion.div
                 style={{ y: yText, opacity: opacityHero }}
-                className="relative z-20 text-center px-4 md:px-6 max-w-[90rem] mx-auto w-full flex flex-col items-center justify-center h-full pt-20 pb-10"
+                className="relative z-20 text-center px-4 md:px-6 max-w-[90rem] mx-auto w-full flex flex-col items-center justify-center h-full pt-0 pb-10"
             >
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
@@ -121,7 +117,7 @@ const Hero3D = () => {
                     className="max-w-4xl mx-auto"
                 >
                     {/* Living Object Logo Section */}
-                    <div className="flex flex-col items-center justify-center w-full mb-10 relative">
+                    <div className="flex flex-col items-center justify-center w-full mb-6 relative">
                         <motion.div
                             className="relative z-10"
                             initial={{ opacity: 0, scale: 0.9, filter: "blur(5px)" }}
@@ -152,13 +148,13 @@ const Hero3D = () => {
                             <img
                                 src="/images/logo-black.png"
                                 alt="PURNA"
-                                className="w-[200px] md:w-[280px] h-auto object-contain"
+                                className="w-[200px] md:w-[280px] h-auto object-contain invert brightness-0 pb-4"
                             />
                         </motion.div>
 
                         {/* Breathing Shadow */}
                         <motion.div
-                            className="absolute -bottom-4 w-[180px] md:w-[250px] h-4 bg-black/10 rounded-[100%] blur-md"
+                            className="absolute -bottom-4 w-[180px] md:w-[250px] h-4 bg-white/10 rounded-[100%] blur-md"
                             animate={{
                                 scale: [0.9, 1, 0.9],
                                 opacity: [0.1, 0.15, 0.1]
@@ -172,11 +168,11 @@ const Hero3D = () => {
                         />
                     </div>
 
-                    <h2 className="text-[#E65800] text-sm md:text-base tracking-[0.3em] mb-4 md:mb-6 uppercase font-semibold">
+                    <h2 className="text-white text-3xl md:text-5xl font-serif font-light tracking-wide mb-6 leading-tight italic">
                         Complete Care for the Complete You
                     </h2>
 
-                    <p className="text-[#151515] text-base md:text-xl max-w-xl md:max-w-2xl mx-auto font-medium leading-relaxed mb-8 md:mb-12 px-4">
+                    <p className="text-white text-base md:text-xl max-w-xl md:max-w-2xl mx-auto font-medium leading-relaxed mb-6 md:mb-8 px-4">
                         From your morning routine to your nightly wind-down,  <br className="hidden md:block" /> The Purna brings you pure, effective essentials inspired by <br className="hidden md:block" />
                         Age Old Natural and crafted for modern wellness.
                     </p>
@@ -186,7 +182,7 @@ const Hero3D = () => {
                             onClick={() => navigate('/products')}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className="w-full sm:w-auto px-8 py-4 bg-[#E65800] text-white text-base md:text-lg font-medium rounded-full shadow-lg hover:shadow-orange-500/30 transition-all hover:-translate-y-1 cursor-pointer"
+                            className="w-full sm:w-auto px-8 py-4 bg-[#151515] text-white text-base md:text-lg font-medium rounded-full shadow-xl hover:shadow-2xl hover:bg-white hover:text-[#e17100] transition-all duration-300 hover:-translate-y-1 cursor-pointer"
                         >
                             Explore Essentials
                         </motion.button>
@@ -194,7 +190,7 @@ const Hero3D = () => {
                             onClick={() => navigate('/about')}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className="w-full sm:w-auto px-8 py-4 border-2 border-[#151515] text-[#151515] text-base md:text-lg font-medium rounded-full hover:bg-[#151515] hover:text-white transition-all cursor-pointer"
+                            className="w-full sm:w-auto px-8 py-4 border-[1.5px] border-white text-white text-base md:text-lg font-medium rounded-full hover:bg-white hover:text-[#e17100] transition-all duration-300 cursor-pointer"
                         >
                             Our Story
                         </motion.button>
@@ -207,9 +203,9 @@ const Hero3D = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1, y: [0, 10, 0] }}
                 transition={{ delay: 2, duration: 2, repeat: Infinity }}
-                className="absolute bottom-8 left-1/2 -translate-x-1/2 text-[#151515]/40 flex flex-col items-center gap-2 z-20"
+                className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/40 flex flex-col items-center gap-2 z-20"
             >
-                <div className="w-[1px] h-12 bg-gradient-to-b from-[#151515]/0 via-[#151515]/40 to-[#151515]/0"></div>
+                <div className="w-[1px] h-12 bg-gradient-to-b from-white/0 via-white/40 to-white/0"></div>
             </motion.div>
         </section>
     );
