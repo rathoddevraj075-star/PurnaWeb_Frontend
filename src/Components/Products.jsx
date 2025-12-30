@@ -124,7 +124,7 @@ const Products = () => {
                         ${product.price?.toFixed(2) || '0.00'}
                       </span>
                       <span className="text-sm font-medium text-neutral-500 group-hover:text-black transition-colors flex items-center gap-1">
-                        Shop Now <ArrowUpRight size={14} />
+                        View Product <ArrowUpRight size={14} />
                       </span>
                     </div>
                   </div>

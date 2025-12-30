@@ -83,10 +83,10 @@ export default function Navbar() {
 
           {/* Nav links */}
           <nav className="flex space-x-6 xl:space-x-8 text-xs">
-            {["SHOP", "ABOUT", "ROUTINE", "BLOG", "FAQ", "CONTACT"].map((item) => (
+            {["OUR PRODUCTS", "ABOUT", "ROUTINE", "BLOG", "FAQ", "CONTACT"].map((item) => (
               <a
                 key={item}
-                href={item === "SHOP" ? "/products" : `/${item.toLowerCase()}`}
+                href={item === "OUR PRODUCTS" ? "/products" : `/${item.toLowerCase()}`}
                 className="relative group text-black hover:text-gray-700 transition-colors font-medium tracking-wide"
               >
                 {item}
@@ -141,7 +141,7 @@ export default function Navbar() {
                   onClick={() => setShopOpen(!shopOpen)}
                   className="w-full flex justify-between items-center text-sm font-semibold uppercase border-b pb-2"
                 >
-                  <span>SHOP</span>
+                  <span>OUR PRODUCTS</span>
                   <span className="text-lg">{shopOpen ? "—" : "+"}</span>
                 </button>
 
