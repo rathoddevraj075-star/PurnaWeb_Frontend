@@ -7,11 +7,11 @@ import Footer from "../Footer";
 export default function ContactPage() {
   return (
     <>
-    <AnnoucementBar />
-    <Navbar />
-    <VideoSection />
-    <FormSection />
-    <Footer />
+      <AnnoucementBar />
+      <Navbar />
+      {/* <VideoSection /> */}
+      <FormSection />
+      <Footer />
     </>
   );
 }
