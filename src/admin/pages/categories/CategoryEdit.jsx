@@ -63,7 +63,8 @@ export default function CategoryEdit() {
             queryClient.invalidateQueries(['admin-categories-tree']);
             queryClient.invalidateQueries(['admin-categories-all']);
             setNotification({ type: 'success', message: isNew ? 'Category created successfully!' : 'Category updated successfully!' });
-            if (isNew) navigate(`/admin/categories/${res.data.data._id}`);
+            // Redirect after short delay to show toast
+            setTimeout(() => navigate('/admin/categories'), 1500);
         },
         onError: (error) => {
             const errorMessage = error.response?.data?.message || error.message || 'Failed to save category';
@@ -97,8 +98,8 @@ export default function CategoryEdit() {
             {/* Notification Toast */}
             {notification && (
                 <div className={`fixed top-4 right-4 z-50 flex items-center gap-3 px-6 py-4 rounded-xl shadow-2xl border transition-all animate-slide-in ${notification.type === 'success'
-                        ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400'
-                        : 'bg-red-500/20 border-red-500/30 text-red-400'
+                    ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400'
+                    : 'bg-red-500/20 border-red-500/30 text-red-400'
                     }`}>
                     {notification.type === 'success'
                         ? <CheckCircle size={20} />

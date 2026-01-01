@@ -11,7 +11,7 @@ import { userApi } from '../../services/adminApi';
 import {
     User, Save, ArrowLeft, Shield, Lock, Mail, Phone,
     UserCheck, UserX, Loader2, AlertCircle, Eye, EyeOff,
-    Calendar, Clock, Check, X
+    Calendar, Clock, Check, X, CheckCircle, XCircle
 } from 'lucide-react';
 
 const ROLES = [
@@ -60,6 +60,15 @@ export default function UserEdit() {
         deniedPermissions: []
     });
     const [errors, setErrors] = useState({});
+    const [notification, setNotification] = useState(null);
+
+    // Auto-hide notification after 5 seconds
+    useEffect(() => {
+        if (notification) {
+            const timer = setTimeout(() => setNotification(null), 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [notification]);
 
     // Fetch user data for editing
     const { data: userData, isLoading: isFetching } = useQuery({
@@ -108,7 +117,12 @@ export default function UserEdit() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['admin-users'] });
             queryClient.invalidateQueries({ queryKey: ['admin-users-stats'] });
-            navigate('/admin/users');
+            setNotification({ type: 'success', message: isNew ? 'User created successfully!' : 'User updated successfully!' });
+            setTimeout(() => navigate('/admin/users'), 1500);
+        },
+        onError: (error) => {
+            const errorMessage = error.response?.data?.message || error.message || 'Failed to save user';
+            setNotification({ type: 'error', message: errorMessage });
         }
     });
 
@@ -181,6 +195,18 @@ export default function UserEdit() {
 
     return (
         <div className="space-y-4 sm:space-y-6">
+            {/* Notification Toast */}
+            {notification && (
+                <div className={`fixed top-4 right-4 z-50 flex items-center gap-3 px-6 py-4 rounded-xl shadow-2xl border transition-all animate-slide-in ${notification.type === 'success'
+                    ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400'
+                    : 'bg-red-500/20 border-red-500/30 text-red-400'
+                    }`}>
+                    {notification.type === 'success' ? <CheckCircle size={20} /> : <XCircle size={20} />}
+                    <span className="font-medium">{notification.message}</span>
+                    <button onClick={() => setNotification(null)} className="ml-2 text-gray-400 hover:text-white">×</button>
+                </div>
+            )}
+
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div className="flex items-center gap-3 sm:gap-4">

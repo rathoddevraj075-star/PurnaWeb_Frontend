@@ -11,7 +11,7 @@ import SeoFormTabs from "../../components/seo/SeoFormTabs";
 import {
     Save, ArrowLeft, Eye, Loader2, Package, Layers,
     ImageIcon, Box, Plus, Trash2, Star, Palette,
-    ListChecks, Sparkles, FlaskConical
+    ListChecks, Sparkles, FlaskConical, CheckCircle, XCircle
 } from 'lucide-react';
 
 const tabList = [
@@ -76,6 +76,15 @@ export default function ProductEdit() {
     const queryClient = useQueryClient();
     const isNew = id === 'new';
     const [activeTab, setActiveTab] = useState('General');
+    const [notification, setNotification] = useState(null); // { type: 'success' | 'error', message: string }
+
+    // Auto-hide notification after 5 seconds
+    useEffect(() => {
+        if (notification) {
+            const timer = setTimeout(() => setNotification(null), 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [notification]);
 
     // Extended form data with all product fields
     const [formData, setFormData] = useState({
@@ -169,7 +178,13 @@ export default function ProductEdit() {
         onSuccess: (res) => {
             queryClient.invalidateQueries(['admin-products']);
             queryClient.invalidateQueries(['admin-product', id]); // Refresh current product
-            if (isNew) navigate(`/admin/products/${res.data.data._id}`);
+            setNotification({ type: 'success', message: isNew ? 'Product created successfully!' : 'Product updated successfully!' });
+            // Redirect after short delay to show toast
+            setTimeout(() => navigate('/admin/products'), 1500);
+        },
+        onError: (error) => {
+            const errorMessage = error.response?.data?.message || error.message || 'Failed to save product';
+            setNotification({ type: 'error', message: errorMessage });
         }
     });
 
@@ -254,6 +269,26 @@ export default function ProductEdit() {
 
     return (
         <div className="space-y-6">
+            {/* Notification Toast */}
+            {notification && (
+                <div className={`fixed top-4 right-4 z-50 flex items-center gap-3 px-6 py-4 rounded-xl shadow-2xl border transition-all animate-slide-in ${notification.type === 'success'
+                    ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400'
+                    : 'bg-red-500/20 border-red-500/30 text-red-400'
+                    }`}>
+                    {notification.type === 'success'
+                        ? <CheckCircle size={20} />
+                        : <XCircle size={20} />
+                    }
+                    <span className="font-medium">{notification.message}</span>
+                    <button
+                        onClick={() => setNotification(null)}
+                        className="ml-2 text-gray-400 hover:text-white transition-colors"
+                    >
+                        ×
+                    </button>
+                </div>
+            )}
+
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">

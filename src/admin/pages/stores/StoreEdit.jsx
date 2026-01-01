@@ -9,7 +9,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { storeApi, productApi } from '../../services/adminApi';
 import {
     Save, ArrowLeft, Loader2, Store, MapPin, Phone, Mail,
-    Clock, Package, Plus, X, Search, Check
+    Clock, Package, Plus, X, Search, Check, CheckCircle, XCircle
 } from 'lucide-react';
 
 // Reusable styled input component
@@ -60,6 +60,15 @@ export default function StoreEdit() {
 
     const [productSearch, setProductSearch] = useState('');
     const [showProductPicker, setShowProductPicker] = useState(false);
+    const [notification, setNotification] = useState(null);
+
+    // Auto-hide notification after 5 seconds
+    useEffect(() => {
+        if (notification) {
+            const timer = setTimeout(() => setNotification(null), 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [notification]);
 
     // Fetch store data if editing
     const { data: store, isLoading } = useQuery({
@@ -102,7 +111,12 @@ export default function StoreEdit() {
         mutationFn: (data) => isNew ? storeApi.create(data) : storeApi.update(id, data),
         onSuccess: () => {
             queryClient.invalidateQueries(['admin-stores']);
-            navigate('/admin/stores');
+            setNotification({ type: 'success', message: isNew ? 'Store created successfully!' : 'Store updated successfully!' });
+            setTimeout(() => navigate('/admin/stores'), 1500);
+        },
+        onError: (error) => {
+            const errorMessage = error.response?.data?.message || error.message || 'Failed to save store';
+            setNotification({ type: 'error', message: errorMessage });
         }
     });
 
@@ -136,6 +150,18 @@ export default function StoreEdit() {
 
     return (
         <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl">
+            {/* Notification Toast */}
+            {notification && (
+                <div className={`fixed top-4 right-4 z-50 flex items-center gap-3 px-6 py-4 rounded-xl shadow-2xl border transition-all animate-slide-in ${notification.type === 'success'
+                    ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400'
+                    : 'bg-red-500/20 border-red-500/30 text-red-400'
+                    }`}>
+                    {notification.type === 'success' ? <CheckCircle size={20} /> : <XCircle size={20} />}
+                    <span className="font-medium">{notification.message}</span>
+                    <button type="button" onClick={() => setNotification(null)} className="ml-2 text-gray-400 hover:text-white">×</button>
+                </div>
+            )}
+
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">

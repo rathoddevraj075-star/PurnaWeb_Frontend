@@ -11,7 +11,7 @@ import { blogApi } from '../../services/adminApi';
 import {
     FileText, Save, ArrowLeft, Image as ImageIcon, Tag,
     Eye, EyeOff, Loader2, AlertCircle, Check, X,
-    Upload, Trash2, Type, AlignLeft, Layers
+    Upload, Trash2, Type, AlignLeft, Layers, CheckCircle, XCircle
 } from 'lucide-react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
@@ -97,6 +97,15 @@ export default function BlogEdit() {
     const [imageFile, setImageFile] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [errors, setErrors] = useState({});
+    const [notification, setNotification] = useState(null); // { type: 'success' | 'error', message: string }
+
+    // Auto-hide notification after 5 seconds
+    useEffect(() => {
+        if (notification) {
+            const timer = setTimeout(() => setNotification(null), 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [notification]);
 
     // Fetch blog data for editing
     const { data: blogData, isLoading: isFetching } = useQuery({
@@ -148,7 +157,12 @@ export default function BlogEdit() {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['admin-blogs'] });
-            navigate('/admin/blogs');
+            setNotification({ type: 'success', message: isNew ? 'Blog post created successfully!' : 'Blog post updated successfully!' });
+            setTimeout(() => navigate('/admin/blogs'), 1500);
+        },
+        onError: (error) => {
+            const errorMessage = error.response?.data?.message || error.message || 'Failed to save blog post';
+            setNotification({ type: 'error', message: errorMessage });
         }
     });
 
@@ -226,6 +240,18 @@ export default function BlogEdit() {
 
     return (
         <div className="space-y-4 sm:space-y-6">
+            {/* Notification Toast */}
+            {notification && (
+                <div className={`fixed top-4 right-4 z-50 flex items-center gap-3 px-6 py-4 rounded-xl shadow-2xl border transition-all animate-slide-in ${notification.type === 'success'
+                    ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400'
+                    : 'bg-red-500/20 border-red-500/30 text-red-400'
+                    }`}>
+                    {notification.type === 'success' ? <CheckCircle size={20} /> : <XCircle size={20} />}
+                    <span className="font-medium">{notification.message}</span>
+                    <button onClick={() => setNotification(null)} className="ml-2 text-gray-400 hover:text-white">×</button>
+                </div>
+            )}
+
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div className="flex items-center gap-3 sm:gap-4">
