@@ -270,7 +270,7 @@ const LightingRig = () => {
 
 // --- DOM UI ---
 
-const ChromeUI = ({ products, activeIndex }) => {
+const ChromeUI = ({ products, activeIndex, onBack }) => {
     const activeProduct = products[activeIndex] || products[0];
 
     return (
@@ -278,9 +278,15 @@ const ChromeUI = ({ products, activeIndex }) => {
 
             {/* Header */}
             <div className="flex justify-between items-start">
-                <div className="flex flex-col">
-                    <h1 className="text-sm font-bold tracking-[0.3em] uppercase opacity-70 mb-2">Purna Routine</h1>
-                    <div className="w-12 h-[2px] bg-white" />
+                <div className="flex flex-col gap-4 pointer-events-auto">
+                    <button onClick={onBack} className="flex items-center gap-2 hover:opacity-50 transition-opacity w-fit">
+                        <ArrowLeft size={20} />
+                        <span className="text-xs font-bold uppercase tracking-widest">Back</span>
+                    </button>
+                    <div>
+                        <h1 className="text-sm font-bold tracking-[0.3em] uppercase opacity-70 mb-2">Purna Routine</h1>
+                        <div className="w-12 h-[2px] bg-white" />
+                    </div>
                 </div>
 
                 <div className="flex gap-4 opacity-50 text-xs font-mono">
@@ -374,14 +380,6 @@ const VariantDetailScroller = () => {
             />
             <div className="h-screen w-full bg-[#050505] relative overflow-hidden">
 
-                {/* Close Button */}
-                <div className="fixed top-8 left-8 z-50 pointer-events-auto mix-blend-difference">
-                    <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-white hover:opacity-50 transition-opacity">
-                        <ArrowLeft size={20} />
-                        <span className="text-xs font-bold uppercase tracking-widest">Back</span>
-                    </button>
-                </div>
-
                 <Canvas dpr={[1, 1.5]} camera={{ position: [0, 0, 10], fov: 45 }}>
                     <Suspense fallback={null}>
                         {/* The Infinite Mercury Sea */}
@@ -400,7 +398,7 @@ const VariantDetailScroller = () => {
                     </Suspense>
                 </Canvas>
 
-                <ChromeUI products={products} activeIndex={activeIndex} />
+                <ChromeUI products={products} activeIndex={activeIndex} onBack={() => navigate(-1)} />
 
             </div>
         </>

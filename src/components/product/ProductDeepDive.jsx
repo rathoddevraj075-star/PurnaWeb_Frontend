@@ -237,16 +237,20 @@ const EditorialOverlay = ({ uiState, product }) => {
 
                     {/* PHASE 1: REVEAL */}
                     {uiState === 'reveal' && (
-                        <motion.div key="reveal" variants={variants} initial="hidden" animate="visible" exit="exit" className="absolute text-center">
-                            <h2 className="text-[#F3F3F3] text-xs md:text-sm font-bold tracking-[0.8em] uppercase mb-6">Object No. 01</h2>
-                            <h1 className="text-5xl md:text-9xl font-black uppercase tracking-tighter leading-[0.85] md:leading-[0.8]">
+                        <motion.div
+                            key="reveal"
+                            variants={variants}
+                            initial="hidden"
+                            animate="visible"
+                            exit="exit"
+                            className="absolute bottom-12 left-0 md:left-[-2rem] text-left"
+                        >
+                            <h2 className="text-[#F3F3F3] text-xs md:text-sm font-bold tracking-[0.8em] uppercase mb-4 opacity-70">Object No. 01</h2>
+                            <h1 className="text-5xl md:text-8xl lg:text-9xl font-black uppercase tracking-tighter leading-[0.9]">
                                 {product.name.split(' ').map((word, i) => (
                                     <span key={i} className="block">{word}</span>
                                 ))}
                             </h1>
-                            <div className="mt-8 flex justify-center">
-                                <ChevronDown className="w-6 h-6 opacity-50 animate-bounce" />
-                            </div>
                         </motion.div>
                     )}
 
