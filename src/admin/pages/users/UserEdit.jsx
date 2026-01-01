@@ -136,7 +136,13 @@ export default function UserEdit() {
         if (!formData.email.trim()) newErrors.email = 'Email is required';
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'Invalid email format';
         if (isNew && !formData.password) newErrors.password = 'Password is required for new users';
-        if (formData.password && formData.password.length < 6) newErrors.password = 'Password must be at least 6 characters';
+        if (formData.password) {
+            // Password must be at least 12 characters with 1 uppercase, 1 lowercase, 1 number, and 1 special character
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{12,}$/;
+            if (!passwordRegex.test(formData.password)) {
+                newErrors.password = 'Password must be at least 12 characters with uppercase, lowercase, number, and special character';
+            }
+        }
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };

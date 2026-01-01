@@ -87,12 +87,9 @@ export default function ProductEdit() {
         brand: '',
         tagline: '',
 
-        // Pricing & Status
-        price: '',
-        discountPrice: '',
+        // Status
         category: '',
         status: 'draft',
-        stock: 0,
 
         // Media
         images: [],
@@ -147,11 +144,8 @@ export default function ProductEdit() {
                 description: product.description || '',
                 brand: product.brand || '',
                 tagline: product.tagline || '',
-                price: product.price || '',
-                discountPrice: product.discountPrice || '',
                 category: product.category?._id || product.category || '',
                 status: product.status || 'draft',
-                stock: product.stock || 0,
                 images: product.images || [],
                 themeColor: product.themeColor || '#000000',
                 keyBenefits: product.keyBenefits || [],
@@ -171,13 +165,18 @@ export default function ProductEdit() {
 
     const saveMutation = useMutation({
         mutationFn: (data) => isNew ? productApi.create(data) : productApi.update(id, data),
+        retry: false, // Prevent automatic retries
         onSuccess: (res) => {
             queryClient.invalidateQueries(['admin-products']);
+            queryClient.invalidateQueries(['admin-product', id]); // Refresh current product
             if (isNew) navigate(`/admin/products/${res.data.data._id}`);
         }
     });
 
-    const handleSave = () => saveMutation.mutate(formData);
+    const handleSave = () => {
+        if (saveMutation.isPending) return; // Prevent double-click
+        saveMutation.mutate(formData);
+    };
 
     const handleSeoSuggest = async () => {
         if (isNew) return null;
@@ -388,30 +387,7 @@ export default function ProductEdit() {
                                 onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
                                 placeholder="Brand name"
                             />
-                            <div className="grid grid-cols-2 gap-4">
-                                <Input
-                                    label="Price"
-                                    required
-                                    type="number"
-                                    value={formData.price}
-                                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                                    placeholder="0"
-                                />
-                                <Input
-                                    label="Sale Price"
-                                    type="number"
-                                    value={formData.discountPrice}
-                                    onChange={(e) => setFormData({ ...formData, discountPrice: e.target.value })}
-                                    placeholder="0"
-                                />
-                            </div>
-                            <Input
-                                label="Stock Quantity"
-                                type="number"
-                                value={formData.stock}
-                                onChange={(e) => setFormData({ ...formData, stock: parseInt(e.target.value) || 0 })}
-                                placeholder="0"
-                            />
+
                             <label className="flex items-center gap-3 cursor-pointer p-4 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-colors">
                                 <input
                                     type="checkbox"

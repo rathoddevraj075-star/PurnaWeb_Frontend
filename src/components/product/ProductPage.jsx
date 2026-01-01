@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import ProductPageContent from "./ProductPageContent";
+import SEO from "../SEO";
 import { productService } from "../../services/api";
 
 export default function ProductPage() {
@@ -53,5 +54,19 @@ export default function ProductPage() {
     );
   }
 
-  return <ProductPageContent product={product} />;
+  return (
+    <>
+      <SEO
+        seo={product.seo}
+        product={product}
+        title={product.seo?.metaTitle || `${product.name} | PurnaRoutine`}
+        description={product.seo?.metaDescription || product.shortDescription}
+        keywords={product.seo?.metaKeywords?.join(', ')}
+        image={product.images?.[0]?.url}
+        url={`/products/${product.slug}`}
+        type="product"
+      />
+      <ProductPageContent product={product} />
+    </>
+  );
 }

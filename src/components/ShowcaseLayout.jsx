@@ -150,7 +150,7 @@ export default function ShowcaseLayout() {
                                 <span className="text-xs font-mono text-amber-600 mb-2 block tracking-widest uppercase">0{index + 1}</span>
                                 <h3 className="text-4xl font-serif text-neutral-900 mb-3 leading-none">{cat.name}</h3>
                                 <p className="text-neutral-500 text-sm leading-relaxed mb-4">{cat.description}</p>
-                                <Link to={`/collections/${cat.name.toLowerCase().replace(/\s+/g, '-')}`} className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest border-b border-neutral-300 pb-1">
+                                <Link to={`/categories/${cat.name.toLowerCase().replace(/\s+/g, '-')}`} className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest border-b border-neutral-300 pb-1">
                                     Explore <ArrowRight size={14} />
                                 </Link>
                             </div>
@@ -168,7 +168,7 @@ function CategoryCard({ category, image, shape = "rounded-[3rem]" }) {
 
     return (
         <div className="group w-full cursor-pointer">
-            <Link to={`/collections/${slug}`} className={`block relative w-full aspect-[4/5] ${shape} overflow-hidden bg-white shadow-lg mb-8`}>
+            <Link to={`/categories/${slug}`} className={`block relative w-full aspect-[4/5] ${shape} overflow-hidden bg-white shadow-lg mb-8`}>
                 {image ? (
                     <img
                         src={image}

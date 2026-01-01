@@ -129,7 +129,7 @@ const AllProductsPage = () => {
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {categories.map((cat, index) => (
-                                <Link key={cat._id || cat.slug} to={`/collections/${cat.slug}/immersive`} className="group block relative h-[60vh] overflow-hidden rounded-[2rem]">
+                                <Link key={cat._id || cat.slug} to={`/categories/${cat.slug}`} className="group block relative h-[60vh] overflow-hidden rounded-[2rem]">
                                     <motion.div
                                         initial={{ opacity: 0, y: 20 }}
                                         whileInView={{ opacity: 1, y: 0 }}

@@ -17,6 +17,7 @@ import * as THREE from 'three';
 import { ArrowLeft, Maximize2, Share2, MapPin, ChevronDown, MoveRight } from 'lucide-react';
 import { productService } from '../../services/api';
 import StoreLocator from '../store/StoreLocator';
+import SEO from '../../components/SEO';
 
 // --- VISUAL ASSETS ---
 // "The Void" Aesthetic: Deep, Dark, High Contrast, Volumetric feel.
@@ -368,47 +369,59 @@ const ProductDeepDive = () => {
     if (loading || !product) return <div className="h-screen w-full bg-[#050505] flex items-center justify-center text-white/30 text-xs tracking-widest uppercase">Initializing Artifact...</div>;
 
     return (
-        <div className="h-screen w-full bg-[#030303] relative overflow-hidden select-none">
+        <>
+            <SEO
+                seo={product.seo}
+                product={product}
+                title={product.seo?.metaTitle || `${product.name} | PurnaRoutine`}
+                description={product.seo?.metaDescription || product.shortDescription}
+                keywords={product.seo?.metaKeywords?.join(', ')}
+                image={product.images?.[0]?.url}
+                url={`/products/${product.slug}`}
+                type="product"
+            />
+            <div className="h-screen w-full bg-[#030303] relative overflow-hidden select-none">
 
-            {/* GLOBAL HDR */}
-            <div className="fixed top-0 left-0 w-full z-50 p-6 flex justify-between items-center text-white mix-blend-difference pointer-events-none">
-                <button onClick={() => navigate(-1)} className="pointer-events-auto flex items-center gap-2 hover:opacity-50 transition-opacity">
-                    <ArrowLeft size={20} /> <span className="hidden md:inline text-xs font-bold tracking-widest uppercase">Return</span>
-                </button>
-                <div className="flex gap-4 pointer-events-auto opacity-50">
-                    <button onClick={handleMaximize} className="hover:opacity-100"><Maximize2 size={20} /></button>
-                    <button onClick={handleShare} className="hover:opacity-100"><Share2 size={20} /></button>
+                {/* GLOBAL HDR */}
+                <div className="fixed top-0 left-0 w-full z-50 p-6 flex justify-between items-center text-white mix-blend-difference pointer-events-none">
+                    <button onClick={() => navigate(-1)} className="pointer-events-auto flex items-center gap-2 hover:opacity-50 transition-opacity">
+                        <ArrowLeft size={20} /> <span className="hidden md:inline text-xs font-bold tracking-widest uppercase">Return</span>
+                    </button>
+                    <div className="flex gap-4 pointer-events-auto opacity-50">
+                        <button onClick={handleMaximize} className="hover:opacity-100"><Maximize2 size={20} /></button>
+                        <button onClick={handleShare} className="hover:opacity-100"><Share2 size={20} /></button>
+                    </div>
                 </div>
-            </div>
 
-            <ErrorBoundary>
-                <Canvas shadows dpr={[1, 1.5]} gl={{ antialias: false, powerPreference: "high-performance" }} camera={{ fov: 45 }}>
-                    <color attach="background" args={['#030303']} />
-                    <Suspense fallback={null}>
-                        <AdaptiveDpr pixelated />
-                        <ScrollControls pages={4} damping={0.2}>
-                            <CinematicRig product={product} setUiState={setUiState} />
-                        </ScrollControls>
-                        <EffectComposer disableNormalPass>
-                            <Noise opacity={0.06} />
-                            <Bloom luminanceThreshold={0.5} mipmapBlur intensity={0.8} radius={0.4} />
-                            <Vignette eskil={false} offset={0.1} darkness={0.7} />
-                        </EffectComposer>
-                    </Suspense>
-                </Canvas>
-            </ErrorBoundary>
+                <ErrorBoundary>
+                    <Canvas shadows dpr={[1, 1.5]} gl={{ antialias: false, powerPreference: "high-performance" }} camera={{ fov: 45 }}>
+                        <color attach="background" args={['#030303']} />
+                        <Suspense fallback={null}>
+                            <AdaptiveDpr pixelated />
+                            <ScrollControls pages={4} damping={0.2}>
+                                <CinematicRig product={product} setUiState={setUiState} />
+                            </ScrollControls>
+                            <EffectComposer disableNormalPass>
+                                <Noise opacity={0.06} />
+                                <Bloom luminanceThreshold={0.5} mipmapBlur intensity={0.8} radius={0.4} />
+                                <Vignette eskil={false} offset={0.1} darkness={0.7} />
+                            </EffectComposer>
+                        </Suspense>
+                    </Canvas>
+                </ErrorBoundary>
 
-            <EditorialOverlay uiState={uiState} product={product} />
+                <EditorialOverlay uiState={uiState} product={product} />
 
-            <StoreLocator isOpen={showStoreLocator} onClose={() => setShowStoreLocator(false)} productName={product.name} productId={product._id} />
+                <StoreLocator isOpen={showStoreLocator} onClose={() => setShowStoreLocator(false)} productName={product.name} productId={product._id} />
 
-            <style>{`
+                <style>{`
                 .stroke-text {
                     -webkit-text-stroke: 1px white;
                     color: transparent;
                 }
             `}</style>
-        </div>
+            </div>
+        </>
     );
 };
 

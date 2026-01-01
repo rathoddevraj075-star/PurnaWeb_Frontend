@@ -20,12 +20,12 @@ const Footer = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-y-12 w-full">
             {/* Column 1 - Left */}
             <div className="space-y-6 justify-self-start text-left">
-              <h3 className="text-xs tracking-[0.2em] font-medium text-white/40 uppercase">Our Products</h3>
+              <h3 className="text-xs tracking-[0.2em] font-medium text-white/40 uppercase">Categories</h3>
               <ul className="space-y-3 text-sm md:text-base font-light">
-                <li><a href="/collections/oral-care" className="block hover:text-[#E65800] hover:translate-x-1 transition-all duration-300">Oral Care</a></li>
-                <li><a href="/collections/skin-care" className="block hover:text-[#E65800] hover:translate-x-1 transition-all duration-300">Skin Care</a></li>
-                <li><a href="/collections/body-care" className="block hover:text-[#E65800] hover:translate-x-1 transition-all duration-300">Body Care</a></li>
-                <li><a href="/collections/hair-care" className="block hover:text-[#E65800] hover:translate-x-1 transition-all duration-300">Hair Care</a></li>
+                <li><a href="/categories/oral-care" className="block hover:text-[#E65800] hover:translate-x-1 transition-all duration-300">Oral Care</a></li>
+                <li><a href="/categories/skin-care" className="block hover:text-[#E65800] hover:translate-x-1 transition-all duration-300">Skin Care</a></li>
+                <li><a href="/categories/body-care" className="block hover:text-[#E65800] hover:translate-x-1 transition-all duration-300">Body Care</a></li>
+                <li><a href="/categories/hair-care" className="block hover:text-[#E65800] hover:translate-x-1 transition-all duration-300">Hair Care</a></li>
               </ul>
             </div>
 

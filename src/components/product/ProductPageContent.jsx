@@ -189,18 +189,13 @@ function ProductHero({ product, imageIndex, setImageIndex }) {
               ))}
             </M.div>
 
-            {/* Price & CTA */}
+            {/* CTA */}
             <M.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
               className="mb-10"
             >
-              <div className="flex items-baseline gap-3 mb-6">
-                <span className="text-4xl sm:text-5xl font-light">${product.price.toFixed(2)}</span>
-                <span className="text-sm opacity-60">Tax included</span>
-              </div>
-
               <Link
                 to="/contact"
                 className="group inline-flex items-center gap-3 bg-white text-black px-8 py-4 rounded-full font-medium text-sm tracking-wide hover:bg-white/90 transition-all shadow-lg hover:shadow-xl"
@@ -513,8 +508,7 @@ function CrossSellSection({ crossSellProducts, themeColor }) {
                   <h3 className="text-lg font-semibold text-neutral-900 mb-2 group-hover:text-[var(--color-orange)] transition-colors">
                     {product.name}
                   </h3>
-                  <p className="text-sm text-neutral-500 mb-3 line-clamp-2">{product.shortDescription || product.description}</p>
-                  <span className="text-lg font-medium text-neutral-900">${product.price?.toFixed(2) || '0.00'}</span>
+                  <p className="text-sm text-neutral-500 line-clamp-2">{product.shortDescription || product.description}</p>
                 </Link>
               </M.div>
             );

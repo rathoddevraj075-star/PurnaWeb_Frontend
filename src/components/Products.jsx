@@ -93,7 +93,7 @@ const Products = () => {
                 whileHover={{ y: -10 }}
                 className="group relative bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
               >
-                <Link to={`/collections/${categorySlug}/immersive`} className="block h-full flex flex-col">
+                <Link to={`/categories/${categorySlug}`} className="block h-full flex flex-col">
                   {/* Image Container */}
                   <div className="relative h-64 w-full bg-[#F5F5F5] overflow-hidden flex items-center justify-center p-6">
                     {/* Background Circle */}

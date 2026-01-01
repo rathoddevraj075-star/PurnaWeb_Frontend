@@ -89,12 +89,12 @@ function App() {
             <Routes>
               <Route path="/" element={<HomePage />} />
 
-              {/* Product & Category Routes */}
-              <Route path="/products" element={<AllProductsPage />} />
+              {/* Category Routes */}
+              <Route path="/categories" element={<AllProductsPage />} />
               <Route path="/products/:id" element={<ProductDeepDive />} />
 
-              {/* Direct Link to Immersive from Category Selection */}
-              <Route path="/collections/:category/immersive" element={<VariantDetailScroller />} />
+              {/* Category Collection View */}
+              <Route path="/categories/:category" element={<VariantDetailScroller />} />
 
               <Route path="/contact" element={<Contact />} />
               <Route path="/faq" element={<FAQSection />} />

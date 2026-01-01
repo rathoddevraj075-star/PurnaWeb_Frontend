@@ -83,10 +83,10 @@ export default function Navbar() {
 
           {/* Nav links */}
           <nav className="flex space-x-6 xl:space-x-8 text-xs">
-            {["OUR PRODUCTS", "ABOUT", "ROUTINE", "BLOG", "FAQ", "CONTACT"].map((item) => (
+            {["CATEGORIES", "ABOUT", "ROUTINE", "BLOG", "FAQ", "CONTACT"].map((item) => (
               <a
                 key={item}
-                href={item === "OUR PRODUCTS" ? "/products" : `/${item.toLowerCase()}`}
+                href={`/${item.toLowerCase()}`}
                 className="relative group text-black hover:text-gray-700 transition-colors font-medium tracking-wide"
               >
                 {item}
@@ -141,7 +141,7 @@ export default function Navbar() {
                   onClick={() => setShopOpen(!shopOpen)}
                   className="w-full flex justify-between items-center text-sm font-semibold uppercase border-b pb-2"
                 >
-                  <span>OUR PRODUCTS</span>
+                  <span>CATEGORIES</span>
                   <span className="text-lg">{shopOpen ? "—" : "+"}</span>
                 </button>
 
@@ -154,7 +154,7 @@ export default function Navbar() {
                       {categories.map((cat) => (
                         <SwiperSlide key={cat.id}>
                           <div className="flex flex-col items-center">
-                            <a href={`/collections/${cat.id}/immersive`} className="flex flex-col items-center group">
+                            <a href={`/categories/${cat.id}`} className="flex flex-col items-center group">
                               <img
                                 src={cat.img}
                                 alt={cat.title}

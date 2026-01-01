@@ -4,6 +4,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowUpRight, ArrowLeft, Loader2 } from "lucide-react";
 import Navbar from "../Navbar";
 import Footer from "../Footer";
+import SEO from "../SEO";
 import Lenis from 'lenis';
 import { productService, categoryService } from "../../services/api";
 
@@ -13,6 +14,7 @@ const CategoryPage = () => {
     const containerRef = useRef(null);
 
     const [categoryProducts, setCategoryProducts] = useState([]);
+    const [categoryData, setCategoryData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [themeColor, setThemeColor] = useState("#E65800");
 
@@ -62,6 +64,7 @@ const CategoryPage = () => {
                 );
 
                 if (categoryData) {
+                    setCategoryData(categoryData);
                     const productsResponse = await productService.getProducts({ category: categoryData._id });
                     const products = productsResponse.data || [];
                     setCategoryProducts(products);
@@ -121,6 +124,12 @@ const CategoryPage = () => {
 
     return (
         <>
+            <SEO
+                seo={categoryData?.seo}
+                title={categoryData?.seo?.metaTitle || `${categoryName} Collection | PurnaRoutine`}
+                description={categoryData?.seo?.metaDescription || categoryData?.description}
+                url={`/categories/${category}`}
+            />
             <Navbar />
 
             <div className="bg-white min-h-screen" ref={containerRef}>
@@ -155,7 +164,7 @@ const CategoryPage = () => {
                     {/* Immersive View CTA */}
                     <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20">
                         <Link
-                            to={`/collections/${category}/immersive`}
+                            to={`/categories/${category}`}
                             className="inline-flex items-center gap-3 bg-white text-black px-8 py-4 rounded-full uppercase tracking-wider hover:scale-105 transition-transform shadow-2xl"
                         >
                             <span>Enter Immersive View</span>

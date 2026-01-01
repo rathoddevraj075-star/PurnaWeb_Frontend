@@ -128,7 +128,7 @@ export default function ProductList() {
                             <tr>
                                 <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Product</th>
                                 <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Category</th>
-                                <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Price</th>
+
                                 <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Status</th>
                                 <th className="text-left px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">SEO Score</th>
                                 <th className="text-right px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Actions</th>
@@ -136,9 +136,9 @@ export default function ProductList() {
                         </thead>
                         <tbody className="divide-y divide-white/5">
                             {isLoading ? (
-                                <tr><td colSpan={6} className="text-center py-12 text-gray-500">Loading...</td></tr>
+                                <tr><td colSpan={5} className="text-center py-12 text-gray-500">Loading...</td></tr>
                             ) : data?.data?.length === 0 ? (
-                                <tr><td colSpan={6} className="text-center py-12 text-gray-500">No products found</td></tr>
+                                <tr><td colSpan={5} className="text-center py-12 text-gray-500">No products found</td></tr>
                             ) : data?.data?.map(product => (
                                 <tr key={product._id} className="hover:bg-white/5 transition-colors group">
                                     <td className="px-6 py-4">
@@ -157,7 +157,7 @@ export default function ProductList() {
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 text-sm text-gray-400">{product.category?.name || '-'}</td>
-                                    <td className="px-6 py-4 text-sm font-medium text-white">₹{product.price.toLocaleString()}</td>
+
                                     <td className="px-6 py-4">
                                         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${product.status === 'published' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
                                             product.status === 'draft' ? 'bg-gray-500/10 text-gray-400 border-gray-500/20' :

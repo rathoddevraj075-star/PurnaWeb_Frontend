@@ -19,6 +19,7 @@ import { EffectComposer, Bloom, Noise } from '@react-three/postprocessing';
 import * as THREE from 'three';
 import { ArrowLeft, ArrowRight, Layers, Maximize } from 'lucide-react';
 import { productService, categoryService } from '../../services/api';
+import SEO from '../../components/SEO';
 
 // --- CONSTANTS ---
 const FONT_URL = '/fonts/TT Firs Neue Trial Bold.ttf';
@@ -331,6 +332,7 @@ const VariantDetailScroller = () => {
     const { category } = useParams();
     const navigate = useNavigate();
     const [products, setProducts] = useState([]);
+    const [categoryData, setCategoryData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [activeIndex, setActiveIndex] = useState(0);
 
@@ -345,6 +347,7 @@ const VariantDetailScroller = () => {
                 );
 
                 if (categoryData) {
+                    setCategoryData(categoryData);
                     const productsResponse = await productService.getProducts({ category: categoryData._id });
                     setProducts(productsResponse.data || []);
                 }
@@ -363,37 +366,44 @@ const VariantDetailScroller = () => {
     if (loading) return <div className="h-screen w-full bg-black flex items-center justify-center text-white/50 font-bold tracking-widest uppercase">Loading Chrome...</div>;
 
     return (
-        <div className="h-screen w-full bg-[#050505] relative overflow-hidden">
+        <>
+            <SEO
+                seo={categoryData?.seo}
+                title={categoryData?.seo?.metaTitle || `${categoryData?.name || 'Collection'} | Immersive View`}
+                url={`/categories/${category}`}
+            />
+            <div className="h-screen w-full bg-[#050505] relative overflow-hidden">
 
-            {/* Close Button */}
-            <div className="fixed top-8 left-8 z-50 pointer-events-auto mix-blend-difference">
-                <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-white hover:opacity-50 transition-opacity">
-                    <ArrowLeft size={20} />
-                    <span className="text-xs font-bold uppercase tracking-widest">Back</span>
-                </button>
+                {/* Close Button */}
+                <div className="fixed top-8 left-8 z-50 pointer-events-auto mix-blend-difference">
+                    <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-white hover:opacity-50 transition-opacity">
+                        <ArrowLeft size={20} />
+                        <span className="text-xs font-bold uppercase tracking-widest">Back</span>
+                    </button>
+                </div>
+
+                <Canvas dpr={[1, 1.5]} camera={{ position: [0, 0, 10], fov: 45 }}>
+                    <Suspense fallback={null}>
+                        {/* The Infinite Mercury Sea */}
+                        <MercuryBackground activeColor={activeColor} />
+
+                        <LightingRig />
+
+                        <ScrollControls horizontal pages={products.length > 0 ? products.length : 1} damping={0.2} style={{ scrollbarWidth: 'none' }}>
+                            <MercuryScene products={products} activeIndex={activeIndex} setActiveIndex={setActiveIndex} />
+                        </ScrollControls>
+
+                        <EffectComposer>
+                            <Noise opacity={0.05} />
+                            <Bloom luminanceThreshold={0.5} intensity={0.5} radius={0.5} />
+                        </EffectComposer>
+                    </Suspense>
+                </Canvas>
+
+                <ChromeUI products={products} activeIndex={activeIndex} />
+
             </div>
-
-            <Canvas dpr={[1, 1.5]} camera={{ position: [0, 0, 10], fov: 45 }}>
-                <Suspense fallback={null}>
-                    {/* The Infinite Mercury Sea */}
-                    <MercuryBackground activeColor={activeColor} />
-
-                    <LightingRig />
-
-                    <ScrollControls horizontal pages={products.length > 0 ? products.length : 1} damping={0.2} style={{ scrollbarWidth: 'none' }}>
-                        <MercuryScene products={products} activeIndex={activeIndex} setActiveIndex={setActiveIndex} />
-                    </ScrollControls>
-
-                    <EffectComposer>
-                        <Noise opacity={0.05} />
-                        <Bloom luminanceThreshold={0.5} intensity={0.5} radius={0.5} />
-                    </EffectComposer>
-                </Suspense>
-            </Canvas>
-
-            <ChromeUI products={products} activeIndex={activeIndex} />
-
-        </div>
+        </>
     );
 };
 
