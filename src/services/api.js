@@ -242,4 +242,14 @@ export const newsletterService = {
     },
 };
 
+// ============================================
+// SETTINGS SERVICE
+// ============================================
+export const settingsService = {
+    getPublicSettings: async () => {
+        const response = await api.get('/settings/status');
+        return response.data;
+    },
+};
+
 export default api;

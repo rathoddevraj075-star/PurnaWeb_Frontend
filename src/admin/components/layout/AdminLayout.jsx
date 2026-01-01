@@ -227,7 +227,7 @@ export default function AdminLayout() {
     );
 
     return (
-        <div className="flex min-h-screen bg-[#0a0c10] text-gray-100 font-sans selection:bg-emerald-500/30">
+        <div className="flex h-screen overflow-hidden bg-[#0a0c10] text-gray-100 font-sans selection:bg-emerald-500/30">
             {/* Mobile Sidebar Backdrop */}
             {mobileMenuOpen && (
                 <div

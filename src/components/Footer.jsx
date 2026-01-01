@@ -1,13 +1,26 @@
-import React from "react";
+import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { settingsService } from "../services/api";
 import {
   FaYoutube,
   FaTiktok,
   FaFacebookF,
   FaInstagram,
+  FaTwitter,
+  FaLinkedinIn
 } from "react-icons/fa";
 
 const Footer = () => {
+  // Fetch site settings
+  const { data: settingsData } = useQuery({
+    queryKey: ['public-settings'],
+    queryFn: () => settingsService.getPublicSettings(),
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+  });
 
+  const settings = settingsData?.data || {};
+  const social = settings.socialLinks || {};
+  const year = new Date().getFullYear();
 
   return (
     <footer className="relative bg-[#153820] text-[#E8E6E1] overflow-hidden pt-20 pb-10 px-6 md:px-12 lg:px-24 font-['TT_Firs_Neue']">
@@ -22,10 +35,10 @@ const Footer = () => {
             <div className="space-y-6 justify-self-start text-left">
               <h3 className="text-xs tracking-[0.2em] font-medium text-white/40 uppercase">Categories</h3>
               <ul className="space-y-3 text-sm md:text-base font-light">
-                <li><a href="/categories/oral-care" className="block hover:text-[#E65800] hover:translate-x-1 transition-all duration-300">Oral Care</a></li>
-                <li><a href="/categories/skin-care" className="block hover:text-[#E65800] hover:translate-x-1 transition-all duration-300">Skin Care</a></li>
-                <li><a href="/categories/body-care" className="block hover:text-[#E65800] hover:translate-x-1 transition-all duration-300">Body Care</a></li>
-                <li><a href="/categories/hair-care" className="block hover:text-[#E65800] hover:translate-x-1 transition-all duration-300">Hair Care</a></li>
+                <li><Link to="/categories/oral-care" className="block hover:text-[#E65800] hover:translate-x-1 transition-all duration-300">Oral Care</Link></li>
+                <li><Link to="/categories/skin-care" className="block hover:text-[#E65800] hover:translate-x-1 transition-all duration-300">Skin Care</Link></li>
+                <li><Link to="/categories/body-care" className="block hover:text-[#E65800] hover:translate-x-1 transition-all duration-300">Body Care</Link></li>
+                <li><Link to="/categories/hair-care" className="block hover:text-[#E65800] hover:translate-x-1 transition-all duration-300">Hair Care</Link></li>
               </ul>
             </div>
 
@@ -33,10 +46,10 @@ const Footer = () => {
             <div className="space-y-6 md:justify-self-center md:text-center text-left">
               <h3 className="text-xs tracking-[0.2em] font-medium text-white/40 uppercase">Company</h3>
               <ul className="space-y-3 text-sm md:text-base font-light">
-                <li><a href="/about" className="block hover:text-[#E65800] hover:translate-x-1 transition-all duration-300">Our Story</a></li>
-                <li><a href="/science" className="block hover:text-[#E65800] hover:translate-x-1 transition-all duration-300">Science</a></li>
-                <li><a href="/blog" className="block hover:text-[#E65800] hover:translate-x-1 transition-all duration-300">Blogs</a></li>
-                <li><a href="/contact" className="block hover:text-[#E65800] hover:translate-x-1 transition-all duration-300">Contact</a></li>
+                <li><Link to="/about" className="block hover:text-[#E65800] hover:translate-x-1 transition-all duration-300">Our Story</Link></li>
+                <li><Link to="/science" className="block hover:text-[#E65800] hover:translate-x-1 transition-all duration-300">Science</Link></li>
+                <li><Link to="/blog" className="block hover:text-[#E65800] hover:translate-x-1 transition-all duration-300">Blogs</Link></li>
+                <li><Link to="/contact" className="block hover:text-[#E65800] hover:translate-x-1 transition-all duration-300">Contact</Link></li>
               </ul>
             </div>
 
@@ -44,8 +57,8 @@ const Footer = () => {
             <div className="space-y-6 md:justify-self-end md:text-right text-left">
               <h3 className="text-xs tracking-[0.2em] font-medium text-white/40 uppercase">Support</h3>
               <ul className="space-y-3 text-sm md:text-base font-light">
-                <li><a href="/faq" className="block hover:text-[#E65800] hover:translate-x-1 transition-all duration-300">FAQ</a></li>
-                <li><a href="/terms" className="block hover:text-[#E65800] hover:translate-x-1 transition-all duration-300">Terms & Conditions</a></li>
+                <li><Link to="/faq" className="block hover:text-[#E65800] hover:translate-x-1 transition-all duration-300">FAQ</Link></li>
+                <li><Link to="/terms" className="block hover:text-[#E65800] hover:translate-x-1 transition-all duration-300">Terms & Conditions</Link></li>
               </ul>
             </div>
           </div>
@@ -53,15 +66,29 @@ const Footer = () => {
 
         {/* Bottom Section */}
         <div className="flex flex-col-reverse md:flex-row justify-between items-center gap-8 pt-12 border-t border-white/10 relative z-20">
-          <div className="text-xs text-white/40 font-light tracking-wide">
-            &copy; {new Date().getFullYear()} PurnaRoutine. All rights reserved.
+          <div className="text-xs text-white/40 font-light tracking-wide flex flex-col md:flex-row gap-2 md:gap-6">
+            <span>&copy; {year} {settings.siteName || 'PurnaRoutine'}. All rights reserved.</span>
+            {settings.contactEmail && (
+              <a href={`mailto:${settings.contactEmail}`} className="hover:text-white transition-colors">
+                {settings.contactEmail}
+              </a>
+            )}
           </div>
 
           <div className="flex items-center gap-6 md:gap-8">
-            <SocialIcon href="#" icon={<FaInstagram size={18} />} />
-            <SocialIcon href="#" icon={<FaTiktok size={18} />} />
-            <SocialIcon href="#" icon={<FaYoutube size={18} />} />
-            <SocialIcon href="#" icon={<FaFacebookF size={18} />} />
+            {social.instagram && <SocialIcon href={social.instagram} icon={<FaInstagram size={18} />} />}
+            {social.facebook && <SocialIcon href={social.facebook} icon={<FaFacebookF size={18} />} />}
+            {social.youtube && <SocialIcon href={social.youtube} icon={<FaYoutube size={18} />} />}
+            {social.twitter && <SocialIcon href={social.twitter} icon={<FaTwitter size={18} />} />}
+            {social.linkedin && <SocialIcon href={social.linkedin} icon={<FaLinkedinIn size={18} />} />}
+
+            {/* Fallback if no social links managed yet */}
+            {!social.instagram && !social.facebook && !social.youtube && !social.twitter && !social.linkedin && (
+              <>
+                <SocialIcon href="#" icon={<FaInstagram size={18} />} />
+                <SocialIcon href="#" icon={<FaFacebookF size={18} />} />
+              </>
+            )}
           </div>
         </div>
 
@@ -80,6 +107,8 @@ const Footer = () => {
 const SocialIcon = ({ href, icon }) => (
   <a
     href={href}
+    target="_blank"
+    rel="noopener noreferrer"
     className="w-10 h-10 flex items-center justify-center rounded-full border border-white/20 text-white hover:bg-[#E65800] hover:border-[#E65800] hover:text-[#153820] transition-all duration-300 hover:scale-110"
     aria-label="Social Link"
   >

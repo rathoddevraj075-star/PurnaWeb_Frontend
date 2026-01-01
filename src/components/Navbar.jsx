@@ -1,6 +1,16 @@
 "use client";
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Menu, X, Search, User } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { settingsService } from "../services/api";
+import {
+  FaInstagram,
+  FaFacebookF,
+  FaYoutube,
+  FaTwitter,
+  FaLinkedinIn
+} from "react-icons/fa";
 
 // ✅ Swiper imports
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -11,6 +21,15 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [shopOpen, setShopOpen] = useState(false);
+
+  // Fetch site settings for social links
+  const { data: settingsData } = useQuery({
+    queryKey: ['public-settings'],
+    queryFn: () => settingsService.getPublicSettings(),
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+  });
+
+  const social = settingsData?.data?.socialLinks || {};
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 40);
@@ -188,6 +207,31 @@ export default function Navbar() {
                 Log in
               </a>
               <div className="flex items-center space-x-6 text-sm">
+                {social.instagram && (
+                  <a href={social.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-orange)] transition-colors">
+                    <FaInstagram size={20} />
+                  </a>
+                )}
+                {social.facebook && (
+                  <a href={social.facebook} target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-orange)] transition-colors">
+                    <FaFacebookF size={20} />
+                  </a>
+                )}
+                {social.youtube && (
+                  <a href={social.youtube} target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-orange)] transition-colors">
+                    <FaYoutube size={20} />
+                  </a>
+                )}
+                {social.twitter && (
+                  <a href={social.twitter} target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-orange)] transition-colors">
+                    <FaTwitter size={20} />
+                  </a>
+                )}
+                {social.linkedin && (
+                  <a href={social.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-orange)] transition-colors">
+                    <FaLinkedinIn size={20} />
+                  </a>
+                )}
               </div>
             </div>
           </div>
@@ -221,11 +265,6 @@ export default function Navbar() {
             </div>
           </div>
         </div>
-
-        {/* Optional: Search suggestions area */}
-        {/* <div className="p-6 text-center text-gray-400 text-sm">
-          Start typing to search...
-        </div> */}
       </div>
     </>
   );
