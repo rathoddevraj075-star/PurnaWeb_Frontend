@@ -228,16 +228,8 @@ const EditorialOverlay = ({ uiState, product }) => {
     return (
         <div className="absolute inset-0 pointer-events-none z-10 font-sans text-white mix-blend-difference px-6 py-12 md:p-24 flex flex-col justify-between">
 
-            {/* TOP NAVIGATION / HUD */}
-            <div className="w-full flex justify-between items-start opacity-50">
-                <div className="flex flex-col gap-1">
-                    <span className="text-[10px] uppercase tracking-[0.4em] font-bold">Project / Deep Dive</span>
-                    <span className="text-[10px] font-mono">ID: {product.slug?.substring(0, 6).toUpperCase()} // v.1.0</span>
-                </div>
-                <div className="hidden md:flex gap-8">
-                    <span className="text-[10px] uppercase tracking-widest animate-pulse">Live Render</span>
-                </div>
-            </div>
+            {/* TOP UI SPACE (kept for layout balance) */}
+            <div className="w-full h-6" />
 
             {/* CENTER CONTENT ZONES */}
             <div className="relative flex-1 flex items-center justify-center">
