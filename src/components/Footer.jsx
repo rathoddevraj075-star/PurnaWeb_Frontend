@@ -82,13 +82,7 @@ const Footer = () => {
             {social.twitter && <SocialIcon href={social.twitter} icon={<FaTwitter size={18} />} />}
             {social.linkedin && <SocialIcon href={social.linkedin} icon={<FaLinkedinIn size={18} />} />}
 
-            {/* Fallback if no social links managed yet */}
-            {!social.instagram && !social.facebook && !social.youtube && !social.twitter && !social.linkedin && (
-              <>
-                <SocialIcon href="#" icon={<FaInstagram size={18} />} />
-                <SocialIcon href="#" icon={<FaFacebookF size={18} />} />
-              </>
-            )}
+
           </div>
         </div>
 
