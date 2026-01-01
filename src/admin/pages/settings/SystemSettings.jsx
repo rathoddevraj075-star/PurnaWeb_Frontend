@@ -36,7 +36,16 @@ export default function SystemSettings() {
             linkedin: ''
         }
     });
-    const [success, setSuccess] = useState(false);
+    // State for toast notifications
+    const [notification, setNotification] = useState(null);
+
+    // Auto-hide notification after 5 seconds
+    useEffect(() => {
+        if (notification) {
+            const timer = setTimeout(() => setNotification(null), 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [notification]);
 
     // Fetch settings
     const { data: settings, isLoading } = useQuery({
@@ -77,12 +86,16 @@ export default function SystemSettings() {
         mutationFn: (data) => settingsApi.updateSettings(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['admin-settings'] });
-            setSuccess(true);
-            setTimeout(() => setSuccess(false), 3000);
+            setNotification({ type: 'success', message: 'System settings saved successfully' });
 
-            // Scroll to top to show success message
-            const contentArea = document.getElementById('admin-content-area');
-            if (contentArea) contentArea.scrollTo({ top: 0, behavior: 'smooth' });
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        },
+        onError: (error) => {
+            setNotification({
+                type: 'error',
+                message: error.response?.data?.message || 'Failed to update settings'
+            });
         }
     });
 
@@ -120,7 +133,35 @@ export default function SystemSettings() {
     }
 
     return (
-        <div className="space-y-6 max-w-4xl mx-auto">
+        <div className="space-y-6 max-w-4xl mx-auto relative">
+            {/* Toast Notification */}
+            {notification && (
+                <div className={`fixed top-24 right-6 z-50 transform transition-all duration-300 ease-out animate-slide-in
+                    flex items-center gap-3 px-6 py-4 rounded-xl shadow-2xl backdrop-blur-md border`
+                }
+                    style={{
+                        backgroundColor: notification.type === 'success' ? 'rgba(16, 185, 129, 0.9)' : 'rgba(239, 68, 68, 0.9)',
+                        borderColor: notification.type === 'success' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)'
+                    }}>
+                    <div className="p-2 bg-white/20 rounded-full">
+                        {notification.type === 'success' ? <Check size={20} className="text-white" /> : <AlertCircle size={20} className="text-white" />}
+                    </div>
+                    <div>
+                        <h4 className="font-bold text-white text-sm">
+                            {notification.type === 'success' ? 'Success' : 'Error'}
+                        </h4>
+                        <p className="text-white/90 text-sm">{notification.message}</p>
+                    </div>
+                    <button
+                        onClick={() => setNotification(null)}
+                        className="ml-4 p-1 hover:bg-white/20 rounded-full transition-colors"
+                    >
+                        <Settings size={14} className="opacity-0" /> {/* Spacer */}
+                        <div className="absolute right-4 top-4">×</div>
+                    </button>
+                </div>
+            )}
+
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
@@ -142,22 +183,6 @@ export default function SystemSettings() {
                     Save All Settings
                 </button>
             </div>
-
-            {/* Success Message */}
-            {success && (
-                <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 flex items-center gap-3 text-emerald-400">
-                    <Check size={20} />
-                    Settings saved successfully!
-                </div>
-            )}
-
-            {/* Error Message */}
-            {updateMutation.isError && (
-                <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex items-center gap-3 text-red-400">
-                    <AlertCircle size={20} />
-                    {updateMutation.error?.response?.data?.message || 'Failed to save settings'}
-                </div>
-            )}
 
             {/* Site Information */}
             <div className="bg-[#0f1218] rounded-2xl border border-white/5 p-6">
@@ -225,11 +250,8 @@ export default function SystemSettings() {
 
                 <div className="space-y-4">
                     {[
-                        { key: 'newOrder', label: 'New Order', desc: 'Receive emails when a new order is placed' },
                         { key: 'newContact', label: 'New Contact Inquiry', desc: 'Receive emails when someone submits the contact form' },
-                        { key: 'newUser', label: 'New User Registration', desc: 'Receive emails when a new user signs up' },
-                        { key: 'lowStock', label: 'Low Stock Alerts', desc: 'Receive emails when product stock runs low' },
-                        { key: 'dailySummary', label: 'Daily Summary', desc: 'Receive a daily summary of store activity' }
+                        { key: 'newUser', label: 'New User Registration', desc: 'Receive emails when a new user signs up' }
                     ].map((item) => (
                         <div key={item.key} className="flex items-center justify-between p-4 bg-white/5 rounded-xl">
                             <div>
