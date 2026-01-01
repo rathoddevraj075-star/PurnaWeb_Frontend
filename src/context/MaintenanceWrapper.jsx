@@ -4,7 +4,7 @@
 
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import MaintenancePage from '../Components/MaintenancePage';
+import MaintenancePage from '../components/MaintenancePage';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
