@@ -1,31 +1,31 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import ScrollToTop from "./Components/ScrollToTop";
+import ScrollToTop from "./components/ScrollToTop";
 import { AuthProvider } from "./context/AuthContext";
 import MaintenanceWrapper from "./context/MaintenanceWrapper";
 
-import AnnouncementBar from "./Components/AnnoucementBar";
-import Navbar from "./Components/Navbar";
-import Hero3D from "./Components/Hero3D";
-import ShowcaseLayout from "./Components/ShowcaseLayout";
-import PhilosophySection from "./Components/PhilosophySection";
-import RoutineSection from "./Components/RoutineSection";
-import BlogSection from "./Components/BlogSection";
-import Newsletter from "./Components/NewsLetter";
-import Footer from "./Components/Footer";
+import AnnouncementBar from "./components/AnnoucementBar";
+import Navbar from "./components/Navbar";
+import Hero3D from "./components/Hero3D";
+import ShowcaseLayout from "./components/ShowcaseLayout";
+import PhilosophySection from "./components/PhilosophySection";
+import RoutineSection from "./components/RoutineSection";
+import BlogSection from "./components/BlogSection";
+import Newsletter from "./components/NewsLetter";
+import Footer from "./components/Footer";
 
 // Page Imports
-import AllProductsPage from "./Components/product/AllProductsPage";
-import VariantDetailScroller from "./Components/product/VariantDetailScroller";
-import ProductDeepDive from "./Components/product/ProductDeepDive";
-import Contact from "./Components/contact/ContactPage";
-import FAQSection from "./Components/faq/FAQ";
-import SciencePage from "./Components/science/SciencePage";
-import About from "./Components/about/About";
-import ThePurnaRoutine from "./Components/ThePurnaRoutine";
-import BlogPage from "./Components/blog/BlogPage";
-import BlogDetailPage from "./Components/blog/BlogDetailPage";
-import AccountPage from "./Components/account/AccountPage";
+import AllProductsPage from "./components/product/AllProductsPage";
+import VariantDetailScroller from "./components/product/VariantDetailScroller";
+import ProductDeepDive from "./components/product/ProductDeepDive";
+import Contact from "./components/contact/ContactPage";
+import FAQSection from "./components/faq/FAQ";
+import SciencePage from "./components/science/SciencePage";
+import About from "./components/about/About";
+import ThePurnaRoutine from "./components/ThePurnaRoutine";
+import BlogPage from "./components/blog/BlogPage";
+import BlogDetailPage from "./components/blog/BlogDetailPage";
+import AccountPage from "./components/account/AccountPage";
 
 // Admin Panel Imports
 import AdminLayout from "./admin/components/layout/AdminLayout";
@@ -76,7 +76,7 @@ function HomePage() {
   );
 }
 
-import PageTransition from "./Components/ui/PageTransition";
+import PageTransition from "./components/ui/PageTransition";
 
 function App() {
   return (
