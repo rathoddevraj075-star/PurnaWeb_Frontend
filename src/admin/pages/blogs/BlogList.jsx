@@ -1,5 +1,5 @@
 /**
- * Blog List Page - Premium Dark Glass Design
+ * Blog List Page - Premium Design
  * Fully responsive for all screen sizes
  */
 
@@ -73,12 +73,12 @@ export default function BlogList() {
 
     const getCategoryBadgeClass = (cat) => {
         const classes = {
-            wellness: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
-            health: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-            lifestyle: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
-            tips: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
-            news: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30',
-            other: 'bg-gray-500/20 text-gray-400 border-gray-500/30'
+            wellness: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
+            health: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20',
+            lifestyle: 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20',
+            tips: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20',
+            news: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500/20',
+            other: 'bg-gray-500/10 text-gray-600 dark:text-gray-400 border-gray-500/20'
         };
         return classes[cat] || classes.other;
     };
@@ -97,13 +97,13 @@ export default function BlogList() {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-3">
+                    <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
                         <div className="p-2 sm:p-2.5 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/20">
                             <FileText size={20} className="sm:w-6 sm:h-6" />
                         </div>
                         Blog Posts
                     </h1>
-                    <p className="text-gray-400 text-sm mt-1 hidden sm:block">
+                    <p className="text-gray-500 dark:text-gray-400 text-sm mt-1 hidden sm:block">
                         Manage your blogs articles and posts
                     </p>
                 </div>
@@ -117,11 +117,11 @@ export default function BlogList() {
             </div>
 
             {/* Filters */}
-            <div className="bg-[#0f1218] rounded-xl sm:rounded-2xl border border-white/5 p-3 sm:p-4">
+            <div className="bg-white dark:bg-[#0f1218] rounded-xl sm:rounded-2xl border border-gray-800 dark:border-white/5 p-3 sm:p-4 shadow-sm dark:shadow-none transition-colors">
                 {/* Mobile Filter Toggle */}
                 <button
                     onClick={() => setShowMobileFilters(!showMobileFilters)}
-                    className="sm:hidden w-full flex items-center justify-between p-2 text-gray-400"
+                    className="sm:hidden w-full flex items-center justify-between p-2 text-gray-500 dark:text-gray-400"
                 >
                     <span className="flex items-center gap-2">
                         <Filter size={16} />
@@ -135,13 +135,13 @@ export default function BlogList() {
                     <div className="flex flex-col sm:flex-row gap-3">
                         {/* Search */}
                         <div className="relative flex-1">
-                            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+                            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                             <input
                                 type="text"
                                 placeholder="Search blogs..."
                                 value={search}
                                 onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                                className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all text-sm"
+                                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-800 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all text-sm"
                             />
                         </div>
 
@@ -149,10 +149,10 @@ export default function BlogList() {
                         <select
                             value={category}
                             onChange={(e) => { setCategory(e.target.value); setPage(1); }}
-                            className="px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm appearance-none cursor-pointer min-w-[140px]"
+                            className="px-4 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-800 dark:border-white/10 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm appearance-none cursor-pointer min-w-[140px]"
                         >
                             {CATEGORIES.map(cat => (
-                                <option key={cat.value} value={cat.value} className="bg-[#0f1218]">
+                                <option key={cat.value} value={cat.value} className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
                                     {cat.label}
                                 </option>
                             ))}
@@ -162,10 +162,10 @@ export default function BlogList() {
                         <select
                             value={status}
                             onChange={(e) => { setStatus(e.target.value); setPage(1); }}
-                            className="px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm appearance-none cursor-pointer min-w-[130px]"
+                            className="px-4 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-800 dark:border-white/10 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm appearance-none cursor-pointer min-w-[130px]"
                         >
                             {STATUS_OPTIONS.map(opt => (
-                                <option key={opt.value} value={opt.value} className="bg-[#0f1218]">
+                                <option key={opt.value} value={opt.value} className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
                                     {opt.label}
                                 </option>
                             ))}
@@ -176,11 +176,11 @@ export default function BlogList() {
 
             {/* Error State */}
             {error && (
-                <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex items-start gap-3 text-red-400">
+                <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex items-start gap-3 text-red-600 dark:text-red-400">
                     <AlertCircle size={20} className="flex-shrink-0 mt-0.5" />
                     <div>
                         <span className="font-medium">Failed to load blogs</span>
-                        <p className="text-sm mt-1 text-red-300">
+                        <p className="text-sm mt-1 text-red-500 dark:text-red-300">
                             {error?.response?.data?.message || error?.message || 'Please try again.'}
                         </p>
                     </div>
@@ -191,12 +191,12 @@ export default function BlogList() {
             {isLoading && (
                 <div className="space-y-3">
                     {[1, 2, 3, 4].map(i => (
-                        <div key={i} className="bg-[#0f1218] rounded-xl p-4 animate-pulse">
+                        <div key={i} className="bg-white dark:bg-[#0f1218] rounded-xl p-4 animate-pulse border border-gray-800 dark:border-white/5">
                             <div className="flex items-center gap-4">
-                                <div className="w-16 h-16 bg-white/5 rounded-lg" />
+                                <div className="w-16 h-16 bg-gray-200 dark:bg-white/5 rounded-lg" />
                                 <div className="flex-1 space-y-2">
-                                    <div className="h-4 bg-white/5 rounded w-1/2" />
-                                    <div className="h-3 bg-white/5 rounded w-1/4" />
+                                    <div className="h-4 bg-gray-200 dark:bg-white/5 rounded w-1/2" />
+                                    <div className="h-3 bg-gray-200 dark:bg-white/5 rounded w-1/4" />
                                 </div>
                             </div>
                         </div>
@@ -206,12 +206,12 @@ export default function BlogList() {
 
             {/* Empty State */}
             {!isLoading && !error && blogs.length === 0 && (
-                <div className="bg-[#0f1218] rounded-2xl border border-white/5 p-8 sm:p-12 text-center">
+                <div className="bg-white dark:bg-[#0f1218] rounded-2xl border border-gray-800 dark:border-white/5 p-8 sm:p-12 text-center transition-colors">
                     <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center">
-                        <FileText size={32} className="text-purple-400" />
+                        <FileText size={32} className="text-purple-600 dark:text-purple-400" />
                     </div>
-                    <h3 className="text-lg font-semibold text-white mb-2">No blog posts found</h3>
-                    <p className="text-gray-400 text-sm mb-6">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No blog posts found</h3>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
                         {search || category !== 'all' || status !== 'all'
                             ? 'Try adjusting your filters'
                             : 'Get started by creating your first blog post'}
@@ -232,36 +232,36 @@ export default function BlogList() {
             {!isLoading && !error && blogs.length > 0 && (
                 <>
                     {/* Desktop View */}
-                    <div className="hidden lg:block bg-[#0f1218] rounded-2xl border border-white/5 overflow-hidden">
+                    <div className="hidden lg:block bg-white dark:bg-[#0f1218] rounded-2xl border border-gray-800 dark:border-white/5 overflow-hidden shadow-sm dark:shadow-none transition-colors">
                         <table className="w-full">
                             <thead>
-                                <tr className="border-b border-white/5">
-                                    <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-4">Blog</th>
-                                    <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-4">Category</th>
-                                    <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-4">Author</th>
-                                    <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-4">Status</th>
-                                    <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-4">Published</th>
-                                    <th className="text-right text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-4">Actions</th>
+                                <tr className="border-b border-gray-800 dark:border-white/5 bg-gray-50 dark:bg-white/[0.02]">
+                                    <th className="text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-6 py-4">Blog</th>
+                                    <th className="text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-6 py-4">Category</th>
+                                    <th className="text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-6 py-4">Author</th>
+                                    <th className="text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-6 py-4">Status</th>
+                                    <th className="text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-6 py-4">Published</th>
+                                    <th className="text-right text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-6 py-4">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-white/5">
+                            <tbody className="divide-y divide-gray-100 dark:divide-white/5">
                                 {blogs.map((blog) => (
-                                    <tr key={blog._id} className="hover:bg-white/[0.02] transition-colors group">
+                                    <tr key={blog._id} className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors group">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-4">
                                                 {blog.featuredImage ? (
                                                     <img
                                                         src={blog.featuredImage}
                                                         alt={blog.title}
-                                                        className="w-14 h-14 rounded-lg object-cover border border-white/10"
+                                                        className="w-14 h-14 rounded-lg object-cover border border-gray-800 dark:border-white/10"
                                                     />
                                                 ) : (
-                                                    <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center border border-white/10">
-                                                        <FileText size={20} className="text-purple-400" />
+                                                    <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center border border-gray-800 dark:border-white/10">
+                                                        <FileText size={20} className="text-purple-600 dark:text-purple-400" />
                                                     </div>
                                                 )}
                                                 <div className="min-w-0">
-                                                    <p className="font-medium text-white truncate max-w-[250px] group-hover:text-emerald-400 transition-colors">
+                                                    <p className="font-medium text-gray-900 dark:text-white truncate max-w-[250px] group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                                                         {blog.title}
                                                     </p>
                                                     {blog.excerpt && (
@@ -278,7 +278,7 @@ export default function BlogList() {
                                             </span>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <div className="flex items-center gap-2 text-sm text-gray-400">
+                                            <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                                                 <User size={14} />
                                                 {blog.author?.name || 'Unknown'}
                                             </div>
@@ -288,8 +288,8 @@ export default function BlogList() {
                                                 onClick={() => togglePublishMutation.mutate(blog._id)}
                                                 disabled={togglePublishMutation.isPending}
                                                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full border transition-all ${blog.isPublished
-                                                    ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/30'
-                                                    : 'bg-amber-500/20 text-amber-400 border-amber-500/30 hover:bg-amber-500/30'
+                                                    ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20'
+                                                    : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20 hover:bg-amber-500/20'
                                                     }`}
                                             >
                                                 {blog.isPublished ? <Eye size={12} /> : <EyeOff size={12} />}
@@ -297,23 +297,23 @@ export default function BlogList() {
                                             </button>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <div className="flex items-center gap-2 text-sm text-gray-400">
+                                            <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                                                 <Calendar size={14} />
                                                 {formatDate(blog.publishedAt)}
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <div className="flex items-center justify-end gap-2">
+                                            <div className="flex items-center justify-end gap-2 text-gray-400">
                                                 <button
                                                     onClick={() => navigate(`/admin/blogs/${blog._id}`)}
-                                                    className="p-2 text-gray-400 hover:text-emerald-400 hover:bg-white/5 rounded-lg transition-all"
+                                                    className="p-2 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-all"
                                                     title="Edit"
                                                 >
                                                     <Edit2 size={16} />
                                                 </button>
                                                 <button
                                                     onClick={() => setDeleteId(blog._id)}
-                                                    className="p-2 text-gray-400 hover:text-red-400 hover:bg-white/5 rounded-lg transition-all"
+                                                    className="p-2 hover:text-red-500 dark:hover:text-red-400 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-all"
                                                     title="Delete"
                                                 >
                                                     <Trash2 size={16} />
@@ -329,21 +329,21 @@ export default function BlogList() {
                     {/* Mobile/Tablet Card View */}
                     <div className="lg:hidden space-y-3">
                         {blogs.map((blog) => (
-                            <div key={blog._id} className="bg-[#0f1218] rounded-xl border border-white/5 p-4 hover:border-white/10 transition-all">
+                            <div key={blog._id} className="bg-white dark:bg-[#0f1218] rounded-xl border border-gray-800 dark:border-white/5 p-4 hover:border-gray-800 dark:hover:border-white/10 transition-all shadow-sm dark:shadow-none">
                                 <div className="flex gap-3">
                                     {blog.featuredImage ? (
                                         <img
                                             src={blog.featuredImage}
                                             alt={blog.title}
-                                            className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg object-cover border border-white/10 flex-shrink-0"
+                                            className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg object-cover border border-gray-800 dark:border-white/10 flex-shrink-0"
                                         />
                                     ) : (
-                                        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center border border-white/10 flex-shrink-0">
-                                            <FileText size={24} className="text-purple-400" />
+                                        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center border border-gray-800 dark:border-white/10 flex-shrink-0">
+                                            <FileText size={24} className="text-purple-600 dark:text-purple-400" />
                                         </div>
                                     )}
                                     <div className="flex-1 min-w-0">
-                                        <h3 className="font-medium text-white text-sm sm:text-base line-clamp-2">
+                                        <h3 className="font-medium text-gray-900 dark:text-white text-sm sm:text-base line-clamp-2">
                                             {blog.title}
                                         </h3>
                                         <div className="flex flex-wrap items-center gap-2 mt-2">
@@ -351,13 +351,13 @@ export default function BlogList() {
                                                 {blog.category}
                                             </span>
                                             <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full border ${blog.isPublished
-                                                ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
-                                                : 'bg-amber-500/20 text-amber-400 border-amber-500/30'
+                                                ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+                                                : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
                                                 }`}>
                                                 {blog.isPublished ? 'Published' : 'Draft'}
                                             </span>
                                         </div>
-                                        <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
+                                        <div className="flex items-center gap-3 mt-2 text-xs text-gray-500 dark:text-gray-400">
                                             <span className="flex items-center gap-1">
                                                 <User size={12} />
                                                 {blog.author?.name || 'Unknown'}
@@ -369,25 +369,25 @@ export default function BlogList() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-2 mt-3 pt-3 border-t border-white/5">
+                                <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-800 dark:border-white/5">
                                     <button
                                         onClick={() => togglePublishMutation.mutate(blog._id)}
                                         disabled={togglePublishMutation.isPending}
-                                        className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium rounded-lg bg-white/5 text-gray-300 hover:bg-white/10 transition-all"
+                                        className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium rounded-lg bg-gray-50 dark:bg-white/5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 transition-all"
                                     >
                                         {blog.isPublished ? <EyeOff size={14} /> : <Eye size={14} />}
                                         {blog.isPublished ? 'Unpublish' : 'Publish'}
                                     </button>
                                     <button
                                         onClick={() => navigate(`/admin/blogs/${blog._id}`)}
-                                        className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium rounded-lg bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 transition-all"
+                                        className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 hover:text-emerald-700 dark:hover:text-emerald-300 transition-all"
                                     >
                                         <Edit2 size={14} />
                                         Edit
                                     </button>
                                     <button
                                         onClick={() => setDeleteId(blog._id)}
-                                        className="p-2 text-gray-400 hover:text-red-400 hover:bg-white/5 rounded-lg transition-all"
+                                        className="p-2 text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-all"
                                     >
                                         <Trash2 size={16} />
                                     </button>
@@ -398,15 +398,15 @@ export default function BlogList() {
 
                     {/* Pagination */}
                     {pagination.pages > 1 && (
-                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#0f1218] rounded-xl border border-white/5 p-4">
-                            <p className="text-sm text-gray-400 order-2 sm:order-1">
+                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white dark:bg-[#0f1218] rounded-xl border border-gray-800 dark:border-white/5 p-4 transition-colors">
+                            <p className="text-sm text-gray-500 dark:text-gray-400 order-2 sm:order-1">
                                 Showing {(pagination.page - 1) * 10 + 1} - {Math.min(pagination.page * 10, pagination.total)} of {pagination.total}
                             </p>
                             <div className="flex items-center gap-2 order-1 sm:order-2">
                                 <button
                                     onClick={() => setPage(p => Math.max(1, p - 1))}
                                     disabled={page === 1}
-                                    className="p-2 rounded-lg bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                    className="p-2 rounded-lg bg-gray-50 dark:bg-white/5 text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                                 >
                                     <ChevronLeft size={18} />
                                 </button>
@@ -428,7 +428,7 @@ export default function BlogList() {
                                                 onClick={() => setPage(pageNum)}
                                                 className={`w-8 h-8 rounded-lg text-sm font-medium transition-all ${pageNum === page
                                                     ? 'bg-emerald-500 text-white'
-                                                    : 'bg-white/5 text-gray-400 hover:bg-white/10'
+                                                    : 'bg-gray-50 dark:bg-white/5 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10'
                                                     }`}
                                             >
                                                 {pageNum}
@@ -439,7 +439,7 @@ export default function BlogList() {
                                 <button
                                     onClick={() => setPage(p => Math.min(pagination.pages, p + 1))}
                                     disabled={page === pagination.pages}
-                                    className="p-2 rounded-lg bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                    className="p-2 rounded-lg bg-gray-50 dark:bg-white/5 text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                                 >
                                     <ChevronRight size={18} />
                                 </button>
@@ -452,23 +452,23 @@ export default function BlogList() {
             {/* Delete Confirmation Modal */}
             {deleteId && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-                    <div className="bg-[#0f1218] rounded-2xl border border-white/10 p-6 max-w-md w-full shadow-2xl">
+                    <div className="bg-white dark:bg-[#0f1218] rounded-2xl border border-gray-800 dark:border-white/10 p-6 max-w-md w-full shadow-2xl transition-colors">
                         <div className="flex items-center gap-4 mb-4">
-                            <div className="p-3 rounded-xl bg-red-500/20">
-                                <Trash2 size={24} className="text-red-400" />
+                            <div className="p-3 rounded-xl bg-red-500/10 dark:bg-red-500/20">
+                                <Trash2 size={24} className="text-red-500 dark:text-red-400" />
                             </div>
                             <div>
-                                <h3 className="text-lg font-semibold text-white">Delete Blog Post</h3>
-                                <p className="text-sm text-gray-400">This action cannot be undone</p>
+                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Delete Blog Post</h3>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">This action cannot be undone</p>
                             </div>
                         </div>
-                        <p className="text-gray-300 mb-6">
+                        <p className="text-gray-600 dark:text-gray-300 mb-6">
                             Are you sure you want to delete this blog post? All associated data will be permanently removed.
                         </p>
                         <div className="flex gap-3">
                             <button
                                 onClick={() => setDeleteId(null)}
-                                className="flex-1 px-4 py-2.5 bg-white/5 text-gray-300 font-medium rounded-xl hover:bg-white/10 transition-all"
+                                className="flex-1 px-4 py-2.5 bg-gray-100 dark:bg-white/5 text-gray-700 dark:text-gray-300 font-medium rounded-xl hover:bg-gray-200 dark:hover:bg-white/10 transition-all"
                             >
                                 Cancel
                             </button>

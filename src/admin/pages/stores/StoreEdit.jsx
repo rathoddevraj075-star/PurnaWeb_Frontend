@@ -1,6 +1,7 @@
 /**
  * Store Edit/Create Page - Admin Panel
- * Premium Dark Design with Map Picker
+ * Premium Design with Map Picker
+ * Fully responsive light/dark mode
  */
 
 import { useState, useEffect } from 'react';
@@ -15,12 +16,12 @@ import {
 // Reusable styled input component
 const Input = ({ label, required, ...props }) => (
     <div>
-        <label className="block text-sm font-medium mb-2 text-gray-400">
+        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-400">
             {label} {required && '*'}
         </label>
         <input
             {...props}
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500/50 transition-colors placeholder-gray-600"
+            className="w-full bg-gray-50 dark:bg-white/5 border border-gray-800 dark:border-white/10 rounded-xl px-4 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:border-emerald-500/50 transition-colors placeholder-gray-400 dark:placeholder-gray-600"
         />
     </div>
 );
@@ -143,7 +144,7 @@ export default function StoreEdit() {
     if (isLoading && !isNew) {
         return (
             <div className="flex items-center justify-center h-64">
-                <Loader2 className="text-emerald-400 animate-spin" size={32} />
+                <Loader2 className="text-emerald-500 dark:text-emerald-400 animate-spin" size={32} />
             </div>
         );
     }
@@ -153,12 +154,12 @@ export default function StoreEdit() {
             {/* Notification Toast */}
             {notification && (
                 <div className={`fixed top-4 right-4 z-50 flex items-center gap-3 px-6 py-4 rounded-xl shadow-2xl border transition-all animate-slide-in ${notification.type === 'success'
-                    ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400'
-                    : 'bg-red-500/20 border-red-500/30 text-red-400'
+                    ? 'bg-emerald-100 dark:bg-emerald-500/20 border-emerald-200 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400'
+                    : 'bg-red-100 dark:bg-red-500/20 border-red-200 dark:border-red-500/30 text-red-600 dark:text-red-400'
                     }`}>
                     {notification.type === 'success' ? <CheckCircle size={20} /> : <XCircle size={20} />}
                     <span className="font-medium">{notification.message}</span>
-                    <button type="button" onClick={() => setNotification(null)} className="ml-2 text-gray-400 hover:text-white">×</button>
+                    <button type="button" onClick={() => setNotification(null)} className="ml-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">×</button>
                 </div>
             )}
 
@@ -168,16 +169,16 @@ export default function StoreEdit() {
                     <button
                         type="button"
                         onClick={() => navigate('/admin/stores')}
-                        className="p-2 rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10 transition-colors"
+                        className="p-2 rounded-xl bg-white dark:bg-white/5 border border-gray-800 dark:border-white/10 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/10 transition-colors shadow-sm dark:shadow-none"
                     >
                         <ArrowLeft size={20} />
                     </button>
                     <div>
-                        <h1 className="text-2xl font-bold text-white flex items-center gap-3">
-                            <Store className="text-emerald-400" size={28} />
+                        <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+                            <Store className="text-emerald-500 dark:text-emerald-400" size={28} />
                             {isNew ? 'Add Store' : 'Edit Store'}
                         </h1>
-                        <p className="text-gray-400 text-sm mt-1">
+                        <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
                             {isNew ? 'Add a new retail partner' : `Editing: ${store?.name}`}
                         </p>
                     </div>
@@ -185,7 +186,7 @@ export default function StoreEdit() {
                 <button
                     type="submit"
                     disabled={saveMutation.isPending}
-                    className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white px-5 py-2.5 rounded-xl font-medium hover:opacity-90 transition-opacity disabled:opacity-50 shadow-lg shadow-emerald-500/20"
+                    className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white px-5 py-2.5 rounded-xl font-medium hover:opacity-90 transition-all disabled:opacity-50 shadow-lg shadow-emerald-500/20 hover:-translate-y-0.5"
                 >
                     {saveMutation.isPending ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
                     {isNew ? 'Create Store' : 'Save Changes'}
@@ -193,9 +194,9 @@ export default function StoreEdit() {
             </div>
 
             {/* Basic Info */}
-            <div className="bg-[#0f1218] rounded-2xl p-6 border border-white/5 space-y-5">
-                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-                    <Store size={20} className="text-emerald-400" />
+            <div className="bg-white dark:bg-[#0f1218] rounded-2xl p-6 border border-gray-800 dark:border-white/5 space-y-5 shadow-sm dark:shadow-none transition-colors">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                    <Store size={20} className="text-emerald-500 dark:text-emerald-400" />
                     Store Information
                 </h2>
 
@@ -209,17 +210,17 @@ export default function StoreEdit() {
                     />
 
                     <div>
-                        <label className="block text-sm font-medium mb-2 text-gray-400">Store Type *</label>
+                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-400">Store Type *</label>
                         <select
                             value={formData.storeType}
                             onChange={(e) => setFormData({ ...formData, storeType: e.target.value })}
-                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500/50 cursor-pointer"
+                            className="w-full bg-gray-50 dark:bg-white/5 border border-gray-800 dark:border-white/10 rounded-xl px-4 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:border-emerald-500/50 cursor-pointer"
                         >
-                            <option value="retail" className="bg-gray-900">Retail Store</option>
-                            <option value="wholesale" className="bg-gray-900">Wholesale</option>
-                            <option value="pharmacy" className="bg-gray-900">Pharmacy</option>
-                            <option value="supermarket" className="bg-gray-900">Supermarket</option>
-                            <option value="other" className="bg-gray-900">Other</option>
+                            <option value="retail" className="bg-white dark:bg-gray-900">Retail Store</option>
+                            <option value="wholesale" className="bg-white dark:bg-gray-900">Wholesale</option>
+                            <option value="pharmacy" className="bg-white dark:bg-gray-900">Pharmacy</option>
+                            <option value="supermarket" className="bg-white dark:bg-gray-900">Supermarket</option>
+                            <option value="other" className="bg-white dark:bg-gray-900">Other</option>
                         </select>
                     </div>
                 </div>
@@ -244,9 +245,9 @@ export default function StoreEdit() {
             </div>
 
             {/* Address */}
-            <div className="bg-[#0f1218] rounded-2xl p-6 border border-white/5 space-y-5">
-                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-                    <MapPin size={20} className="text-emerald-400" />
+            <div className="bg-white dark:bg-[#0f1218] rounded-2xl p-6 border border-gray-800 dark:border-white/5 space-y-5 shadow-sm dark:shadow-none transition-colors">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                    <MapPin size={20} className="text-emerald-500 dark:text-emerald-400" />
                     Location
                 </h2>
 
@@ -289,14 +290,14 @@ export default function StoreEdit() {
                 </div>
 
                 {/* Coordinates */}
-                <div className="bg-white/5 rounded-xl p-4 space-y-4">
+                <div className="bg-gray-50 dark:bg-white/5 rounded-xl p-4 space-y-4 border border-gray-800 dark:border-white/5">
                     <div className="flex items-center justify-between">
-                        <p className="text-sm text-gray-400">GPS Coordinates (for "Find Stock" feature)</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">GPS Coordinates (for "Find Stock" feature)</p>
                         <a
                             href="https://www.google.com/maps"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-xs text-emerald-400 hover:underline"
+                            className="text-xs text-emerald-600 dark:text-emerald-400 hover:underline"
                         >
                             Get from Google Maps →
                         </a>
@@ -325,16 +326,16 @@ export default function StoreEdit() {
             </div>
 
             {/* Products Available */}
-            <div className="bg-[#0f1218] rounded-2xl p-6 border border-white/5 space-y-5">
+            <div className="bg-white dark:bg-[#0f1218] rounded-2xl p-6 border border-gray-800 dark:border-white/5 space-y-5 shadow-sm dark:shadow-none transition-colors">
                 <div className="flex items-center justify-between">
-                    <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-                        <Package size={20} className="text-emerald-400" />
+                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                        <Package size={20} className="text-emerald-500 dark:text-emerald-400" />
                         Products Available
                     </h2>
                     <button
                         type="button"
                         onClick={() => setShowProductPicker(!showProductPicker)}
-                        className="flex items-center gap-2 text-sm bg-emerald-500/20 text-emerald-400 px-3 py-1.5 rounded-lg hover:bg-emerald-500/30 transition-colors"
+                        className="flex items-center gap-2 text-sm bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-3 py-1.5 rounded-lg hover:bg-emerald-200 dark:hover:bg-emerald-500/30 transition-colors"
                     >
                         <Plus size={16} />
                         Add Products
@@ -347,13 +348,13 @@ export default function StoreEdit() {
                         {selectedProducts.map(product => (
                             <div
                                 key={product._id}
-                                className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-3 py-1.5"
+                                className="flex items-center gap-2 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-500 dark:border-emerald-500/20 rounded-full px-3 py-1.5"
                             >
-                                <span className="text-emerald-300 text-sm">{product.name}</span>
+                                <span className="text-emerald-700 dark:text-emerald-300 text-sm">{product.name}</span>
                                 <button
                                     type="button"
                                     onClick={() => toggleProduct(product._id)}
-                                    className="text-emerald-400/50 hover:text-red-400 transition-colors"
+                                    className="text-emerald-600/50 dark:text-emerald-400/50 hover:text-red-500 dark:hover:text-red-400 transition-colors"
                                 >
                                     <X size={14} />
                                 </button>
@@ -361,23 +362,23 @@ export default function StoreEdit() {
                         ))}
                     </div>
                 ) : (
-                    <div className="text-center py-6 border-2 border-dashed border-white/10 rounded-xl">
-                        <p className="text-gray-500 text-sm">No products selected</p>
-                        <p className="text-gray-600 text-xs mt-1">Click "Add Products" to select which products are available at this store</p>
+                    <div className="text-center py-6 border-2 border-dashed border-gray-800 dark:border-white/10 rounded-xl">
+                        <p className="text-gray-500 dark:text-gray-500 text-sm">No products selected</p>
+                        <p className="text-gray-400 dark:text-gray-600 text-xs mt-1">Click "Add Products" to select which products are available at this store</p>
                     </div>
                 )}
 
                 {/* Product Picker Modal */}
                 {showProductPicker && (
-                    <div className="bg-white/5 rounded-xl p-4 border border-white/10 space-y-4">
+                    <div className="bg-gray-50 dark:bg-white/5 rounded-xl p-4 border border-gray-800 dark:border-white/10 space-y-4">
                         <div className="relative">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={16} />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" size={16} />
                             <input
                                 type="text"
                                 placeholder="Search products..."
                                 value={productSearch}
                                 onChange={(e) => setProductSearch(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-lg pl-9 pr-4 py-2 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-emerald-500/50"
+                                className="w-full bg-white dark:bg-white/5 border border-gray-800 dark:border-white/10 rounded-lg pl-9 pr-4 py-2 text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-emerald-500/50"
                             />
                         </div>
                         <div className="max-h-48 overflow-y-auto space-y-1">
@@ -387,19 +388,19 @@ export default function StoreEdit() {
                                     key={product._id}
                                     onClick={() => toggleProduct(product._id)}
                                     className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left text-sm transition-colors ${formData.products.includes(product._id)
-                                        ? 'bg-emerald-500/20 text-emerald-300'
-                                        : 'text-gray-300 hover:bg-white/5'
+                                        ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300'
+                                        : 'text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-white/5'
                                         }`}
                                 >
                                     <span>{product.name}</span>
                                     {formData.products.includes(product._id) && (
-                                        <Check size={16} className="text-emerald-400" />
+                                        <Check size={16} className="text-emerald-500 dark:text-emerald-400" />
                                     )}
                                 </button>
                             ))}
                             {productsLoading && (
                                 <div className="text-center py-4">
-                                    <Loader2 className="animate-spin mx-auto text-emerald-400" size={20} />
+                                    <Loader2 className="animate-spin mx-auto text-emerald-500 dark:text-emerald-400" size={20} />
                                     <p className="text-gray-500 text-sm mt-2">Loading products...</p>
                                 </div>
                             )}
@@ -413,7 +414,7 @@ export default function StoreEdit() {
                         <button
                             type="button"
                             onClick={() => setShowProductPicker(false)}
-                            className="w-full py-2 text-sm text-gray-400 hover:text-white transition-colors"
+                            className="w-full py-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                         >
                             Done selecting
                         </button>
@@ -422,16 +423,16 @@ export default function StoreEdit() {
             </div>
 
             {/* Opening Hours */}
-            <div className="bg-[#0f1218] rounded-2xl p-6 border border-white/5 space-y-5">
-                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-                    <Clock size={20} className="text-emerald-400" />
+            <div className="bg-white dark:bg-[#0f1218] rounded-2xl p-6 border border-gray-800 dark:border-white/5 space-y-5 shadow-sm dark:shadow-none transition-colors">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                    <Clock size={20} className="text-emerald-500 dark:text-emerald-400" />
                     Opening Hours
                 </h2>
 
                 <div className="grid gap-3">
                     {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map(day => (
                         <div key={day} className="flex items-center gap-4">
-                            <span className="w-24 text-sm text-gray-400 capitalize">{day}</span>
+                            <span className="w-24 text-sm text-gray-600 dark:text-gray-400 capitalize">{day}</span>
                             <input
                                 type="time"
                                 value={formData.openingHours[day]?.open || '09:00'}
@@ -442,9 +443,9 @@ export default function StoreEdit() {
                                         [day]: { ...formData.openingHours[day], open: e.target.value }
                                     }
                                 })}
-                                className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-white text-sm focus:outline-none focus:border-emerald-500/50"
+                                className="bg-gray-50 dark:bg-white/5 border border-gray-800 dark:border-white/10 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-emerald-500/50"
                             />
-                            <span className="text-gray-500">to</span>
+                            <span className="text-gray-400 dark:text-gray-500">to</span>
                             <input
                                 type="time"
                                 value={formData.openingHours[day]?.close || '21:00'}
@@ -455,7 +456,7 @@ export default function StoreEdit() {
                                         [day]: { ...formData.openingHours[day], close: e.target.value }
                                     }
                                 })}
-                                className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-white text-sm focus:outline-none focus:border-emerald-500/50"
+                                className="bg-gray-50 dark:bg-white/5 border border-gray-800 dark:border-white/10 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-emerald-500/50"
                             />
                         </div>
                     ))}

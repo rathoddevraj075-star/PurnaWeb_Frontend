@@ -1,5 +1,5 @@
 /**
- * User List Page - Premium Dark Glass Design
+ * User List Page - Premium Design
  * Fully responsive for all screen sizes
  */
 
@@ -10,7 +10,7 @@ import { userApi } from '../../services/adminApi';
 import {
     Users, Plus, Search, Edit2, Trash2, UserCheck, UserX,
     Calendar, Shield, Filter, ChevronLeft, ChevronRight,
-    AlertCircle, Mail, Phone, MoreVertical
+    AlertCircle, Mail
 } from 'lucide-react';
 
 const ROLES = [
@@ -79,10 +79,10 @@ export default function UserList() {
 
     const getRoleBadgeClass = (userRole) => {
         const classes = {
-            admin: 'bg-red-500/20 text-red-400 border-red-500/30',
-            seo_manager: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
-            editor: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-            user: 'bg-gray-500/20 text-gray-400 border-gray-500/30'
+            admin: 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20',
+            seo_manager: 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20',
+            editor: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20',
+            user: 'bg-gray-500/10 text-gray-600 dark:text-gray-400 border-gray-500/20'
         };
         return classes[userRole] || classes.user;
     };
@@ -120,13 +120,13 @@ export default function UserList() {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-3">
+                    <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
                         <div className="p-2 sm:p-2.5 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/20">
                             <Users size={20} className="sm:w-6 sm:h-6" />
                         </div>
                         User Management
                     </h1>
-                    <p className="text-gray-400 text-sm mt-1 hidden sm:block">
+                    <p className="text-gray-500 dark:text-gray-400 text-sm mt-1 hidden sm:block">
                         Manage customers and staff accounts
                     </p>
                 </div>
@@ -142,31 +142,31 @@ export default function UserList() {
             {/* Stats Cards */}
             {statsData && (
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-                    <div className="bg-[#0f1218] rounded-xl border border-white/5 p-4">
-                        <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">Total Users</p>
-                        <p className="text-2xl font-bold text-white">{statsData.stats.total}</p>
+                    <div className="bg-white dark:bg-[#0f1218] rounded-xl border border-gray-800 dark:border-white/5 p-4 shadow-sm dark:shadow-none transition-colors">
+                        <p className="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider mb-1">Total Users</p>
+                        <p className="text-2xl font-bold text-gray-900 dark:text-white">{statsData.stats.total}</p>
                     </div>
-                    <div className="bg-[#0f1218] rounded-xl border border-white/5 p-4">
-                        <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">Active</p>
-                        <p className="text-2xl font-bold text-emerald-400">{statsData.stats.active}</p>
+                    <div className="bg-white dark:bg-[#0f1218] rounded-xl border border-gray-800 dark:border-white/5 p-4 shadow-sm dark:shadow-none transition-colors">
+                        <p className="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider mb-1">Active</p>
+                        <p className="text-2xl font-bold text-emerald-500 dark:text-emerald-400">{statsData.stats.active}</p>
                     </div>
-                    <div className="bg-[#0f1218] rounded-xl border border-white/5 p-4">
-                        <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">Inactive</p>
-                        <p className="text-2xl font-bold text-amber-400">{statsData.stats.inactive}</p>
+                    <div className="bg-white dark:bg-[#0f1218] rounded-xl border border-gray-800 dark:border-white/5 p-4 shadow-sm dark:shadow-none transition-colors">
+                        <p className="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider mb-1">Inactive</p>
+                        <p className="text-2xl font-bold text-amber-500 dark:text-amber-400">{statsData.stats.inactive}</p>
                     </div>
-                    <div className="bg-[#0f1218] rounded-xl border border-white/5 p-4">
-                        <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">Staff</p>
-                        <p className="text-2xl font-bold text-purple-400">{statsData.stats.staff}</p>
+                    <div className="bg-white dark:bg-[#0f1218] rounded-xl border border-gray-800 dark:border-white/5 p-4 shadow-sm dark:shadow-none transition-colors">
+                        <p className="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider mb-1">Staff</p>
+                        <p className="text-2xl font-bold text-purple-500 dark:text-purple-400">{statsData.stats.staff}</p>
                     </div>
                 </div>
             )}
 
             {/* Filters */}
-            <div className="bg-[#0f1218] rounded-xl sm:rounded-2xl border border-white/5 p-3 sm:p-4">
+            <div className="bg-white dark:bg-[#0f1218] rounded-xl sm:rounded-2xl border border-gray-800 dark:border-white/5 p-3 sm:p-4 shadow-sm dark:shadow-none transition-colors">
                 {/* Mobile Filter Toggle */}
                 <button
                     onClick={() => setShowMobileFilters(!showMobileFilters)}
-                    className="sm:hidden w-full flex items-center justify-between p-2 text-gray-400"
+                    className="sm:hidden w-full flex items-center justify-between p-2 text-gray-500 dark:text-gray-400"
                 >
                     <span className="flex items-center gap-2">
                         <Filter size={16} />
@@ -180,13 +180,13 @@ export default function UserList() {
                     <div className="flex flex-col sm:flex-row gap-3">
                         {/* Search */}
                         <div className="relative flex-1">
-                            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+                            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                             <input
                                 type="text"
                                 placeholder="Search by name or email..."
                                 value={search}
                                 onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                                className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all text-sm"
+                                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-800 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all text-sm"
                             />
                         </div>
 
@@ -194,10 +194,10 @@ export default function UserList() {
                         <select
                             value={role}
                             onChange={(e) => { setRole(e.target.value); setPage(1); }}
-                            className="px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm appearance-none cursor-pointer min-w-[140px]"
+                            className="px-4 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-800 dark:border-white/10 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm appearance-none cursor-pointer min-w-[140px]"
                         >
                             {ROLES.map(r => (
-                                <option key={r.value} value={r.value} className="bg-[#0f1218]">
+                                <option key={r.value} value={r.value} className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
                                     {r.label}
                                 </option>
                             ))}
@@ -207,10 +207,10 @@ export default function UserList() {
                         <select
                             value={status}
                             onChange={(e) => { setStatus(e.target.value); setPage(1); }}
-                            className="px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm appearance-none cursor-pointer min-w-[130px]"
+                            className="px-4 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-800 dark:border-white/10 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm appearance-none cursor-pointer min-w-[130px]"
                         >
                             {STATUS_OPTIONS.map(opt => (
-                                <option key={opt.value} value={opt.value} className="bg-[#0f1218]">
+                                <option key={opt.value} value={opt.value} className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
                                     {opt.label}
                                 </option>
                             ))}
@@ -221,11 +221,11 @@ export default function UserList() {
 
             {/* Error State */}
             {error && (
-                <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex items-start gap-3 text-red-400">
+                <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex items-start gap-3 text-red-600 dark:text-red-400">
                     <AlertCircle size={20} className="flex-shrink-0 mt-0.5" />
                     <div>
                         <span className="font-medium">Failed to load users</span>
-                        <p className="text-sm mt-1 text-red-300">
+                        <p className="text-sm mt-1 text-red-500 dark:text-red-300">
                             {error?.response?.data?.message || error?.message || 'Please try again.'}
                         </p>
                     </div>
@@ -236,12 +236,12 @@ export default function UserList() {
             {isLoading && (
                 <div className="space-y-3">
                     {[1, 2, 3, 4].map(i => (
-                        <div key={i} className="bg-[#0f1218] rounded-xl p-4 animate-pulse">
+                        <div key={i} className="bg-white dark:bg-[#0f1218] rounded-xl p-4 animate-pulse border border-gray-800 dark:border-white/5">
                             <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 bg-white/5 rounded-full" />
+                                <div className="w-12 h-12 bg-gray-200 dark:bg-white/5 rounded-full" />
                                 <div className="flex-1 space-y-2">
-                                    <div className="h-4 bg-white/5 rounded w-1/3" />
-                                    <div className="h-3 bg-white/5 rounded w-1/4" />
+                                    <div className="h-4 bg-gray-200 dark:bg-white/5 rounded w-1/3" />
+                                    <div className="h-3 bg-gray-200 dark:bg-white/5 rounded w-1/4" />
                                 </div>
                             </div>
                         </div>
@@ -251,12 +251,12 @@ export default function UserList() {
 
             {/* Empty State */}
             {!isLoading && !error && users.length === 0 && (
-                <div className="bg-[#0f1218] rounded-2xl border border-white/5 p-8 sm:p-12 text-center">
+                <div className="bg-white dark:bg-[#0f1218] rounded-2xl border border-gray-800 dark:border-white/5 p-8 sm:p-12 text-center transition-colors">
                     <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
-                        <Users size={32} className="text-blue-400" />
+                        <Users size={32} className="text-blue-500 dark:text-blue-400" />
                     </div>
-                    <h3 className="text-lg font-semibold text-white mb-2">No users found</h3>
-                    <p className="text-gray-400 text-sm mb-6">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No users found</h3>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
                         {search || role !== 'all' || status !== 'all'
                             ? 'Try adjusting your filters'
                             : 'Get started by creating your first user'}
@@ -277,28 +277,28 @@ export default function UserList() {
             {!isLoading && !error && users.length > 0 && (
                 <>
                     {/* Desktop View */}
-                    <div className="hidden lg:block bg-[#0f1218] rounded-2xl border border-white/5 overflow-hidden">
+                    <div className="hidden lg:block bg-white dark:bg-[#0f1218] rounded-2xl border border-gray-800 dark:border-white/5 overflow-hidden shadow-sm dark:shadow-none transition-colors">
                         <table className="w-full">
                             <thead>
-                                <tr className="border-b border-white/5">
-                                    <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-4">User</th>
-                                    <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-4">Role</th>
-                                    <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-4">Status</th>
-                                    <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-4">Last Login</th>
-                                    <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-4">Joined</th>
-                                    <th className="text-right text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-4">Actions</th>
+                                <tr className="border-b border-gray-800 dark:border-white/5 bg-gray-50 dark:bg-white/[0.02]">
+                                    <th className="text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-6 py-4">User</th>
+                                    <th className="text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-6 py-4">Role</th>
+                                    <th className="text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-6 py-4">Status</th>
+                                    <th className="text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-6 py-4">Last Login</th>
+                                    <th className="text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-6 py-4">Joined</th>
+                                    <th className="text-right text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-6 py-4">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-white/5">
+                            <tbody className="divide-y divide-gray-100 dark:divide-white/5">
                                 {users.map((user) => (
-                                    <tr key={user._id} className="hover:bg-white/[0.02] transition-colors group">
+                                    <tr key={user._id} className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors group">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-4">
                                                 {user.avatar ? (
                                                     <img
                                                         src={user.avatar}
                                                         alt={user.name}
-                                                        className="w-10 h-10 rounded-full object-cover border border-white/10"
+                                                        className="w-10 h-10 rounded-full object-cover border border-gray-800 dark:border-white/10"
                                                     />
                                                 ) : (
                                                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white font-medium text-sm">
@@ -306,7 +306,7 @@ export default function UserList() {
                                                     </div>
                                                 )}
                                                 <div className="min-w-0">
-                                                    <p className="font-medium text-white truncate max-w-[200px] group-hover:text-emerald-400 transition-colors">
+                                                    <p className="font-medium text-gray-900 dark:text-white truncate max-w-[200px] group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                                                         {user.name}
                                                     </p>
                                                     <p className="text-sm text-gray-500 truncate max-w-[200px] flex items-center gap-1">
@@ -327,8 +327,8 @@ export default function UserList() {
                                                 onClick={() => toggleStatusMutation.mutate(user._id)}
                                                 disabled={toggleStatusMutation.isPending}
                                                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full border transition-all ${user.isActive
-                                                    ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/30'
-                                                    : 'bg-amber-500/20 text-amber-400 border-amber-500/30 hover:bg-amber-500/30'
+                                                    ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20'
+                                                    : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20 hover:bg-amber-500/20'
                                                     }`}
                                             >
                                                 {user.isActive ? <UserCheck size={12} /> : <UserX size={12} />}
@@ -336,28 +336,28 @@ export default function UserList() {
                                             </button>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <div className="flex items-center gap-2 text-sm text-gray-400">
+                                            <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                                                 <Calendar size={14} />
                                                 {formatDate(user.lastLogin)}
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <div className="text-sm text-gray-400">
+                                            <div className="text-sm text-gray-500 dark:text-gray-400">
                                                 {formatDate(user.createdAt)}
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <div className="flex items-center justify-end gap-2">
+                                            <div className="flex items-center justify-end gap-2 text-gray-400 pointer-events-auto">
                                                 <button
                                                     onClick={() => navigate(`/admin/users/${user._id}`)}
-                                                    className="p-2 text-gray-400 hover:text-emerald-400 hover:bg-white/5 rounded-lg transition-all"
+                                                    className="p-2 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-all"
                                                     title="Edit"
                                                 >
                                                     <Edit2 size={16} />
                                                 </button>
                                                 <button
                                                     onClick={() => setDeleteId(user._id)}
-                                                    className="p-2 text-gray-400 hover:text-red-400 hover:bg-white/5 rounded-lg transition-all"
+                                                    className="p-2 hover:text-red-500 dark:hover:text-red-400 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-all"
                                                     title="Delete"
                                                 >
                                                     <Trash2 size={16} />
@@ -373,13 +373,13 @@ export default function UserList() {
                     {/* Mobile/Tablet Card View */}
                     <div className="lg:hidden space-y-3">
                         {users.map((user) => (
-                            <div key={user._id} className="bg-[#0f1218] rounded-xl border border-white/5 p-4 hover:border-white/10 transition-all">
+                            <div key={user._id} className="bg-white dark:bg-[#0f1218] rounded-xl border border-gray-800 dark:border-white/5 p-4 hover:border-gray-800 dark:hover:border-white/10 transition-all shadow-sm dark:shadow-none">
                                 <div className="flex gap-3">
                                     {user.avatar ? (
                                         <img
                                             src={user.avatar}
                                             alt={user.name}
-                                            className="w-12 h-12 rounded-full object-cover border border-white/10 flex-shrink-0"
+                                            className="w-12 h-12 rounded-full object-cover border border-gray-800 dark:border-white/10 flex-shrink-0"
                                         />
                                     ) : (
                                         <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white font-medium flex-shrink-0">
@@ -387,7 +387,7 @@ export default function UserList() {
                                         </div>
                                     )}
                                     <div className="flex-1 min-w-0">
-                                        <h3 className="font-medium text-white text-sm sm:text-base truncate">
+                                        <h3 className="font-medium text-gray-900 dark:text-white text-sm sm:text-base truncate">
                                             {user.name}
                                         </h3>
                                         <p className="text-xs text-gray-500 truncate">{user.email}</p>
@@ -397,33 +397,33 @@ export default function UserList() {
                                                 {getRoleLabel(user.role)}
                                             </span>
                                             <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full border ${user.isActive
-                                                ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
-                                                : 'bg-amber-500/20 text-amber-400 border-amber-500/30'
+                                                ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+                                                : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
                                                 }`}>
                                                 {user.isActive ? 'Active' : 'Inactive'}
                                             </span>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-2 mt-3 pt-3 border-t border-white/5">
+                                <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-800 dark:border-white/5">
                                     <button
                                         onClick={() => toggleStatusMutation.mutate(user._id)}
                                         disabled={toggleStatusMutation.isPending}
-                                        className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium rounded-lg bg-white/5 text-gray-300 hover:bg-white/10 transition-all"
+                                        className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium rounded-lg bg-gray-50 dark:bg-white/5 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 transition-all"
                                     >
                                         {user.isActive ? <UserX size={14} /> : <UserCheck size={14} />}
                                         {user.isActive ? 'Deactivate' : 'Activate'}
                                     </button>
                                     <button
                                         onClick={() => navigate(`/admin/users/${user._id}`)}
-                                        className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium rounded-lg bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 transition-all"
+                                        className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 transition-all"
                                     >
                                         <Edit2 size={14} />
                                         Edit
                                     </button>
                                     <button
                                         onClick={() => setDeleteId(user._id)}
-                                        className="p-2 text-gray-400 hover:text-red-400 hover:bg-white/5 rounded-lg transition-all"
+                                        className="p-2 text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-all"
                                     >
                                         <Trash2 size={16} />
                                     </button>
@@ -434,15 +434,15 @@ export default function UserList() {
 
                     {/* Pagination */}
                     {pagination.pages > 1 && (
-                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#0f1218] rounded-xl border border-white/5 p-4">
-                            <p className="text-sm text-gray-400 order-2 sm:order-1">
+                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white dark:bg-[#0f1218] rounded-xl border border-gray-800 dark:border-white/5 p-4 transition-colors">
+                            <p className="text-sm text-gray-500 dark:text-gray-400 order-2 sm:order-1">
                                 Showing {(pagination.page - 1) * 10 + 1} - {Math.min(pagination.page * 10, pagination.total)} of {pagination.total}
                             </p>
                             <div className="flex items-center gap-2 order-1 sm:order-2">
                                 <button
                                     onClick={() => setPage(p => Math.max(1, p - 1))}
                                     disabled={page === 1}
-                                    className="p-2 rounded-lg bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                    className="p-2 rounded-lg bg-gray-50 dark:bg-white/5 text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                                 >
                                     <ChevronLeft size={18} />
                                 </button>
@@ -464,7 +464,7 @@ export default function UserList() {
                                                 onClick={() => setPage(pageNum)}
                                                 className={`w-8 h-8 rounded-lg text-sm font-medium transition-all ${pageNum === page
                                                     ? 'bg-emerald-500 text-white'
-                                                    : 'bg-white/5 text-gray-400 hover:bg-white/10'
+                                                    : 'bg-gray-50 dark:bg-white/5 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10'
                                                     }`}
                                             >
                                                 {pageNum}
@@ -475,7 +475,7 @@ export default function UserList() {
                                 <button
                                     onClick={() => setPage(p => Math.min(pagination.pages, p + 1))}
                                     disabled={page === pagination.pages}
-                                    className="p-2 rounded-lg bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                    className="p-2 rounded-lg bg-gray-50 dark:bg-white/5 text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                                 >
                                     <ChevronRight size={18} />
                                 </button>
@@ -488,23 +488,23 @@ export default function UserList() {
             {/* Delete Confirmation Modal */}
             {deleteId && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-                    <div className="bg-[#0f1218] rounded-2xl border border-white/10 p-6 max-w-md w-full shadow-2xl">
+                    <div className="bg-white dark:bg-[#0f1218] rounded-2xl border border-gray-800 dark:border-white/10 p-6 max-w-md w-full shadow-2xl transition-colors">
                         <div className="flex items-center gap-4 mb-4">
-                            <div className="p-3 rounded-xl bg-red-500/20">
-                                <Trash2 size={24} className="text-red-400" />
+                            <div className="p-3 rounded-xl bg-red-500/10 dark:bg-red-500/20">
+                                <Trash2 size={24} className="text-red-500 dark:text-red-400" />
                             </div>
                             <div>
-                                <h3 className="text-lg font-semibold text-white">Delete User</h3>
-                                <p className="text-sm text-gray-400">This action cannot be undone</p>
+                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Delete User</h3>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">This action cannot be undone</p>
                             </div>
                         </div>
-                        <p className="text-gray-300 mb-6">
+                        <p className="text-gray-600 dark:text-gray-300 mb-6">
                             Are you sure you want to delete this user? All associated data will be permanently removed.
                         </p>
                         <div className="flex gap-3">
                             <button
                                 onClick={() => setDeleteId(null)}
-                                className="flex-1 px-4 py-2.5 bg-white/5 text-gray-300 font-medium rounded-xl hover:bg-white/10 transition-all"
+                                className="flex-1 px-4 py-2.5 bg-gray-100 dark:bg-white/5 text-gray-700 dark:text-gray-300 font-medium rounded-xl hover:bg-gray-200 dark:hover:bg-white/10 transition-all"
                             >
                                 Cancel
                             </button>

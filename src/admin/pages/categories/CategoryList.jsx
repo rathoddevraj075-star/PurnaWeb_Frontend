@@ -1,5 +1,5 @@
 /**
- * Category List Page - Premium Dark Design
+ * Category List Page - Premium Design
  */
 
 import { useState } from 'react';
@@ -29,13 +29,13 @@ export default function CategoryList() {
     const renderCategory = (category, level = 0) => (
         <div key={category._id}>
             <div
-                className={`flex items-center gap-3 px-6 py-4 border-b border-white/5 bg-white/[0.02] hover:bg-white/5 transition-colors group`}
+                className={`flex items-center gap-3 px-6 py-4 border-b border-gray-800 dark:border-white/5 bg-white dark:bg-white/[0.02] hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group`}
                 style={{ paddingLeft: `${24 + level * 32}px` }}
             >
                 {category.children?.length > 0 ? (
                     <button
                         onClick={() => toggleExpand(category._id)}
-                        className="p-1 text-gray-400 hover:text-white hover:bg-white/10 rounded transition-colors"
+                        className="p-1 text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 rounded transition-colors"
                     >
                         <ChevronRight size={16} className={`transition-transform duration-200 ${expandedIds.includes(category._id) ? 'rotate-90' : ''}`} />
                     </button>
@@ -44,29 +44,29 @@ export default function CategoryList() {
                 )}
 
                 {category.image?.url ? (
-                    <img src={category.image.url} alt="" className="w-10 h-10 rounded-lg object-cover ring-1 ring-white/10" />
+                    <img src={category.image.url} alt="" className="w-10 h-10 rounded-lg object-cover ring-1 ring-gray-800 dark:ring-white/10" />
                 ) : (
-                    <div className="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center ring-1 ring-white/10">
+                    <div className="w-10 h-10 bg-gray-100 dark:bg-white/5 rounded-lg flex items-center justify-center ring-1 ring-gray-800 dark:ring-white/10">
                         <FolderTree size={16} className="text-gray-500" />
                     </div>
                 )}
 
                 <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-white group-hover:text-emerald-400 transition-colors truncate">{category.name}</p>
+                    <p className="font-semibold text-gray-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate">{category.name}</p>
                     <p className="text-xs text-gray-500 font-mono mt-0.5 truncate">{category.slug}</p>
                 </div>
 
                 <div className="flex items-center gap-4">
                     <span className={`px-2.5 py-1 rounded-full text-xs font-medium border ${category.isActive
-                            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                            : 'bg-gray-500/10 text-gray-400 border-gray-500/20'
+                        ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+                        : 'bg-gray-500/10 text-gray-600 dark:text-gray-400 border-gray-500/20'
                         }`}>
                         {category.isActive ? 'Active' : 'Inactive'}
                     </span>
 
-                    <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${(category.seo?.seoScore || 0) >= 80 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
-                            (category.seo?.seoScore || 0) >= 50 ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
-                                'bg-red-500/10 text-red-400 border-red-500/20'
+                    <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${(category.seo?.seoScore || 0) >= 80 ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20' :
+                        (category.seo?.seoScore || 0) >= 50 ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20' :
+                            'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20'
                         }`}>
                         SEO: {category.seo?.seoScore || 0}%
                     </span>
@@ -74,13 +74,13 @@ export default function CategoryList() {
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <Link
                             to={`/admin/categories/${category._id}`}
-                            className="p-2 text-gray-400 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition-colors"
+                            className="p-2 text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 rounded-lg transition-colors"
                         >
                             <Edit size={16} />
                         </Link>
                         <button
                             onClick={() => window.confirm(`Delete "${category.name}"?`) && deleteMutation.mutate(category._id)}
-                            className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                            className="p-2 text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors"
                         >
                             <Trash2 size={16} />
                         </button>
@@ -98,11 +98,11 @@ export default function CategoryList() {
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-                        <FolderTree className="text-purple-400" />
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                        <FolderTree className="text-purple-600 dark:text-purple-400" />
                         Categories
                     </h1>
-                    <p className="text-gray-400 text-sm mt-1">Organize your product hierarchy</p>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Organize your product hierarchy</p>
                 </div>
                 <Link
                     to="/admin/categories/new"
@@ -112,7 +112,7 @@ export default function CategoryList() {
                 </Link>
             </div>
 
-            <div className="bg-[#0f1218] rounded-2xl border border-white/5 shadow-xl shadow-black/20 overflow-hidden">
+            <div className="bg-white dark:bg-[#0f1218] rounded-2xl border border-gray-800 dark:border-white/5 shadow-xl shadow-gray-200/20 dark:shadow-black/20 overflow-hidden transition-colors">
                 {isLoading ? (
                     <div className="p-12 text-center text-gray-500">Loading...</div>
                 ) : data?.length === 0 ? (
@@ -121,7 +121,7 @@ export default function CategoryList() {
                         <p>No categories found</p>
                     </div>
                 ) : (
-                    <div className="divide-y divide-white/5">
+                    <div className="divide-y divide-gray-100 dark:divide-white/5">
                         {data?.map(category => renderCategory(category))}
                     </div>
                 )}
