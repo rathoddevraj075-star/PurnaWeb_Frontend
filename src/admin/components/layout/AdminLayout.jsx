@@ -23,7 +23,8 @@ const menuItems = [
         label: 'SEO Management',
         icon: Search,
         children: [
-            { path: '/admin/seo/global', label: 'Global Settings' },
+            { path: '/admin/seo/global', label: 'Homepage & Global' },
+            { path: '/admin/seo/pages', label: 'Page Meta' },
             { path: '/admin/seo/health', label: 'SEO Health' },
             { path: '/admin/seo/redirects', label: 'Redirects' },
         ]

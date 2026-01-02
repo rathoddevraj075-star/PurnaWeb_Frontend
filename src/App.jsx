@@ -38,6 +38,8 @@ import CategoryEdit from "./admin/pages/categories/CategoryEdit";
 import GlobalSeoSettings from "./admin/pages/seo/GlobalSeoSettings";
 import SeoHealth from "./admin/pages/seo/SeoHealth";
 import RedirectsPage from "./admin/pages/seo/RedirectsPage";
+import PageMetaList from "./admin/pages/seo/PageMetaList";
+import PageMetaEdit from "./admin/pages/seo/PageMetaEdit";
 import ActivityLogs from "./admin/pages/ActivityLogs";
 import NotificationsPage from "./admin/pages/NotificationsPage";
 import BlogList from "./admin/pages/blogs/BlogList";
@@ -125,6 +127,8 @@ function App() {
                 <Route path="seo/global" element={<GlobalSeoSettings />} />
                 <Route path="seo/health" element={<SeoHealth />} />
                 <Route path="seo/redirects" element={<RedirectsPage />} />
+                <Route path="seo/pages" element={<PageMetaList />} />
+                <Route path="seo/pages/:slug" element={<PageMetaEdit />} />
                 <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="logs" element={<ActivityLogs />} />
               </Route>

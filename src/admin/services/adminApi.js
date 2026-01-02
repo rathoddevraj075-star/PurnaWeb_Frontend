@@ -114,6 +114,38 @@ export const redirectApi = {
     checkChain: (url) => adminApi.get('/redirects/check-chain', { params: { url } }),
 };
 
+// ============ PAGE META (Static Pages SEO) ============
+const pageMetaBaseUrl = `${API_BASE}/page-meta`;
+export const pageMetaApi = {
+    getAll: () => axios.get(pageMetaBaseUrl, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` }
+    }),
+    getOne: (slug) => axios.get(`${pageMetaBaseUrl}/${slug}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` }
+    }),
+    create: (data) => axios.post(pageMetaBaseUrl, data, {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('adminToken')}`
+        }
+    }),
+    update: (slug, data) => axios.put(`${pageMetaBaseUrl}/${slug}`, data, {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('adminToken')}`
+        }
+    }),
+    delete: (slug) => axios.delete(`${pageMetaBaseUrl}/${slug}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` }
+    }),
+    seedDefaults: () => axios.post(`${pageMetaBaseUrl}/seed`, {}, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` }
+    }),
+    getSeoSuggestions: (slug) => axios.get(`${pageMetaBaseUrl}/${slug}/suggestions`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` }
+    }),
+};
+
 // ============ ACTIVITY LOGS ============
 export const logsApi = {
     getAll: (params) => adminApi.get('/logs', { params }),

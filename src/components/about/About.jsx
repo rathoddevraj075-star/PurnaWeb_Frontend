@@ -4,6 +4,8 @@ import AnnoucementBar from "../AnnoucementBar";
 import Navbar from "../Navbar";
 import Footer from "../Footer";
 import Newsletter from "../NewsLetter";
+import SEO from "../SEO";
+import usePageMeta from "../../hooks/usePageMeta";
 
 const values = [
   {
@@ -29,8 +31,16 @@ const values = [
 ];
 
 const About = () => {
+  const { data: pageMeta } = usePageMeta('about');
+
   return (
     <div className="bg-[#FCF8F2] min-h-screen w-full selection:bg-orange-100 selection:text-orange-900">
+      <SEO
+        title={pageMeta?.metaTitle || "About Us | PurnaRoutine"}
+        description={pageMeta?.metaDescription || "Learn about PurnaRoutine's mission to bring authentic natural wellness products."}
+        seo={pageMeta}
+        url="/about"
+      />
       <AnnoucementBar />
       <Navbar />
 
