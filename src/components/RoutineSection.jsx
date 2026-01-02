@@ -8,7 +8,7 @@ const STEPS = [
         time: "6 AM",
         title: "Oral Care Essentials",
         description: "Start fresh with safe, gentle, natural formulations.",
-        image: "https://images.unsplash.com/photo-1555820585-c5ae44394b79?q=80&w=1000&auto=format&fit=crop",
+        image: "https://res.cloudinary.com/dsbtvehtu/image/upload/v1767357292/Oral_Care_hezwxc.jpg",
         accent: "text-amber-600",
         bgAccent: "bg-amber-600"
     },
@@ -17,7 +17,7 @@ const STEPS = [
         time: "10 AM",
         title: "Body Care",
         description: "Stay energized with cleansing and nourishing essentials.",
-        image: "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?q=80&w=1000&auto=format&fit=crop",
+        image: "https://res.cloudinary.com/dsbtvehtu/image/upload/v1767357276/Body_Care_sghzph.jpg",
         accent: "text-teal-600",
         bgAccent: "bg-teal-600"
     },
@@ -26,7 +26,7 @@ const STEPS = [
         time: "4 PM",
         title: "Hand & Hygiene",
         description: "Midday freshness that keeps you active and confident.",
-        image: "https://images.unsplash.com/photo-1571781926291-280553da1e54?q=80&w=1000&auto=format&fit=crop",
+        image: "https://res.cloudinary.com/dsbtvehtu/image/upload/v1767357275/Hand_Hygiene_av9qsh.jpg",
         accent: "text-blue-600",
         bgAccent: "bg-blue-600"
     },
@@ -35,7 +35,7 @@ const STEPS = [
         time: "8 PM",
         title: "Hair & Skin Ritual",
         description: "Wash away the day with calm, herbal nourishment.",
-        image: "https://images.unsplash.com/photo-1512290923902-8a9281aa0f46?q=80&w=1000&auto=format&fit=crop",
+        image: "https://res.cloudinary.com/dsbtvehtu/image/upload/v1767357637/young-brunette-with-leaves-looking-camera_xphhi8.jpg",
         accent: "text-indigo-600",
         bgAccent: "bg-indigo-600"
     },
@@ -44,7 +44,7 @@ const STEPS = [
         time: "10 PM",
         title: "Night Care",
         description: "End the day with products crafted for rest, repair, and renewal.",
-        image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=1000&auto=format&fit=crop",
+        image: "https://res.cloudinary.com/dsbtvehtu/image/upload/v1767357275/Night_Care_wrdqjk.jpg",
         accent: "text-purple-600",
         bgAccent: "bg-purple-600"
     }
