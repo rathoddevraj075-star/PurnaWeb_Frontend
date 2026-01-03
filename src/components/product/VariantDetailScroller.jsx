@@ -1,338 +1,235 @@
 import React, { useRef, useState, useEffect, Suspense, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Canvas, useFrame, useThree, extend } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { motion, AnimatePresence } from 'framer-motion';
+import * as THREE from 'three';
 import {
     useTexture,
     Environment,
     Float,
-    Text,
     Image,
     ScrollControls,
     useScroll,
     MeshTransmissionMaterial,
-    Lightformer,
-    shaderMaterial,
-    CubeCamera
+    ContactShadows,
+    Text,
+    Html // Using Html for sharp text labels in 3D
 } from '@react-three/drei';
-import { EffectComposer, Bloom, Noise } from '@react-three/postprocessing';
-import * as THREE from 'three';
-import { ArrowLeft, ArrowRight, Layers, Maximize } from 'lucide-react';
+import { EffectComposer, Noise, Vignette, DepthOfField } from '@react-three/postprocessing';
+import { ArrowLeft, Maximize, Circle } from 'lucide-react';
 import { productService, categoryService } from '../../services/api';
 import SEO from '../../components/SEO';
 
-// --- CONSTANTS ---
-const FONT_URL = '/fonts/TT Firs Neue Trial Bold.ttf';
+// --- CONSTANTS & CONFIG ---
+const THEME = {
+    background: '#f0f2f5', // Soft Cloud White/Grey
+    text: '#1a1a1a',
+    accent: '#4a90e2'
+};
 
-// --- SHADERS ---
-
-// Liquid Chrome Shader
-// Uses noise to displace vertices and analytical normals for crisp reflections
-const MercuryMaterial = shaderMaterial(
-    {
-        uTime: 0,
-        uEnvMap: null,
-        uResolution: new THREE.Vector2(0, 0),
-        uMouse: new THREE.Vector2(0, 0),
-        uColor: new THREE.Color('#ffffff')
-    },
-    // Vertex Shader
-    `
-    varying vec2 vUv;
-    varying vec3 vPosition;
-    varying vec3 vNormal;
-    varying vec3 vViewPosition;
-    
-    uniform float uTime;
-    uniform vec2 uMouse;
-
-    // Simplex Noise
-    vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-    vec2 mod289(vec2 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-    vec3 permute(vec3 x) { return mod289(((x*34.0)+1.0)*x); }
-    float snoise(vec2 v) {
-        const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
-        vec2 i  = floor(v + dot(v, C.yy) );
-        vec2 x0 = v - i + dot(i, C.xx);
-        vec2 i1;
-        i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
-        vec4 x12 = x0.xyxy + C.xxzz;
-        x12.xy -= i1;
-        i = mod289(i);
-        vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 )) + i.x + vec3(0.0, i1.x, 1.0 ));
-        vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
-        m = m*m ;
-        m = m*m ;
-        vec3 x = 2.0 * fract(p * C.www) - 1.0;
-        vec3 h = abs(x) - 0.5;
-        vec3 ox = floor(x + 0.5);
-        vec3 a0 = x - ox;
-        m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
-        vec3 g;
-        g.x  = a0.x  * x0.x  + h.x  * x0.y;
-        g.yz = a0.yz * x12.xz + h.yz * x12.yw;
-        return 130.0 * dot(m, g);
-    }
-
-    void main() {
-        vUv = uv;
-        vec3 pos = position;
-        
-        // Liquid Motion
-        float noise = snoise(uv * 1.5 + uTime * 0.1);
-        float noise2 = snoise(uv * 3.0 - uTime * 0.2);
-        
-        // Combine layers
-        float displacement = (noise * 1.0 + noise2 * 0.5) * 0.8;
-        
-        // Mouse Ripple
-        float dist = distance(uv, uMouse);
-        float ripple = sin(dist * 15.0 - uTime * 3.0) * exp(-dist * 3.0) * 0.2;
-        
-        pos.z += displacement + ripple;
-        
-        // Compute Normal analytically (approximate)
-        float d = 0.01;
-        float n1 = snoise((uv + vec2(d,0)) * 1.5 + uTime*0.1);
-        float n2 = snoise((uv + vec2(0,d)) * 1.5 + uTime*0.1);
-        vec3 t1 = normalize(vec3(d, 0.0, n1 - noise));
-        vec3 t2 = normalize(vec3(0.0, d, n2 - noise));
-        vNormal = cross(t1, t2);
-
-        vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
-        vViewPosition = -mvPosition.xyz;
-        gl_Position = projectionMatrix * mvPosition;
-        vPosition = pos;
-    }
-    `,
-    // Fragment Shader
-    `
-    varying vec2 vUv;
-    varying vec3 vPosition;
-    varying vec3 vNormal;
-    varying vec3 vViewPosition;
-    
-    uniform sampler2D uEnvMap;
-    uniform vec3 uColor;
-
-    void main() {
-        vec3 viewDir = normalize(vViewPosition);
-        vec3 normal = normalize(vNormal);
-        
-        // Fresnel
-        float fresnel = pow(1.0 - dot(viewDir, normal), 3.0);
-        
-        // Fake Reflection (Matcap style or Environment mapping)
-        // Since we don't have access to the real scene cubemap easily in shaderMaterial without convoluted setup,
-        // we'll calculate a procedural metallic look.
-        
-        vec3 reflectDir = reflect(-viewDir, normal);
-        
-        // Procedural Studio Light reflection
-        float light = dot(reflectDir, normalize(vec3(0.5, 1.0, 0.5)));
-        light = pow(max(0.0, light), 10.0); // Specular highlight
-        
-        // Base Metal Color
-        vec3 metalColor = mix(vec3(0.1), vec3(0.9), fresnel);
-        metalColor += light * 2.0; // intense reflection
-        
-        // Tint
-        metalColor *= uColor;
-
-        gl_FragColor = vec4(metalColor, 1.0);
-    }
-    `
-);
-extend({ MercuryMaterial });
+const REVEAL_CONFIG = {
+    gap: 12,        // Vertical distance between items in scroll space
+    spread: 3,      // Visual vertical spread
+    depth: 4,       // Depth spacing
+};
 
 // --- 3D COMPONENTS ---
 
-const MercuryBackground = ({ activeColor }) => {
-    const materialRef = useRef();
-    const { viewport, mouse } = useThree();
-
-    useFrame((state, delta) => {
-        if (materialRef.current) {
-            materialRef.current.uTime = state.clock.elapsedTime;
-            // Map mouse -1..1 to 0..1 UV space
-            const u = (mouse.x + 1) / 2;
-            const v = (mouse.y + 1) / 2;
-            materialRef.current.uMouse.lerp(new THREE.Vector2(u, v), delta * 2);
-
-            // Subtle tint based on project
-            /* materialRef.current.uColor.lerp(new THREE.Color(activeColor || "#ffffff"), delta); */
-            // Force Silver/Chrome for high end look
-            materialRef.current.uColor.lerp(new THREE.Color("#e0e0e0"), delta);
-        }
-    });
-
+const Background = () => {
     return (
-        <mesh position={[0, 0, -8]} scale={[viewport.width * 1.2, viewport.height * 1.2, 1]}>
-            <planeGeometry args={[1, 1, 128, 128]} />
-            <mercuryMaterial ref={materialRef} />
-        </mesh>
+        <color attach="background" args={[THEME.background]} />
     );
 };
 
-const ProductPrism = ({ product, index, activeIndex }) => {
-    const isActive = activeIndex === index;
-    const group = useRef();
+const RevealScene = ({ products, activeIndex, setActiveIndex }) => {
+    // We no longer use useScroll(). We track the "Visual" index locally.
+    const smoothedIndex = useRef(activeIndex);
 
     useFrame((state, delta) => {
-        // Subtle float
-        group.current.position.y = Math.sin(state.clock.elapsedTime * 0.5 + index) * 0.2;
-
-        // Rotate if active
-        // if(isActive) group.current.rotation.y += delta * 0.1;
+        // Smoothly interpolate the visual index towards the integer activeIndex
+        // This guarantees we never stop "in between" because activeIndex is always an integer.
+        // We use a spring-like lerp for "snappines"
+        const speed = 6;
+        smoothedIndex.current = THREE.MathUtils.lerp(smoothedIndex.current, activeIndex, delta * speed);
     });
 
     return (
-        <group ref={group}>
-            {/* The Glass Prism Base */}
-            <mesh position={[0, -0.5, -0.5]} scale={[4, 5.5, 0.5]}>
-                <boxGeometry />
-                <MeshTransmissionMaterial
-                    backside
-                    samples={4}
-                    thickness={0.5}
-                    chromaticAberration={0.05}
-                    anisotropy={0.1}
-                    distortion={0.1}
-                    distortionScale={0.1}
-                    temporalDistortion={0.1}
-                    roughness={0}
-                    ior={1.5}
-                    color="#ffffff"
-                />
-            </mesh>
-
-            {/* The Product Image */}
-            <Image
-                url={product.images?.[0]?.url || product.images?.[0] || 'https://via.placeholder.com/600x800'}
-                scale={[4, 5.5, 1]}
-                position={[0, 0, 0.1]}
-                transparent
-                toneMapped={false}
-            />
-
-            {/* Reflection on floor? No, mercury background handles environment. */}
-        </group>
-    );
-};
-
-const MercuryScene = ({ products, activeIndex, setActiveIndex }) => {
-    const { width } = useThree((state) => state.viewport);
-    const scroll = useScroll();
-    const group = useRef();
-
-    // Layout
-    const GAP = 6;
-
-    useFrame((state, delta) => {
-        // Scroll Logic
-        const offset = scroll.offset * (products.length - 1);
-        setActiveIndex(Math.round(offset));
-
-        const targetX = -offset * GAP;
-        group.current.position.x = THREE.MathUtils.lerp(group.current.position.x, targetX, delta * 6);
-    });
-
-    return (
-        <group ref={group} position={[width < 5 ? 0 : 2, 0, 0]}>
+        <group>
             {products.map((product, i) => (
-                <group key={i} position={[i * GAP, 0, 0]}>
-                    <ProductPrism product={product} index={i} activeIndex={activeIndex} />
-                </group>
+                <KineticItem
+                    key={i}
+                    product={product}
+                    index={i}
+                    currentAnimatedIndex={smoothedIndex} // Pass ref
+                />
             ))}
         </group>
     );
 };
 
-const LightingRig = () => {
+const KineticItem = ({ product, index, currentAnimatedIndex }) => {
+    const group = useRef();
+
+    useFrame((state, delta) => {
+        // Read the current smoothed float index from the shared ref
+        const currentScrollIndex = currentAnimatedIndex.current;
+
+        const diff = index - currentScrollIndex;
+
+        // --- ANIMATION LOGIC (STACK COVER) ---
+
+        // Config
+        const EXIT_DEPTH = -5;
+        const ENTER_OFFSET = 12;
+
+        let targetY = 0;
+        let targetZ = 0;
+        let targetRotX = 0;
+        let targetScale = 1;
+        let targetOpacity = 1;
+
+        if (diff > 0) {
+            // FUTURE ITEMS (Below)
+            // Slide up from bottom
+            targetY = -diff * ENTER_OFFSET;
+            targetZ = 0;
+            targetOpacity = 1;
+
+        } else {
+            // PAST ITEMS (Behind)
+            // Recede deep back
+            targetY = diff * 0.5;
+            targetZ = diff * 5;
+            targetScale = 1 - (Math.abs(diff) * 0.15);
+            targetOpacity = 1 - (Math.abs(diff) * 0.5);
+        }
+
+        targetOpacity = Math.max(0, Math.min(1, targetOpacity));
+
+        const lerpSpeed = 10;
+        group.current.position.y = THREE.MathUtils.lerp(group.current.position.y, targetY, delta * lerpSpeed);
+        group.current.position.z = THREE.MathUtils.lerp(group.current.position.z, targetZ, delta * lerpSpeed);
+        group.current.rotation.x = THREE.MathUtils.lerp(group.current.rotation.x, targetRotX, delta * lerpSpeed);
+        group.current.scale.setScalar(THREE.MathUtils.lerp(group.current.scale.x, targetScale, delta * lerpSpeed));
+    });
+
     return (
-        <>
-            <Environment preset="studio" />
-
-            {/* Custom Lightformers for nice reflections on the mercury */}
-            <Environment resolution={256}>
-                <group rotation={[-Math.PI / 3, 0, 1]}>
-                    <Lightformer form="rect" intensity={4} position={[10, 0, 1]} scale={10} color="white" />
-                    <Lightformer form="ring" intensity={2} position={[-5, 2, -1]} scale={10} color="white" />
-                    <Lightformer form="circle" intensity={2} position={[0, 5, -2]} scale={2} color="#ff0000" /> {/* Red accent */}
-                </group>
-            </Environment>
-
-            <ambientLight intensity={0.5} />
-            <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={2} castShadow />
-        </>
-    )
-}
+        <group ref={group}>
+            <group>
+                <Float speed={2} rotationIntensity={0.1} floatIntensity={0.2}>
+                    {/* Product Image - Full Bleed, No Border */}
+                    <Image
+                        url={product.images?.[0]?.url || product.images?.[0] || 'https://via.placeholder.com/600x800'}
+                        scale={[3.84, 4.8]}
+                        position={[0, 0, 0]}
+                        transparent
+                        toneMapped={false}
+                    />
+                </Float>
+            </group>
+        </group>
+    );
+};
 
 // --- DOM UI ---
 
-const ChromeUI = ({ products, activeIndex, onBack }) => {
-    const activeProduct = products[activeIndex] || products[0];
+const OverlayUI = ({ products, activeIndex, onBack }) => {
+    const activeProduct = products[activeIndex] || {};
 
     return (
-        <div className="absolute inset-0 pointer-events-none p-6 md:p-12 flex flex-col justify-between text-white mix-blend-difference">
+        <div className="absolute inset-0 pointer-events-none flex flex-col justify-between p-8 md:p-16 text-[#1a1a1a]">
 
-            {/* Header */}
-            <div className="flex justify-between items-start">
-                <div className="flex flex-col gap-4 pointer-events-auto">
-                    <button onClick={onBack} className="flex items-center gap-2 hover:opacity-50 transition-opacity w-fit">
+            {/* Top Bar */}
+            <div className="flex justify-between items-center pointer-events-auto">
+                <button onClick={onBack} className="flex items-center gap-3 group">
+                    <div className="p-3 rounded-full bg-white/80 backdrop-blur-md shadow-sm group-hover:scale-110 transition-transform">
                         <ArrowLeft size={20} />
-                        <span className="text-xs font-bold uppercase tracking-widest">Back</span>
-                    </button>
-                    <div>
-                        <h1 className="text-sm font-bold tracking-[0.3em] uppercase opacity-70 mb-2">Purna Routine</h1>
-                        <div className="w-12 h-[2px] bg-white" />
                     </div>
-                </div>
+                    <span className="font-semibold tracking-wider text-sm uppercase opacity-70 group-hover:opacity-100 transition-opacity">
+                        Back to Collection
+                    </span>
+                </button>
 
-                <div className="flex gap-4 opacity-50 text-xs font-mono">
-                    <span>INDEX.{activeIndex + 1}</span>
-                    <span>/</span>
-                    <span>TOTAL.{products.length}</span>
+                <div className="text-right">
+                    <h1 className="text-2xl font-bold tracking-tighter uppercase">{activeProduct.category?.name || 'Collection'}</h1>
+                    <p className="text-xs font-mono opacity-50 tracking-widest mt-1">
+                        {String(activeIndex + 1).padStart(2, '0')} — {String(products.length).padStart(2, '0')}
+                    </p>
                 </div>
             </div>
 
-            {/* Center Float Title? No, stick to consistent layout but stylized */}
+            {/* Bottom Content Area */}
+            <div className="flex flex-col md:flex-row justify-between items-end gap-12">
 
-            {/* Bottom Panel */}
-            <div className="flex flex-col md:flex-row justify-between items-end gap-10">
-                <div className="max-w-2xl">
+                {/* Product Info */}
+                <div className="max-w-xl">
                     <AnimatePresence mode="wait">
                         <motion.div
-                            key={activeProduct?._id}
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 1.05 }}
-                            transition={{ duration: 0.5 }}
+                            key={activeProduct._id}
+                            initial={{ y: 20, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            exit={{ y: -20, opacity: 0 }}
+                            transition={{ duration: 0.4, ease: "easeOut" }}
                         >
-                            <h2 className="text-6xl md:text-9xl font-black uppercase tracking-tighter leading-[0.8] mb-4">
-                                {activeProduct?.name}
+                            <div className="flex items-center gap-3 mb-4">
+                                <span className="px-3 py-1 rounded-full border border-black/10 bg-white/50 backdrop-blur-sm text-[10px] font-bold uppercase tracking-widest text-black/60">
+                                    {activeProduct.type || 'Product'}
+                                </span>
+                                {activeProduct.isNew && (
+                                    <span className="px-3 py-1 rounded-full bg-[#1a1a1a] text-white text-[10px] font-bold uppercase tracking-widest">
+                                        New Arrival
+                                    </span>
+                                )}
+                            </div>
+
+                            <h2 className="text-5xl md:text-7xl font-light tracking-tighter mb-4 leading-[0.9]">
+                                {activeProduct.name}
                             </h2>
-                            <p className="text-lg md:text-xl font-light opacity-80 max-w-lg">
-                                {activeProduct?.shortDescription}
+
+                            <p className="text-sm md:text-base opacity-70 leading-relaxed max-w-md font-medium">
+                                {activeProduct.shortDescription}
                             </p>
+
+                            {/* Price Tag styling */}
+                            <div className="mt-6 flex items-baseline gap-2">
+                                <span className="text-2xl font-bold">
+                                    ₹{activeProduct.variants?.[0]?.price || 'N/A'}
+                                </span>
+                                {activeProduct.variants?.[0]?.comparePrice && (
+                                    <span className="text-sm line-through opacity-40">
+                                        ₹{activeProduct.variants[0].comparePrice}
+                                    </span>
+                                )}
+                            </div>
                         </motion.div>
                     </AnimatePresence>
                 </div>
 
+                {/* Call to Action */}
                 <div className="pointer-events-auto">
                     <button
                         onClick={() => window.location.href = `/products/${activeProduct?.slug}`}
-                        className="group w-24 h-24 border border-white/30 rounded-full flex flex-col items-center justify-center hover:bg-white hover:text-black transition-all duration-500"
+                        className="group relative px-10 py-6 bg-[#1a1a1a] text-white overflow-hidden rounded-2xl flex items-center justify-center gap-3 hover:bg-black transition-colors"
                     >
-                        <Maximize size={24} className="mb-1 group-hover:scale-125 transition-transform" />
-                        <span className="text-[10px] uppercase tracking-widest font-bold">Open</span>
+                        <span className="relative z-10 font-bold uppercase tracking-widest text-sm">View Details</span>
+                        <Maximize className="w-4 h-4 relative z-10 group-hover:scale-125 transition-transform" />
                     </button>
                 </div>
+
+            </div>
+
+            {/* Scroll Indicator */}
+            <div className="absolute right-8 md:right-16 top-1/2 -translate-y-1/2 flex flex-col gap-2 items-center">
+                <div className="h-16 w-[1px] bg-black/10" />
+                <span className="text-[10px] uppercase rotate-90 tracking-widest opacity-40 origin-center whitespace-nowrap">Scroll to Explore</span>
+                <div className="h-16 w-[1px] bg-black/10" />
             </div>
 
         </div>
     );
 };
+
+// --- MAIN COMPONENT ---
 
 const VariantDetailScroller = () => {
     const { category } = useParams();
@@ -342,7 +239,48 @@ const VariantDetailScroller = () => {
     const [loading, setLoading] = useState(true);
     const [activeIndex, setActiveIndex] = useState(0);
 
-    // Fetch
+    // Cooldown state for prevent rapid-fire scrolling (optional but good for UX)
+    const lastScrollTime = useRef(0);
+
+    // --- DISCRETE SCROLL HANDLER ---
+    useEffect(() => {
+        const handleWheel = (e) => {
+            const now = Date.now();
+            // Optional cooldown: 50ms to prevent inertial bounce, but user wants sensitivity.
+            // Let's rely on threshold.
+
+            if (now - lastScrollTime.current > 50) {
+                // Threshold
+                if (Math.abs(e.deltaY) > 20) {
+                    const direction = Math.sign(e.deltaY);
+
+                    setActiveIndex(prev => {
+                        const next = prev + direction;
+                        // Clamp
+                        return Math.max(0, Math.min(products.length - 1, next));
+                    });
+
+                    lastScrollTime.current = now;
+                }
+            }
+        };
+
+        // Add passive: false to allow potentialpreventDefault() if needed, 
+        // though we are just hijacking the logic here.
+        window.addEventListener('wheel', handleWheel, { passive: false });
+        // Also handle keyboard?
+        const handleKey = (e) => {
+            if (e.key === 'ArrowDown') setActiveIndex(prev => Math.min(products.length - 1, prev + 1));
+            if (e.key === 'ArrowUp') setActiveIndex(prev => Math.max(0, prev - 1));
+        }
+        window.addEventListener('keydown', handleKey);
+
+        return () => {
+            window.removeEventListener('wheel', handleWheel);
+            window.removeEventListener('keydown', handleKey);
+        };
+    }, [products.length]); // Re-bind if products count changes (rare after load)
+
     useEffect(() => {
         const fetchProducts = async () => {
             setLoading(true);
@@ -366,39 +304,44 @@ const VariantDetailScroller = () => {
         if (category) fetchProducts();
     }, [category]);
 
-    // Theme color for internal ref if needed
-    const activeColor = useMemo(() => products[activeIndex]?.themeColor, [products, activeIndex]);
-
-    if (loading) return <div className="h-screen w-full bg-black flex items-center justify-center text-white/50 font-bold tracking-widest uppercase">Loading Chrome...</div>;
+    if (loading) return (
+        <div className="h-screen w-full bg-[#f0f2f5] flex flex-col items-center justify-center gap-4">
+            <div className="w-6 h-6 border-2 border-[#1a1a1a] border-t-transparent rounded-full animate-spin" />
+            <span className="text-xs font-bold uppercase tracking-widest opacity-50">Loading Experience...</span>
+        </div>
+    );
 
     return (
         <>
             <SEO
                 seo={categoryData?.seo}
-                title={categoryData?.seo?.metaTitle || `${categoryData?.name || 'Collection'} | Immersive View`}
+                title={categoryData?.seo?.metaTitle || `${categoryData?.name || 'Collection'} | Showcase`}
                 url={`/categories/${category}`}
             />
-            <div className="h-screen w-full bg-[#050505] relative overflow-hidden">
 
-                <Canvas dpr={[1, 1.5]} camera={{ position: [0, 0, 10], fov: 45 }}>
+            <div className="h-screen w-full bg-[#f0f2f5] relative overflow-hidden font-sans text-[#1a1a1a]">
+
+                <Canvas shadows dpr={[1, 1.5]} camera={{ position: [0, 0, 8], fov: 35 }}>
                     <Suspense fallback={null}>
-                        {/* The Infinite Mercury Sea */}
-                        <MercuryBackground activeColor={activeColor} />
+                        <Background />
 
-                        <LightingRig />
+                        {/* Soft Studio Lighting */}
+                        <ambientLight intensity={0.7} />
+                        <spotLight position={[10, 10, 10]} angle={0.5} penumbra={1} intensity={1.5} castShadow shadow-bias={-0.0001} />
+                        <Environment preset="city" />
 
-                        <ScrollControls horizontal pages={products.length > 0 ? products.length : 1} damping={0.2} style={{ scrollbarWidth: 'none' }}>
-                            <MercuryScene products={products} activeIndex={activeIndex} setActiveIndex={setActiveIndex} />
-                        </ScrollControls>
+                        {/* NO SCROLL CONTROLS - Custom Handler */}
+                        <RevealScene products={products} activeIndex={activeIndex} setActiveIndex={setActiveIndex} />
 
+                        {/* Post Processing for "Dreamy" look */}
                         <EffectComposer>
-                            <Noise opacity={0.05} />
-                            <Bloom luminanceThreshold={0.5} intensity={0.5} radius={0.5} />
+                            <Noise opacity={0.04} />
+                            <Vignette eskil={false} offset={0.1} darkness={0.3} />
                         </EffectComposer>
                     </Suspense>
                 </Canvas>
 
-                <ChromeUI products={products} activeIndex={activeIndex} onBack={() => navigate(-1)} />
+                <OverlayUI products={products} activeIndex={activeIndex} onBack={() => navigate('/')} />
 
             </div>
         </>

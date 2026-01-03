@@ -59,7 +59,7 @@ const AllProductsPage = () => {
                     return {
                         ...cat,
                         count: catProducts.length,
-                        image: catProducts[0]?.images?.[0]?.url || cat.image || "",
+                        image: cat.image?.url || catProducts[0]?.images?.[0]?.url || "",
                         theme: catProducts[0]?.themeColor || "#000"
                     };
                 });

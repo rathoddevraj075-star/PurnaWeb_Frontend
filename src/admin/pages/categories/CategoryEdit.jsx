@@ -18,8 +18,12 @@ export default function CategoryEdit() {
     const [notification, setNotification] = useState(null); // { type: 'success' | 'error', message: string }
     const [formData, setFormData] = useState({
         name: '', slug: '', description: '', longDescription: '',
-        parent: '', isActive: true, isFeatured: false, order: 0, seo: {}
+        parent: '', isActive: true, isFeatured: false, order: 0, seo: {},
+        image: { url: '', alt: '' }
     });
+
+    // Temp state for image upload
+    const [newImageUrl, setNewImageUrl] = useState('');
 
     // Auto-hide notification after 5 seconds
     useEffect(() => {
@@ -51,7 +55,11 @@ export default function CategoryEdit() {
                 isActive: category.isActive ?? true,
                 isFeatured: category.isFeatured || false,
                 order: category.order || 0,
-                seo: category.seo || {}
+                isActive: category.isActive ?? true,
+                isFeatured: category.isFeatured || false,
+                order: category.order || 0,
+                seo: category.seo || {},
+                image: category.image || { url: '', alt: '' }
             });
         }
     }, [category]);
@@ -200,6 +208,75 @@ export default function CategoryEdit() {
                             />
                         </div>
                     </div>
+
+                    {/* Image Upload Section */}
+                    <div className="bg-white dark:bg-[#0f1218] rounded-2xl p-6 border border-gray-800 dark:border-white/5 shadow-xl shadow-gray-200/20 dark:shadow-black/20">
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Category Image</h3>
+
+                        <div className="flex gap-3 mb-4">
+                            <input
+                                type="text"
+                                value={newImageUrl}
+                                onChange={(e) => setNewImageUrl(e.target.value)}
+                                className="flex-1 bg-white dark:bg-white/5 border border-gray-800 dark:border-white/10 rounded-xl px-4 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:border-emerald-500/50 transition-colors placeholder-gray-400 dark:placeholder-gray-600"
+                                placeholder="Enter image URL"
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' && newImageUrl.trim()) {
+                                        setFormData({ ...formData, image: { ...formData.image, url: newImageUrl.trim() } });
+                                        setNewImageUrl('');
+                                    }
+                                }}
+                            />
+                            <button
+                                onClick={() => {
+                                    if (newImageUrl.trim()) {
+                                        setFormData({ ...formData, image: { ...formData.image, url: newImageUrl.trim() } });
+                                        setNewImageUrl('');
+                                    }
+                                }}
+                                className="bg-emerald-500/10 text-emerald-500 px-4 py-2.5 rounded-xl hover:bg-emerald-500/20 transition-colors"
+                            >
+                                Set
+                            </button>
+                        </div>
+
+                        {formData.image?.url ? (
+                            <div className="relative group rounded-xl overflow-hidden border border-gray-200 dark:border-white/10 aspect-video">
+                                <img
+                                    src={formData.image.url}
+                                    alt={formData.image.alt || 'Category'}
+                                    className="w-full h-full object-cover"
+                                />
+                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                    <button
+                                        onClick={() => setFormData({ ...formData, image: { url: '', alt: '' } })}
+                                        className="p-2 bg-white/20 rounded-lg hover:bg-red-500/50 transition-colors text-white"
+                                    >
+                                        <div className="w-5 h-5 flex items-center justify-center">×</div>
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="border-2 border-dashed border-gray-300 dark:border-white/10 rounded-xl p-8 text-center">
+                                <p className="text-gray-500 dark:text-gray-400 text-sm">No image set</p>
+                            </div>
+                        )}
+
+                        <div className="mt-4">
+                            <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-400">Alt Text</label>
+                            <input
+                                type="text"
+                                value={formData.image?.alt || ''}
+                                onChange={(e) => setFormData({
+                                    ...formData,
+                                    image: { ...formData.image, alt: e.target.value }
+                                })}
+                                className="w-full bg-white dark:bg-white/5 border border-gray-800 dark:border-white/10 rounded-xl px-4 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:border-emerald-500/50 transition-colors"
+                                placeholder="Image description"
+                            />
+                        </div>
+                    </div>
+
                     <div className="space-y-6">
                         <div className="bg-white dark:bg-[#0f1218] rounded-2xl p-6 border border-gray-800 dark:border-white/5 shadow-xl shadow-gray-200/20 dark:shadow-black/20 space-y-5">
                             <div>

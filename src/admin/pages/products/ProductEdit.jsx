@@ -477,7 +477,7 @@ export default function ProductEdit() {
                             <ImageIcon className="text-emerald-500 dark:text-emerald-400" size={20} />
                             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Product Images</h3>
                         </div>
-                        <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">Add product images via URL. The primary image is displayed on the 3D product packaging.</p>
+                        <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">Add product images via URL. The primary image is displayed on the 3D product packaging. <strong>Recommended Size: 970x1200px (Portrait).</strong></p>
 
                         {/* Add Image Input */}
                         <div className="flex gap-3 mb-6">

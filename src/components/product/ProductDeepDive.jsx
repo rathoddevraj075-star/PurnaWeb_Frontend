@@ -34,7 +34,7 @@ class ErrorBoundary extends React.Component {
 }
 
 // --- PARTICLES ---
-const DustMotes = ({ count = 30, color = "#fff" }) => {
+const DustMotes = ({ count = 30, color = "#000" }) => {
     const { viewport } = useThree();
     const particles = useMemo(() => {
         return new Array(count).fill().map(() => ({
@@ -93,75 +93,88 @@ const CinematicRig = ({ product, setUiState }) => {
 
         // --- CAMERA CHOREOGRAPHY ("The Shot List") ---
 
-        // Shot 1: "The Monolith" (0.0 - 0.3)
-        // Low angle, looking up at hero.
-        const shot1 = { pos: new THREE.Vector3(0, -2, isMobile ? 12 : 9), look: new THREE.Vector3(0, 1, 0) };
+        // Fix: Keep Camera mostly centered to avoid perspective distortion ("Not Straight").
+        // Instead, we will move the OBJECT (group) to positions.
 
-        // Shot 2: "The Analysis" (0.3 - 0.6)
-        // Side profile, extreme close up.
-        const shot2 = { pos: new THREE.Vector3(isMobile ? 3 : 5, 0, isMobile ? 8 : 4), look: new THREE.Vector3(0, 0, 0) };
+        // SHOT 1: REVEAL (0.0 - 0.3)
+        // Camera: Center, slightly zoomed out.
+        // Object: Shifted RIGHT (x=2.5) to clear Left Text. Straight rotation.
+        const shot1 = {
+            camPos: new THREE.Vector3(0, 0, isMobile ? 12 : 9),
+            camLook: new THREE.Vector3(0, 0, 0),
+            objPos: new THREE.Vector3(isMobile ? 1.5 : 2.5, 0, 0)
+        };
 
-        // Shot 3: "The Promise" (0.6 - 0.85)
-        // Top-down / Dutch angle, artistic.
-        const shot3 = { pos: new THREE.Vector3(isMobile ? -2 : -4, 3, isMobile ? 10 : 6), look: new THREE.Vector3(0, -1, 0) };
+        // SHOT 2: INGREDIENTS (0.3 - 0.6)
+        // Camera: Slight side angle for depth? Or just zoom?
+        // Let's keep it simple: Center object, Zoom in.
+        const shot2 = {
+            camPos: new THREE.Vector3(0, 0, isMobile ? 8 : 5),
+            camLook: new THREE.Vector3(0, 0, 0),
+            objPos: new THREE.Vector3(0, 0, 0)
+        };
 
-        // Shot 4: "The Offering" (0.85 - 1.0)
-        // Center frame, balanced, ready to buy.
-        const shot4 = { pos: new THREE.Vector3(0, 0, isMobile ? 13 : 10), look: new THREE.Vector3(0, 0, 0) };
+        // SHOT 3: BENEFIT (0.6 - 0.85)
+        // Object: Shifted LEFT (x=-2.5) to clear Right Text.
+        const shot3 = {
+            camPos: new THREE.Vector3(0, 0, isMobile ? 10 : 7),
+            camLook: new THREE.Vector3(0, 0, 0),
+            objPos: new THREE.Vector3(isMobile ? -1.5 : -3, 1, 0)
+        };
+
+        // SHOT 4: OFFER (0.85 - 1.0)
+        // Object: Dead Center.
+        // Cam: Center.
+        // User said "last one image not in center".
+        const shot4 = {
+            camPos: new THREE.Vector3(0, 0, isMobile ? 12 : 10),
+            camLook: new THREE.Vector3(0, 0, 0), // Look at center = center screen
+            objPos: new THREE.Vector3(0, 0.5, 0)  // Move object slightly UP (0.5) to clear very bottom text
+        };
 
         // -- INTERPOLATION LOGIC --
-        let targetPos = new THREE.Vector3();
-        let targetLook = new THREE.Vector3();
+        let targetCamPos = new THREE.Vector3();
+        let targetCamLook = new THREE.Vector3();
+        let targetObjPos = new THREE.Vector3();
 
         if (offset < 0.33) {
             const t = offset / 0.33;
-            targetPos.lerpVectors(shot1.pos, shot2.pos, t);
-            targetLook.lerpVectors(shot1.look, shot2.look, t);
+            targetCamPos.lerpVectors(shot1.camPos, shot2.camPos, t);
+            targetCamLook.lerpVectors(shot1.camLook, shot2.camLook, t);
+            targetObjPos.lerpVectors(shot1.objPos, shot2.objPos, t);
         } else if (offset < 0.66) {
             const t = (offset - 0.33) / 0.33;
-            targetPos.lerpVectors(shot2.pos, shot3.pos, t);
-            targetLook.lerpVectors(shot2.look, shot3.look, t);
+            targetCamPos.lerpVectors(shot2.camPos, shot3.camPos, t);
+            targetCamLook.lerpVectors(shot2.camLook, shot3.camLook, t);
+            targetObjPos.lerpVectors(shot2.objPos, shot3.objPos, t);
         } else {
             const t = (offset - 0.66) / 0.34;
-            targetPos.lerpVectors(shot3.pos, shot4.pos, t);
-            targetLook.lerpVectors(shot3.look, shot4.look, t);
+            targetCamPos.lerpVectors(shot3.camPos, shot4.camPos, t);
+            targetCamLook.lerpVectors(shot3.camLook, shot4.camLook, t);
+            targetObjPos.lerpVectors(shot3.objPos, shot4.objPos, t);
         }
 
-        // Smooth Camera Movement (Damping)
-        camera.position.lerp(targetPos, delta * 3);
-
-        // Smooth LookAt requires a dummy object or simple vector lerp, 
-        // but camera.lookAt updates matrix instantly. We lerp the *target* then look.
-        // We can stick to standard easing for 'lookAt' targets?
-        // For simplicity and smoothness in r3f:
-        const currentLook = new THREE.Vector3(0, 0, 0); // approximating center focus
-        // Actually, let's just look at 0,0,0 always but with slight offset for framing?
-        // No, the shot list 'look' vectors are better.
-
-        // Simple lookAt 0,0,0 is safest to avoid gimble locks or snappy rotations.
-        // Let's bias the look target slightly based on the phase.
-        camera.lookAt(0, 0, 0);
-
+        // Apply Camera
+        camera.position.lerp(targetCamPos, delta * 3);
+        camera.lookAt(targetCamLook);
 
         // --- OBJECT BEHAVIOR ---
         if (group.current) {
-            // Constant gentle levitation
-            group.current.position.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.2;
+            // Apply Calculated Position
+            group.current.position.lerp(targetObjPos, delta * 5); // Smooth object move
 
-            // Scroll Rotation: Spin the product as we scroll to show off 3D nature
+            // Add gentle levitation on top of position
+            group.current.position.y += Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
+
+            // Scroll Rotation: Spin the product as we scroll
             group.current.rotation.y = offset * Math.PI * 2;
-
-            // Mouse interaction (Parallax)
-            // group.current.rotation.x = state.mouse.y * 0.1;
-            // group.current.rotation.z = state.mouse.x * 0.1;
         }
 
         // --- LIGHTING DRAMA ---
         if (lightRef.current) {
-            // Move the spotlight around to create moving shadows/highlights
             lightRef.current.position.x = Math.sin(offset * Math.PI) * 10;
             lightRef.current.position.z = Math.cos(offset * Math.PI) * 10;
-            lightRef.current.intensity = 15 + Math.sin(state.clock.elapsedTime) * 2; // Pulse
+            lightRef.current.intensity = 15 + Math.sin(state.clock.elapsedTime) * 2;
         }
     });
 
@@ -172,14 +185,14 @@ const CinematicRig = ({ product, setUiState }) => {
                 <Float speed={2} rotationIntensity={0.2} floatIntensity={0.2}>
                     <Image
                         url={product.images?.[0]?.url || product.images?.[0] || 'https://via.placeholder.com/600x800'}
-                        scale={isMobile ? [4.5, 6, 1] : [5.5, 7.5, 1]}
+                        scale={isMobile ? [4.85, 6, 1] : [6.06, 7.5, 1]}
                         transparent
                         opacity={1}
                     />
                     {/* Dark backing plate for catching rim lights nicely */}
-                    <mesh position={[0, 0, -0.05]} scale={isMobile ? [4.6, 6.1, 1] : [5.6, 7.6, 1]}>
+                    <mesh position={[0, 0, -0.05]} scale={isMobile ? [4.95, 6.1, 1] : [6.16, 7.6, 1]}>
                         <planeGeometry />
-                        <meshStandardMaterial color="#000" roughness={0.2} metalness={0.8} />
+                        <meshStandardMaterial color="#e5e5e5" roughness={0.2} metalness={0.8} />
                     </mesh>
                 </Float>
             </group>
@@ -226,7 +239,7 @@ const EditorialOverlay = ({ uiState, product }) => {
     };
 
     return (
-        <div className="absolute inset-0 pointer-events-none z-10 font-sans text-white mix-blend-difference px-6 py-12 md:p-24 flex flex-col justify-between">
+        <div className="absolute inset-0 pointer-events-none z-10 font-sans text-black px-6 py-12 md:p-24 flex flex-col justify-between">
 
             {/* TOP UI SPACE (kept for layout balance) */}
             <div className="w-full h-6" />
@@ -243,9 +256,9 @@ const EditorialOverlay = ({ uiState, product }) => {
                             initial="hidden"
                             animate="visible"
                             exit="exit"
-                            className="absolute bottom-12 left-0 md:left-[-2rem] text-left"
+                            className="absolute top-32 left-0 md:left-[-2rem] text-left"
                         >
-                            <h2 className="text-[#F3F3F3] text-xs md:text-sm font-bold tracking-[0.8em] uppercase mb-4 opacity-70">Object No. 01</h2>
+                            <h2 className="text-neutral-600 text-xs md:text-sm font-bold tracking-[0.8em] uppercase mb-4 opacity-70">Object No. 01</h2>
                             <h1 className="text-5xl md:text-8xl lg:text-9xl font-black uppercase tracking-tighter leading-[0.9]">
                                 {product.name.split(' ').map((word, i) => (
                                     <span key={i} className="block">{word}</span>
@@ -257,14 +270,14 @@ const EditorialOverlay = ({ uiState, product }) => {
                     {/* PHASE 2: INGREDIENTS */}
                     {uiState === 'ingredients' && (
                         <motion.div key="ingredients" variants={variants} initial="hidden" animate="visible" exit="exit" className="absolute left-0 md:left-[-4rem] top-1/2 -translate-y-1/2 max-w-[300px] text-left">
-                            <div className="w-12 h-[2px] bg-white mb-6" />
+                            <div className="w-12 h-[2px] bg-black mb-6" />
                             <h3 className="text-3xl md:text-5xl font-bold uppercase leading-none mb-4">Core<br />Matrix</h3>
                             <p className="text-xs md:text-sm leading-relaxed opacity-70 font-mono">
                                 {product.ingredientsSummary || "Active botanical compounds extracted for maximum efficacy. Pure. Potent. Field-tested."}
                             </p>
                             <div className="mt-6 flex gap-2">
-                                <div className="px-3 py-1 border border-white/20 rounded-full text-[10px] uppercase tracking-wider">Organic</div>
-                                <div className="px-3 py-1 border border-white/20 rounded-full text-[10px] uppercase tracking-wider">Vegan</div>
+                                <div className="px-3 py-1 border border-black/20 rounded-full text-[10px] uppercase tracking-wider">Organic</div>
+                                <div className="px-3 py-1 border border-black/20 rounded-full text-[10px] uppercase tracking-wider">Vegan</div>
                             </div>
                         </motion.div>
                     )}
@@ -283,7 +296,7 @@ const EditorialOverlay = ({ uiState, product }) => {
                     {/* PHASE 4: OFFER (The Purchase) */}
                     {uiState === 'offer' && (
                         <motion.div key="offer" variants={variants} initial="hidden" animate="visible" exit="exit" className="absolute bottom-0 w-full pointer-events-auto">
-                            <div className="flex flex-col md:flex-row items-end justify-between gap-8 pb-12 border-b border-white/10">
+                            <div className="flex flex-col md:flex-row items-end justify-between gap-8 pb-12 border-b border-black/10">
                                 <div>
                                     <h2 className="text-4xl md:text-6xl font-black uppercase mb-4">{product.name}</h2>
                                     <p className="max-w-md text-sm opacity-60">Ready to integrate this ritual into your daily protocol? Available at select flagship locations.</p>
@@ -291,7 +304,7 @@ const EditorialOverlay = ({ uiState, product }) => {
                                 <div className="flex flex-col gap-3 w-full md:w-auto">
                                     <button
                                         onClick={() => document.dispatchEvent(new CustomEvent('open-store-locator'))}
-                                        className="h-14 px-8 bg-white text-black font-bold uppercase tracking-widest hover:bg-[#E65800] hover:text-white transition-colors flex items-center justify-center gap-3 rounded-sm"
+                                        className="h-14 px-8 bg-black text-white font-bold uppercase tracking-widest hover:bg-[#E65800] hover:text-white transition-colors flex items-center justify-center gap-3 rounded-sm"
                                     >
                                         <MapPin size={18} /> Locate Stock
                                     </button>
@@ -304,9 +317,9 @@ const EditorialOverlay = ({ uiState, product }) => {
             </div>
 
             {/* SCROLL INDICATOR BAR */}
-            <div className="fixed right-6 top-1/2 -translate-y-1/2 h-32 w-[2px] bg-white/10 hidden md:block">
+            <div className="fixed right-6 top-1/2 -translate-y-1/2 h-32 w-[2px] bg-black/10 hidden md:block">
                 <motion.div
-                    className="w-full bg-white"
+                    className="w-full bg-black"
                     animate={{
                         height: uiState === 'reveal' ? '25%' : uiState === 'ingredients' ? '50%' : uiState === 'benefit' ? '75%' : '100%'
                     }}
@@ -362,7 +375,7 @@ const ProductDeepDive = () => {
         } else { alert('Link Copied'); }
     };
 
-    if (loading || !product) return <div className="h-screen w-full bg-[#050505] flex items-center justify-center text-white/30 text-xs tracking-widest uppercase">Initializing Artifact...</div>;
+    if (loading || !product) return <div className="h-screen w-full bg-white flex items-center justify-center text-black/30 text-xs tracking-widest uppercase">Initializing Artifact...</div>;
 
     return (
         <>
@@ -376,10 +389,10 @@ const ProductDeepDive = () => {
                 url={`/products/${product.slug}`}
                 type="product"
             />
-            <div className="h-screen w-full bg-[#030303] relative overflow-hidden select-none">
+            <div className="h-screen w-full bg-white relative overflow-hidden select-none">
 
                 {/* GLOBAL HDR */}
-                <div className="fixed top-0 left-0 w-full z-50 p-6 flex justify-between items-center text-white mix-blend-difference pointer-events-none">
+                <div className="fixed top-0 left-0 w-full z-50 p-6 flex justify-between items-center text-black pointer-events-none">
                     <button onClick={() => navigate(-1)} className="pointer-events-auto flex items-center gap-2 hover:opacity-50 transition-opacity">
                         <ArrowLeft size={20} /> <span className="hidden md:inline text-xs font-bold tracking-widest uppercase">Return</span>
                     </button>
@@ -391,15 +404,15 @@ const ProductDeepDive = () => {
 
                 <ErrorBoundary>
                     <Canvas shadows dpr={[1, 1.5]} gl={{ antialias: false, powerPreference: "high-performance" }} camera={{ fov: 45 }}>
-                        <color attach="background" args={['#030303']} />
+                        <color attach="background" args={['#ffffff']} />
                         <Suspense fallback={null}>
                             <AdaptiveDpr pixelated />
                             <ScrollControls pages={4} damping={0.2}>
                                 <CinematicRig product={product} setUiState={setUiState} />
                             </ScrollControls>
                             <EffectComposer disableNormalPass>
-                                <Noise opacity={0.06} />
-                                <Bloom luminanceThreshold={0.5} mipmapBlur intensity={0.8} radius={0.4} />
+                                {/* <Noise opacity={0.06} /> */}
+                                {/* <Bloom luminanceThreshold={0.5} mipmapBlur intensity={0.8} radius={0.4} /> */}
                                 <Vignette eskil={false} offset={0.1} darkness={0.7} />
                             </EffectComposer>
                         </Suspense>
@@ -412,7 +425,7 @@ const ProductDeepDive = () => {
 
                 <style>{`
                 .stroke-text {
-                    -webkit-text-stroke: 1px white;
+                    -webkit-text-stroke: 1px black;
                     color: transparent;
                 }
             `}</style>
