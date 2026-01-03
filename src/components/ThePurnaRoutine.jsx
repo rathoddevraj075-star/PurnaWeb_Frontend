@@ -104,7 +104,7 @@ const ThePurnaRoutine = () => {
             {/* Footer Call to Action */}
             <div className="text-center mt-32">
                 <h3 className="text-3xl font-serif mb-8">Ready to start your routine?</h3>
-                <a href="/products" className="inline-block border border-black px-12 py-4 uppercase tracking-widest hover:bg-black hover:text-white transition-all duration-300">
+                <a href="/categories" className="inline-block border border-black px-12 py-4 uppercase tracking-widest hover:bg-black hover:text-white transition-all duration-300">
                     Explore Essentials
                 </a>
             </div>
